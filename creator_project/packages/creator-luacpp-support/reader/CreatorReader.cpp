@@ -132,15 +132,14 @@ CreatorReader::CreatorReader()
     _animationManager = new AnimationManager();
     _collisionManager = new ColliderManager();
     _widgetManager = new WidgetManager();
-	_nodeLayoutManager = new NodeLayoutManager();
+
     _animationManager->autorelease();
     _collisionManager->autorelease();
     _widgetManager->autorelease();
-	_nodeLayoutManager->autorelease();
+
     CC_SAFE_RETAIN(_animationManager);
     CC_SAFE_RETAIN(_collisionManager);
     CC_SAFE_RETAIN(_widgetManager);
-	CC_SAFE_RETAIN(_nodeLayoutManager);
 	
 }
 
@@ -149,7 +148,6 @@ CreatorReader::~CreatorReader()
     CC_SAFE_RELEASE_NULL(_collisionManager);
     CC_SAFE_RELEASE_NULL(_animationManager);
     CC_SAFE_RELEASE_NULL(_widgetManager);
-	CC_SAFE_RELEASE_NULL(_nodeLayoutManager);
 }
 
 CreatorReader* CreatorReader::createWithFilename(const std::string& filename)
@@ -294,9 +292,6 @@ cocos2d::Scene* CreatorReader::getSceneGraph() const
 
     _widgetManager->setupWidgets();
     node->addChild(_widgetManager);
-
-	_nodeLayoutManager->setupNodeLayouts();
-	node->addChild(_nodeLayoutManager);
 
     return static_cast<cocos2d::Scene*>(node);
 }
