@@ -33,7 +33,7 @@
 #include "CreatorReader_generated.h"
 #include "collider/ColliderManager.h"
 #include "dragonbones/DragonBonesHeaders.h"
-#include "dragonbones/cocos2dx/CCDragonBonesHeaders.h"
+//#include "dragonbones/cocos2dx/CCDragonBonesHeaders.h"
 #include "ui/WidgetExport.h"
 //#include "ui/NodeExport.h"
 
@@ -51,6 +51,9 @@ public:
      @return A `Scene*`
      */
     cocos2d::Scene* getSceneGraph() const;
+
+
+	cocos2d::Node* getNodeGraph() const;
     
     /**
      Return the AnimationManager. It is added as a child of the Scene to simplify the codes.
@@ -87,7 +90,7 @@ protected:
     ~CreatorReader();
     bool initWithFilename(const std::string& filename);
 
-    cocos2d::Node* createTree(const buffers::NodeTree* treeBuffer) const;
+    cocos2d::Node* createTree(const buffers::NodeTree* treeBuffer,bool isSceneToNode=false) const;
 
     cocos2d::Scene* createScene(const buffers::Scene* sceneBuffer) const;
     void parseScene(cocos2d::Scene* scene, const buffers::Scene* sceneBuffer) const;
@@ -151,8 +154,8 @@ protected:
     cocos2d::ClippingNode* createMask(const buffers::Mask* maskBuffer) const;
     void parseMask(cocos2d::ClippingNode* mask, const buffers::Mask* maskBuffer) const;
     
-    dragonBones::CCArmatureDisplay* createArmatureDisplay(const buffers::DragonBones* dragonBonesBuffer) const;
-    void parseArmatureDisplay(dragonBones::CCArmatureDisplay* armatureDisplay, const buffers::DragonBones* dragonBonesBuffer) const;
+ //   dragonBones::CCArmatureDisplay* createArmatureDisplay(const buffers::DragonBones* dragonBonesBuffer) const;
+  //  void parseArmatureDisplay(dragonBones::CCArmatureDisplay* armatureDisplay, const buffers::DragonBones* dragonBonesBuffer) const;
     
     cocos2d::MotionStreak* createMotionStreak(const buffers::MotionStreak* motionStreakBuffer) const;
     void parseMotionStreak(cocos2d::MotionStreak* motionStreak, const buffers::MotionStreak* motionStreakBuffer) const;

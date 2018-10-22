@@ -1,4 +1,5 @@
 let Utils = require('./Utils');
+let Utils2 = require('../Utils');
 
 class Widget {
     static parse(data) {
@@ -24,7 +25,8 @@ class Widget {
         result.isAbsHorizontalCenter = data._isAbsHorizontalCenter;
         result.isAbsVerticalCenter = data._isAbsVerticalCenter;
 
-        Utils.log("parse widget result value:" + JSON.stringify(result));
+        
+       // Utils2.log("parse widget result value:" + JSON.stringify(result));
 
         return result;
     }

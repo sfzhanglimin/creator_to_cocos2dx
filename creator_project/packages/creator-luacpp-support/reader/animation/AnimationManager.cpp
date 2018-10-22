@@ -43,13 +43,13 @@ void AnimationManager::playAnimationClip(cocos2d::Node *target, const std::strin
     
     for (auto& animationInfo : _animations)
     {
-        if (animationInfo.target == target)
+       // if (animationInfo.target == target)
         {
             for (auto& animClip : animationInfo.clips)
             {
                 if (animClip->getName() == animationClipName)
                 {
-                    runAnimationClip(animationInfo.target, animClip);
+                    runAnimationClip(target, animClip);
                     foundAnimationClip = true;
                     break;
                 }

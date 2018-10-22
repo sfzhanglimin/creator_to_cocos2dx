@@ -82,6 +82,11 @@ namespace  {
         dst = src;
     }
 
+	void assignValue(std::string src, std::string & dst)
+	{
+		dst = src;
+	}
+
     void assignValue(const cocos2d::Color3B& src, cocos2d::Color3B& dst)
     {
         dst.r = src.r;
@@ -100,6 +105,11 @@ namespace  {
     {
         out = start + percent * (end - start);
     }
+
+	void computeNextValue(std::string start, std::string end, float percent, std::string &out)
+	{
+		out = start;
+	}
 
     void computeNextValue(const cocos2d::Color3B& start, const cocos2d::Color3B& end, float percent, cocos2d::Color3B& out)
     {
@@ -256,8 +266,14 @@ void AnimateClip::doUpdate(const AnimProperties& animProperties) const
 
         // update position
         cocos2d::Vec2 nextPos;
-        if (getNextValue(animProperties.animPosition, elapsed, nextPos))
-            target->setPosition(nextPos);
+		if (getNextValue(animProperties.animPosition, elapsed, nextPos))
+		{
+			auto s =target->getParent()->getContentSize();
+			nextPos.x += s.width*0.5;
+			nextPos.y += s.height*0.5;
+			target->setPosition(nextPos);
+		}
+            
 
         // update color
         cocos2d::Color3B nextColor;
@@ -304,6 +320,10 @@ void AnimateClip::doUpdate(const AnimProperties& animProperties) const
         // position y
         if (getNextValue(animProperties.animPositionY, elapsed, nextValue))
             target->setPositionY(nextValue);
+
+		std::string nextPath;
+		if (getNextValue(animProperties.animSpriteFrame, elapsed, nextPath))
+			((cocos2d::Sprite*)target)->setTexture(nextPath);
     }
 }
 

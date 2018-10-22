@@ -89,6 +89,7 @@ void WidgetAdapter::syncLayoutProperty()
 
 	if (_needAdaptNode->getName().compare("root") == 0){
 		_needAdaptNode->setContentSize(sDesignSize);
+		_needAdaptNode->setPosition(sDesignSize / 2);
 		return;
 	}
 

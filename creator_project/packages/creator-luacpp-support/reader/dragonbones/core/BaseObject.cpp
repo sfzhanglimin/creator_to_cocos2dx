@@ -1,59 +1,46 @@
 #include "BaseObject.h"
 DRAGONBONES_NAMESPACE_BEGIN
 
-std::size_t BaseObject::_hashCode = 0;
-std::size_t BaseObject::_defaultMaxCount = 5000;
-std::unordered_map<std::size_t, std::size_t> BaseObject::_maxCountMap;
-std::unordered_map<std::size_t, std::vector<BaseObject*>> BaseObject::_poolsMap;
-BaseObject::RecycleOrDestroyCallback BaseObject::_recycleOrDestroyCallback = nullptr;
+unsigned BaseObject::_hashCode = 0;
+unsigned BaseObject::_defaultMaxCount = 3000;
+std::map<std::size_t, unsigned> BaseObject::_maxCountMap;
+std::map<std::size_t, std::vector<BaseObject*>> BaseObject::_poolsMap;
 
 void BaseObject::_returnObject(BaseObject* object)
 {
-    const auto classTypeIndex = object->getClassTypeIndex();
-    const auto maxCountIterator = _maxCountMap.find(classTypeIndex);
+    const auto classType = object->getClassTypeIndex();
+    const auto maxCountIterator = _maxCountMap.find(classType);
     const auto maxCount = maxCountIterator != _maxCountMap.end() ? maxCountIterator->second : _defaultMaxCount;
-
-    auto& pool = _poolsMap[classTypeIndex];
+    auto& pool = _poolsMap[classType];
     if (pool.size() < maxCount)
     {
-        if (std::find(pool.cbegin(), pool.cend(), object) == pool.cend())
+        if (!object->_isInPool)
         {
+            object->_isInPool = true;
             pool.push_back(object);
         }
         else
         {
-            DRAGONBONES_ASSERT(false, "The object aleady in pool.");
+            DRAGONBONES_ASSERT(false, "The object is already in the pool.");
         }
-
-        if (_recycleOrDestroyCallback != nullptr)
-            _recycleOrDestroyCallback(object, 0);
     }
     else
     {
-        if (_recycleOrDestroyCallback != nullptr)
-            _recycleOrDestroyCallback(object, 1);
-
         delete object;
     }
 }
 
-void BaseObject::setObjectRecycleOrDestroyCallback(const std::function<void(BaseObject*, int)>& cb)
+void BaseObject::setMaxCount(std::size_t classType, unsigned maxCount)
 {
-    _recycleOrDestroyCallback = cb;
-}
-
-void BaseObject::setMaxCount(std::size_t classTypeIndex, std::size_t maxCount)
-{
-    if (classTypeIndex)
+    if (classType > 0)
     {
-        _maxCountMap[classTypeIndex] = maxCount;
-        const auto iterator = _poolsMap.find(classTypeIndex);
+        const auto iterator = _poolsMap.find(classType);
         if (iterator != _poolsMap.end())
         {
             auto& pool = iterator->second;
-            if (pool.size() > maxCount)
+            if (pool.size() > (size_t)maxCount)
             {
-                for (auto i = maxCount, l = pool.size(); i < l; ++i)
+                for (auto i = (size_t)maxCount, l = pool.size(); i < l; ++i)
                 {
                     delete pool[i];
                 }
@@ -61,38 +48,38 @@ void BaseObject::setMaxCount(std::size_t classTypeIndex, std::size_t maxCount)
                 pool.resize(maxCount);
             }
         }
+
+        _maxCountMap[classType] = maxCount;
     }
     else
     {
         _defaultMaxCount = maxCount;
         for (auto& pair : _poolsMap)
         {
-            if (_maxCountMap.find(pair.first) == _maxCountMap.end())
-            {
-                continue;
-            }
-
-            _maxCountMap[pair.first] = maxCount;
-
             auto& pool = pair.second;
-            if (pool.size() > maxCount)
+            if (pool.size() > (size_t)maxCount)
             {
-                for (auto i = maxCount, l = pool.size(); i < l; ++i)
+                for (auto i = (size_t)maxCount, l = pool.size(); i < l; ++i)
                 {
                     delete pool[i];
                 }
 
                 pool.resize(maxCount);
             }
+
+            if (_maxCountMap.find(pair.first) != _maxCountMap.end())
+            {
+                _maxCountMap[pair.first] = maxCount;
+            }
         }
     }
 }
 
-void BaseObject::clearPool(std::size_t classTypeIndex)
+void BaseObject::clearPool(std::size_t classType)
 {
-    if (classTypeIndex)
+    if (classType > 0)
     {
-        const auto iterator = _poolsMap.find(classTypeIndex);
+        const auto iterator = _poolsMap.find(classType);
         if (iterator != _poolsMap.end())
         {
             auto& pool = iterator->second;
@@ -125,19 +112,10 @@ void BaseObject::clearPool(std::size_t classTypeIndex)
     }
 }
 
-BaseObject::BaseObject() :
-    hashCode(BaseObject::_hashCode++)
-{}
-BaseObject::~BaseObject()
-{
-    int i = 0;
-    ++i;
-}
-
 void BaseObject::returnToPool()
 {
     _onClear();
-    _returnObject(this);
+    BaseObject::_returnObject(this);
 }
 
 DRAGONBONES_NAMESPACE_END

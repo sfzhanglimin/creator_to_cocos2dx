@@ -84,6 +84,7 @@ class FireParser {
     }
 
     run(filename, assetpath, path_to_json_files) {
+        Utils.log(filename)
         state._filename = path.basename(filename, '.fire');
         let sub_folder = path.dirname(filename).substr(Constants.ASSETS_PATH.length + 1);
         let json_name = path.join(path_to_json_files, sub_folder, state._filename) + '.json';

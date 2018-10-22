@@ -4,6 +4,9 @@ const Widget = require('./Widget');
 let Utils = require('./Utils');
 const fs = require('fs');
 
+const Utils2 = require('../Utils');
+
+
 class Node {
 
     static get_node_components(node) {
@@ -287,6 +290,24 @@ class Node {
                 addProp(props, 'opacity', result, 'opacity');
                 
 
+                //cc.Sprite.spriteFrame
+                if (props['cc.Sprite']) {
+                    result['spriteFrame'] = [];
+                    //addProp(props, 'cc.Sprite',  result, 'cc.Sprite');
+                    props['cc.Sprite'].spriteFrame.forEach(function(sprite){
+
+                        let path = Utils.get_sprite_frame_name_by_uuid(sprite.value.__uuid__);
+                        path = 'creator/'+path;
+                        let value = {
+                            frame: sprite.frame,
+                            value: path
+                        };
+                        parseCurveProperty(sprite, value);
+                        result['spriteFrame'].push(value);
+
+                    });
+                }
+
                 // position -> {x:, y:, curveType?, curveData?}
                 if (props.position) {
                     result.position = [];
@@ -369,6 +390,14 @@ class Node {
                                 let subAnim = {
                                     path: path,
                                     props: parseCurveDataProps(curveData.paths[path].props)
+                                };
+                                animationClip.curveData.push(subAnim);
+                            }
+                            
+                            if (curveData.paths.hasOwnProperty(path) && curveData.paths[path].comps) {
+                                let subAnim = {
+                                    path: path,
+                                    props: parseCurveDataProps(curveData.paths[path].comps)
                                 };
                                 animationClip.curveData.push(subAnim);
                             }

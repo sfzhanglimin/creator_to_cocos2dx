@@ -144,6 +144,16 @@ struct AnimPropSkewY
     std::string curveType;
 };
 
+
+struct AnimPropSpriteFrame
+{
+	float frame;
+	std::string value;
+	std::vector<float> curveData;
+	std::string curveType;
+};
+
+
 struct AnimProperties
 {
     std::vector<AnimPropRotation> animRotation;
@@ -160,6 +170,7 @@ struct AnimProperties
     std::vector<AnimPropOpacity> animOpacity;
     std::vector<AnimPropWidth> animWidth;
     std::vector<AnimPropHeight> animHeight;
+	std::vector<AnimPropSpriteFrame> animSpriteFrame;
     std::string path;
 };
 

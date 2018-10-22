@@ -31,6 +31,7 @@
 #include "base/CCEventListenerFocus.h"
 
 #include "collider/ColliderManager.h"
+#include "ui/PageView.h"
 
 
 static int lua_ColliderManager_unregisterCollisionCallback(lua_State* L)
@@ -126,10 +127,28 @@ static void extendColliderManager(lua_State* L)
     lua_pop(L, 1);
 }
 
+
+
+static int lua_register_creator_reader_pageView(lua_State* tolua_S)
+{
+	tolua_usertype(tolua_S, "creator.CreatorPageView");
+	tolua_cclass(tolua_S, "CreatorPageView", "creator.CreatorPageView", "ccui.PageView", nullptr);
+
+	tolua_beginmodule(tolua_S, "CreatorPageView");
+
+	tolua_endmodule(tolua_S);
+	std::string typeName = typeid(creator::CreatorPageView).name();
+	g_luaType[typeName] = "creator.CreatorPageView";
+	g_typeCast["CreatorPageView"] = "creator.CreatorPageView";
+	return 1;
+}
+
+
 int register_all_creator_reader_manual(lua_State* L)
 {
     if (nullptr == L)
         return 0;
+	lua_register_creator_reader_pageView(L);
     extendColliderManager(L);
 
     return 0;

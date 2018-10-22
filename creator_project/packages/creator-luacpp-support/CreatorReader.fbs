@@ -431,6 +431,7 @@ table AnimProps
     scaleY:[AnimPropScaleY];
     skewX:[AnimPropSkewX];
     skewY:[AnimPropSkewY];
+    spriteFrame:[AnimPropSpriteFrame];
 }
 
 table AnimEvents
@@ -549,6 +550,16 @@ table AnimPropSkewY
     curveType:string;
     curveData:[float];
 }
+
+table AnimPropSpriteFrame
+{
+    frame:float;
+    value:string;
+    curveType:string;
+    curveData:[float];
+}
+
+
 
 
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
