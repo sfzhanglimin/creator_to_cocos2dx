@@ -22,19 +22,19 @@ class Slider extends Node {
         // normal sprite
         if (handle_button_data._N$normalSprite) {
             let path = Utils.get_sprite_frame_name_by_uuid(handle_button_data._N$normalSprite.__uuid__);
-            this._properties.normalTexturePath = state._assetpath + path ;
+            this._properties.normalTexturePath =  path ;
         }
         
         // disabled sprite
         if (handle_button_data._N$disabledSprite) {
             let path = Utils.get_sprite_frame_name_by_uuid(handle_button_data._N$disabledSprite.__uuid__);
-            this._properties.disabledTexturePath = state._assetpath + path ;
+            this._properties.disabledTexturePath = path ;
         }
  
         // pressed sprite
         if (handle_button_data.pressedSprite) {
             let path = Utils.get_sprite_frame_name_by_uuid(handle_button_data.pressedSprite.__uuid__);
-            this._properties.pressedTexturePath = state._assetpath + path ;
+            this._properties.pressedTexturePath =  path ;
         }
 
         let handle_id = handle_button_data._N$target.__id__;
@@ -49,7 +49,7 @@ class Slider extends Node {
 
             if (background_sprite_data._spriteFrame) {
                 let path = Utils.get_sprite_frame_name_by_uuid(background_sprite_data._spriteFrame.__uuid__);
-                this._properties.barTexturePath = state._assetpath + path;
+                this._properties.barTexturePath =  path;
 
                 // size
                 this.add_property_size('barSize', '_contentSize', background_node_data);

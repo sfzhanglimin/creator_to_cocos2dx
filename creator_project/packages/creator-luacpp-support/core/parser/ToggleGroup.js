@@ -34,7 +34,7 @@ class ToggleGroup extends Node {
 
         // remove all toggle children
         toggle_ids.forEach(function(child_id) {
-            Utils.remove_child_by_id(this, child_id);
+           // Utils.remove_child_by_id(this, child_id);
         }.bind(this));
 
         // 2nd: parse children

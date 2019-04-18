@@ -48,6 +48,12 @@ class Utils {
         if (Fs.existsSync(cocos2dx_path))
             return true;
 
+        let common_cocos2dx_path = Path.join(dir, 'common_cocos2d-x');
+        if (Fs.existsSync(common_cocos2dx_path))
+            return true;
+
+        
+
         // cocos2d-x internal lua tests
         let app_delegate_path = Path.join(dir, 'project/Classes/AppDelegate.cpp');
         if (Fs.existsSync(app_delegate_path))
@@ -86,7 +92,7 @@ class Utils {
 
                 let url = path.replace(/\\/g, '/');
 
-                uuidmaps[uuid] = url;
+                uuidmaps[uuid] = [url,meta];
             }
 
             cb(uuidmaps);

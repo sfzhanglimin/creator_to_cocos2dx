@@ -7,6 +7,7 @@ const Path = require('path');
 
 const Utils = require('./Utils');
 const Constants = require('./Constants');
+const fs = require('fs');
 const Fs = require('fire-fs');
 const Del = require('del')
 const parse_fire = require('./parser/ConvertFireToJson');
@@ -27,8 +28,8 @@ class BuildWorker extends WorkerBase {
         this._state = state;
 
         // clean old json or ccreator files
-        Fs.emptyDirSync(Constants.JSON_PATH);
-        Fs.emptyDirSync(Constants.CCREATOR_PATH);
+        // Fs.emptyDirSync(Constants.JSON_PATH);
+       // Fs.emptyDirSync(Constants.CCREATOR_PATH);
 
         Utils.getAssetsInfo(function(uuidmap) {
             let copyReourceInfos = this._convertFireToJson(uuidmap);
@@ -45,31 +46,123 @@ class BuildWorker extends WorkerBase {
 
     _convertFireToJson(uuidmap) {
         let fireFiles = this._getFireList();
+        let fireFiles2 = this._getPrefabList();
+
+        fireFiles2.forEach(function(filename) {
+            fireFiles.push(filename);
+        });
+
         let copyReourceInfos = parse_fire(fireFiles, 'creator', Constants.JSON_PATH, uuidmap);
 
         return copyReourceInfos;
     }
 
+
+
+
+
+    _getChangeFiles(filenames) {
+
+        let changeFiles =[]
+        let timeFilePath = Path.join(Constants.TEMP_PATH,"timeCreatorfiles")
+        if(fs.existsSync(timeFilePath))
+        {
+            let readData = fs.readFileSync(timeFilePath)
+            let data = JSON.parse(readData);   
+    
+            filenames.forEach(function(filename) {
+    
+                let stat = fs.statSync(filename);
+                let mtime = stat.mtime.getTime();
+                if(data[filename]  != null)
+                {
+                    if(data[filename] < mtime)
+                    {
+                       // changeFiles[]
+                       data[filename] = mtime;
+                       changeFiles.push(filename);
+                    }
+                }
+                else
+                {
+                    data[filename] = mtime;
+                     changeFiles.push(filename);
+                }
+    
+                
+               });
+    
+            //update time file
+            let pFile = fs.openSync(timeFilePath, 'w');
+            let dump = JSON.stringify(data, null, '\t');//.replace(/\\\\/g,'/');
+            fs.writeSync(pFile, dump);
+            fs.close(pFile);
+    
+            return changeFiles
+        }
+        else
+        {
+            let fire_fs = Fs
+            fire_fs.ensureDirSync(Path.dirname(timeFilePath));
+            let pFile = fs.openSync(timeFilePath, 'w');
+            let data = {}
+    
+    
+            filenames.forEach(function(filename) {
+    
+    
+            let stat = fs.statSync(filename);
+            let str = stat.mtime.getTime()
+            data[filename] = str
+    
+         });
+    
+            let dump = JSON.stringify(data, null, '\t');//.replace(/\\\\/g,'/');
+            fs.writeSync(pFile, dump);
+            fs.close(pFile);
+    
+            return filenames
+        }
+    }
+
+
+
     // .json -> .ccreator
     _compileJsonToBinary(cb) {
         const jsonFiles = this._getJsonList();
+        let changeFiles = this._getChangeFiles(jsonFiles)
 
-        let i = 0;
-        jsonFiles.forEach(function(file) {
-            let subFolder = Path.dirname(file).substr(Constants.JSON_PATH.length + 1);
-            let creatorPath = Path.join(Constants.CCREATOR_PATH, subFolder);
-            let params = ['-b', '-o', creatorPath, Constants.CREATOR_READER_FBS, file];
+        
 
-            Utils.runcommand(Constants.FLATC, params, function(code){
-                if (code != 0)
-                    Utils.log('[creator-luacpp-support] convert ' + file + ' to .ccreator error');
+        if(changeFiles.length > 0 )
+        {
+            let i = 0;
+            changeFiles.forEach(function(file) {
 
-                ++i;
-                if (i === jsonFiles.length)
-                    cb();
+            
+                let subFolder = Path.dirname(file).substr(Constants.JSON_PATH.length + 1);
+                let creatorPath = Path.join(Constants.CCREATOR_PATH, subFolder);
+                let params = ['-b', '-o', creatorPath, Constants.CREATOR_READER_FBS, file];
+    
+                Utils.runcommand(Constants.FLATC, params, function(code){
+                    if (code != 0)
+                        Utils.log('[creator-luacpp-support] convert ' + file + ' to .ccreator error');
+    
+                    ++i;
+                    if (i === changeFiles.length)
+                        cb();
+                });
+
             });
-        });
+        }
+        else
+        {
+             cb();
+        }
+
+       
     }
+
 
     _copyResources(copyReourceInfos) {
         // should copy these resources
@@ -99,16 +192,36 @@ class BuildWorker extends WorkerBase {
         {
             // copy .ccreator
             resdst = Path.join(resdst, Constants.RESOURCE_FOLDER_NAME);
-            Del.sync(resdst, {force: true});
-            this._copyTo(Constants.CCREATOR_PATH, resdst, ['.ccreator'], true);
+            //Del.sync(resdst, {force: true});
+            //this._copyTo(Constants.CCREATOR_PATH, resdst, ['.ccreator'], true);
+
 
             // copy other resources
+            //this._copyTo(Constants.ASSETS_PATH, resdst, ['.png'], true);
+            //this._copyTo(Constants.ASSETS_PATH, resdst, ['.jpg'], true);
+            //this._copyTo(Constants.ASSETS_PATH, resdst, ['.ttf'], true);
+            //this._copyTo(Constants.ASSETS_PATH, resdst, ['.fnt'], true);
+            //this._copyTo(Constants.ASSETS_PATH, resdst, ['.plist'], true);
+           let cpybatPath = Path.join(Constants.PACKAGE_PATH, 'bin');
+
+           const process2 = require('child_process')
+           process2.execFileSync('cpyres.bat', [Constants.PROJECT_PATH, resdst], {cwd:cpybatPath}, function(error, stdout, stderr) {
+                console.log(error);
+                console.log(stdout);
+                alert(1);
+            });
+
             Object.keys(copyReourceInfos).forEach(function(uuid) {
                 let pathInfo = copyReourceInfos[uuid];
                 let src = pathInfo.fullpath;
                 let dst = Path.join(resdst, pathInfo.relative_path);
-                Fs.ensureDirSync(Path.dirname(dst));
-                Fs.copySync(src, dst);
+                let res = src.match(/default-assets/);
+                if (res)
+                {
+                    Fs.ensureDirSync(Path.dirname(dst));
+                    Fs.copySync(src, dst);
+                }
+                
             });
         }
 
@@ -117,7 +230,7 @@ class BuildWorker extends WorkerBase {
             return;
 
         // copy reader
-        {
+        /*{
             let codeFilesDist = Path.join(classes, 'reader')
             Del.sync(codeFilesDist, {force: true});
             Fs.copySync(Constants.READER_PATH, codeFilesDist);
@@ -128,7 +241,7 @@ class BuildWorker extends WorkerBase {
                 let bindingCodesPath = Path.join(classes, 'reader/lua-bindings');
                 Del.sync(bindingCodesPath, {force: true});
             }
-        }
+        }*/
     }
 
    // copy all files with ext in src to dst
@@ -148,8 +261,21 @@ class BuildWorker extends WorkerBase {
     }
 
     // get all .fire file in assets folder
+
+    _getPrefabList() {
+        return this._getFilesWithExt(Constants.ASSETS_PATH, ['.prefab'], true);
+    }
+
     _getFireList() {
         return this._getFilesWithExt(Constants.ASSETS_PATH, ['.fire'], true);
+    }
+
+    _getPngList() {
+        return this._getFilesWithExt(Constants.ASSETS_PATH, ['.png'], true);
+    }
+
+    _getJpgList() {
+        return this._getFilesWithExt(Constants.ASSETS_PATH, ['.jpg'], true);
     }
 
     _getJsonList() {

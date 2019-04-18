@@ -35,9 +35,11 @@
 #include "dragonbones/DragonBonesHeaders.h"
 //#include "dragonbones/cocos2dx/CCDragonBonesHeaders.h"
 #include "ui/WidgetExport.h"
-//#include "ui/NodeExport.h"
-
-
+#include "ui/RadioButton.h"
+#include "ui/RadioButtonGroup.h"
+#include "ui/Button.h"
+#include "ui/Layout.h"
+#include "ui/RichText.h"
 
 NS_CCR_BEGIN
 
@@ -101,8 +103,10 @@ protected:
     void parseColliders(cocos2d::Node* node, const buffers::Node* nodeBuffer) const;
     void parseWidget(cocos2d::Node* node, const buffers::Node* nodeBuffer) const;
 
-    cocos2d::Sprite* createSprite(const buffers::Sprite* spriteBuffer) const;
-    void parseSprite(cocos2d::Sprite* sprite, const buffers::Sprite* spriteBuffer) const;
+	void parseTrimedSprite(cocos2d::Sprite* node) const;
+
+    cocos2d::Node* createSprite(const buffers::Sprite* spriteBuffer) const;
+    void parseSprite(cocos2d::ui::Scale9Sprite* sprite, const buffers::Sprite* spriteBuffer) const;
 
     cocos2d::TMXTiledMap* createTileMap(const buffers::TileMap* tilemapBuffer) const;
     void parseTilemap(cocos2d::TMXTiledMap* tilemap, const buffers::TileMap* tilemapBuffer) const;
@@ -111,7 +115,7 @@ protected:
     void parseLabel(cocos2d::Label* label, const buffers::Label* labelBuffer) const;
 
     cocos2d::ui::RichText* createRichText(const buffers::RichText* richTextBuffer) const;
-    void parseRichText(cocos2d::ui::RichText* richText, const buffers::RichText* richTextBuffer) const;
+    void parseRichText(CreatorRichText* richText, const buffers::RichText* richTextBuffer) const;
 
     cocos2d::ParticleSystemQuad* createParticle(const buffers::Particle* particleBuffer) const;
     void parseParticle(cocos2d::ParticleSystemQuad* partile, const buffers::Particle* particleBuffer) const;
@@ -126,7 +130,10 @@ protected:
     void parseEditBox(cocos2d::ui::EditBox* editBox, const buffers::EditBox* editBoxBuffer) const;
 
     cocos2d::ui::Button* createButton(const buffers::Button* buttonBuffer) const;
-    void parseButton(cocos2d::ui::Button* button, const buffers::Button* buttonBuffer) const;
+    void parseButton(CreatorButton* button, const buffers::Button* buttonBuffer) const;
+
+    cocos2d::ui::Layout* createLayout(const buffers::Layout* buttonBuffer) const;
+    void parseLayout(CreatorLayout* button, const buffers::Layout* buttonBuffer) const;
 
     spine::SkeletonAnimation* createSpineSkeleton(const buffers::SpineSkeleton* spineBuffer) const;
     void parseSpineSkeleton(spine::SkeletonAnimation* button, const buffers::SpineSkeleton* spineBuffer) const;
@@ -142,8 +149,8 @@ protected:
     cocos2d::ui::Slider* createSlider(const buffers::Slider* sliderBuffer) const;
     void parseSlider(cocos2d::ui::Slider* slider, const buffers::Slider* sliderBuffer) const;
     
-    cocos2d::ui::CheckBox* createToggle(const buffers::Toggle* toggleBuffer) const;
-    void parseToggle(cocos2d::ui::CheckBox* checkBox, const buffers::Toggle* toggleBuffer) const;
+    cocos2d::Node* createToggle(const buffers::Toggle* toggleBuffer) const;
+    void parseToggle(CreatorRadioButton* checkBox, const buffers::Toggle* toggleBuffer) const;
     
     cocos2d::ui::RadioButtonGroup* createToggleGroup(const buffers::ToggleGroup* toggleGroupBuffer) const;
     void parseToggleGroup(cocos2d::ui::RadioButtonGroup* radioGroup, const buffers::ToggleGroup* toggleGroupBuffer) const;

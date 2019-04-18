@@ -18,11 +18,14 @@ enum EditBoxInputMode:byte {Any, EmailAddress, Numeric, PhoneNumber, URL, Decime
 enum LabelOverflowType:byte {None, Clamp, Shrink, ResizeHeight, Toggle}
 enum MaskType:byte {Rect, Ellipse, ImageStencil}
 enum ColliderType:byte {BoxCollider, PolygonCollider, CircleCollider}
+enum LayoutType:byte { None = 0, Horizontal = 1, Vertical = 2, Grid = 3 }
+enum ResizeMode:byte { None = 0, Container = 1, Children = 2 }
 
 // New nodes should be added at the end of the union
 // no more than 255 union objects can be added
-union AnyNode {Scene, Sprite, Label, Particle, TileMap, Node, Button, ProgressBar, ScrollView, CreatorScene, 
-               EditBox, RichText, SpineSkeleton, VideoPlayer, WebView, Slider, Toggle, ToggleGroup, PageView, Mask, DragonBones, MotionStreak}
+union AnyNode {Scene, Sprite, Label, Particle, TileMap, Node, Button, ProgressBar, ScrollView, CreatorScene,
+               EditBox, RichText, SpineSkeleton, VideoPlayer, WebView, Slider, Toggle, ToggleGroup, PageView,
+               Mask, DragonBones, MotionStreak, Layout}
 
 table SceneGraph
 {
@@ -56,6 +59,28 @@ table NodeTree
 
     // no need to declare it, but required everytime that
     // object_type:string;
+}
+
+table Meta
+{
+    type:string;
+    wrapMode:string;
+    filterMode:string;
+    trimType:string;
+    trimThreshold:int;
+    rotated:bool;
+    offsetX:float;
+    offsetY:float;
+    trimX:int;
+    trimY:int;
+    width:int;
+    height:int;
+    rawWidth:int;
+    rawHeight:int;
+    borderTop:int;
+    borderBottom:int;
+    borderLeft:int;
+    borderRight:int;
 }
 
 table SpriteFrame
@@ -118,6 +143,7 @@ table Sprite
     dstBlend:int = 771;
     trimEnabled:bool = false;
     sizeMode:SpriteSizeMode;
+    meta:Meta;
 }
 
 table Label
@@ -174,11 +200,36 @@ table Button
 {
     node:Node;
     transition:int;
+    duration:float;
     zoomScale:float;
+    spriteType:SpriteType;
+    trimEnabled:bool = false;
     spriteFrameName:string;
     pressedSpriteFrameName:string;
     disabledSpriteFrameName:string;
     ignoreContentAdaptWithSize:bool = false;
+    normalColor:ColorRGBA;
+    pressedColor:ColorRGBA;
+    disableColor:ColorRGBA;
+}
+
+table Layout
+{
+    node:Node;
+    layoutType:LayoutType;
+    resizeMode:ResizeMode;
+    backgroundVisible:bool = true;
+    spriteFrameName:string;
+    paddingTop:float;
+    paddingBottom:float;
+    paddingLeft:float;
+    paddingRight:float;
+    spacingX:float;
+    spacingY:float;
+    startAxis:int;
+    horizontalDirection:int;
+    verticalDirection:int;
+    cellSize:Size;
 }
 
 table ProgressBar
@@ -251,9 +302,19 @@ table Toggle
     interactable:bool;
     enableAutoGrayEffect:bool;
     isChecked:bool;
+    isToggleGroup:bool;
+    backgroundNodeName:string;
+    checkMarkNodeName:string;
     backgroundSpritePath:string;
     checkMarkSpritePath:string;
     zoomScale:float;
+    transition:int;
+    duration:float;
+    pressedSpriteFrameName:string;
+    disabledSpriteFrameName:string;
+    normalColor:ColorRGBA;
+    pressedColor:ColorRGBA;
+    disableColor:ColorRGBA;
 }
 
 table ToggleGroup

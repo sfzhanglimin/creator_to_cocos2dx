@@ -9,6 +9,25 @@ const Utils = require('../Utils');
  * @fullpath: full path of the resource
  * @relative_path: relative path to assets folder or creator default asset path
  */
+let get_file_by_uuid = function(uuid) {
+    let infos = uuidinfos[uuid];
+    if(infos){
+        return infos[0]
+    }
+
+    return infos
+}
+
+let get_meta_by_uuid = function(uuid) {
+    let infos = uuidinfos[uuid];
+    if(infos){
+        return infos[1]
+    }
+
+    return infos
+}
+
+
 let get_relative_full_path_by_uuid = function(uuid) {
     if (uuid in state._uuid)
         return state._uuid[uuid];
@@ -28,7 +47,7 @@ let get_relative_full_path_by_uuid = function(uuid) {
 }
 
 let get_sprite_frame_json_by_uuid = function(uuid) {
-    let jsonfile = uuidinfos[uuid];
+    let jsonfile = get_file_by_uuid(uuid);//uuidinfos[uuid];
     if (jsonfile) {
         let contents = fs.readFileSync(jsonfile);
         let contents_json = JSON.parse(contents);
@@ -50,7 +69,7 @@ let is_sprite_frame_from_texture_packer = function(uuid) {
 /**
  * The sprite frame name will include path information if it is not a texture packer
  */
-let get_sprite_frame_name_by_uuid = function(uuid) {
+let get_sprite_frame_name_by_uuid_old = function(uuid) {
     if (uuid in state._sprite_frames) {
         let uuid_info = state._sprite_frames[uuid];
         if (uuid_info.is_texture_packer)
@@ -78,9 +97,14 @@ let get_sprite_frame_name_by_uuid = function(uuid) {
             let path_info = get_relative_full_path_by_uuid(texture_uuid);
 
             // get texture frames information
-            let meta = Editor.remote.assetdb._uuid2meta[metauuid].__subMetas__;
-            let found_sprite_frame_name = null;
-            Object.keys(meta).forEach(sprite_frame_name => {
+             let found_sprite_frame_name = null;
+              try
+            {
+                let tempMeta= Editor.remote.assetdb._uuid2meta[metauuid];
+           
+                let meta = tempMeta.__subMetas__;
+           
+                Object.keys(meta).forEach(sprite_frame_name => {
                 let sprite_frame_info = meta[sprite_frame_name];
                 sprite_frame_info.name = sprite_frame_name;
                 sprite_frame_info.texture_path = path_info.relative_path;
@@ -94,8 +118,16 @@ let get_sprite_frame_name_by_uuid = function(uuid) {
                         found_sprite_frame_name = sprite_frame_name;
                     else
                         found_sprite_frame_name = sprite_frame_info.texture_path;
-                }
-            });
+                    }
+                });
+            }
+            catch(e)
+            {
+                module.exports.log('can not get sprite frame name of uuid ' + uuid);
+                return null;
+            }
+
+           
             return found_sprite_frame_name;
         }
         else {
@@ -105,11 +137,24 @@ let get_sprite_frame_name_by_uuid = function(uuid) {
     }
 }
 
+
+/**
+ * The sprite frame name will include path information if it is not a texture packer
+ */
+let get_sprite_frame_name_by_uuid = function(uuid) {
+   let ret = get_sprite_frame_name_by_uuid_old(uuid);
+   if(ret)
+   {
+        return "creator/"+ret;
+   }
+   return null
+}
+
 let get_font_path_by_uuid = function(uuid) {
     if (uuid in state._uuid)
         return state._uuid[uuid].relative_path;
     else {
-        let jsonfile = uuidinfos[uuid];
+        let jsonfile = get_file_by_uuid(uuid);//uuidinfos[uuid];
         if (jsonfile) {
             let current_dir = path.basename(jsonfile, '.json');
             let contents = fs.readFileSync(jsonfile);
@@ -121,7 +166,7 @@ let get_font_path_by_uuid = function(uuid) {
             if (type === 'cc.BitmapFont') {
                 // png path
                 let png_uuid = contents_json.spriteFrame.__uuid__;
-                let json_png = JSON.parse(fs.readFileSync(uuidinfos[png_uuid]));
+                let json_png = JSON.parse(fs.readFileSync(get_file_by_uuid(png_uuid)))//uuidinfos[png_uuid]));
                 let png_path_info = get_relative_full_path_by_uuid(json_png.content.texture);
                 state._uuid[png_uuid] = png_path_info;
 
@@ -134,11 +179,15 @@ let get_font_path_by_uuid = function(uuid) {
                 return state._uuid[uuid].relative_path;
             }
             else if (type === 'cc.TTFFont') {
-                state._uuid[uuid] = {
-                    fullpath: path.join(res_dir, contents_json._rawFiles[0]),
-                    relative_path: current_dir + '/' + contents_json._rawFiles[0]
-                }
 
+                let path = get_relative_full_path_by_uuid(uuid);
+
+
+               // state._uuid[uuid] = {
+                   // fullpath: path.join(res_dir, contents_json._rawFiles[0]),
+                   // relative_path: current_dir + '/' + contents_json._rawFiles[0]
+                //}
+///
                 return state._uuid[uuid].relative_path;
             }
             else {
@@ -159,7 +208,7 @@ let get_spine_info_by_uuid = function (uuid) {
     if (uuid in state._uuid)
         return state._uuid[uuid];
 
-    let jsonfile = uuidinfos[uuid];
+    let jsonfile = get_file_by_uuid(uuid);//uuidinfos[uuid];
     if (jsonfile) {
         let contents = fs.readFileSync(jsonfile);
         let contents_json = JSON.parse(contents);
@@ -197,7 +246,7 @@ let get_tiledmap_path_by_uuid = function (uuid) {
 
     // from the json file, we can only get texture path
     // so should use the texture path to get tmx path
-    let jsonfile = uuidinfos[uuid];
+    let jsonfile = get_file_by_uuid(uuid);//uuidinfos[uuid];
     if (jsonfile) {
         let contents = fs.readFileSync(jsonfile);
         let contents_json = JSON.parse(contents);
@@ -249,6 +298,7 @@ let create_node = function (node_type, node_data) {
     const Prefab = require('./Prefab');
     const DragonBones = require('./DragonBones');
     const MotionStreak = require('./MotionStreak');
+    const Layout = require('./Layout');
 
     let n = null;
     if (node_type === 'cc.Node')
@@ -295,6 +345,8 @@ let create_node = function (node_type, node_data) {
         n = new DragonBones(node_data);
     else if (node_type === 'cc.MotionStreak')
         n = new MotionStreak(node_data);
+    else if (node_type === 'cc.Layout')
+        n = new Layout(node_data);
 
     if (n != null)
         n.parse_properties();
@@ -329,4 +381,6 @@ module.exports = {
     remove_child_by_id: remove_child_by_id,
     get_sprite_frame_json_by_uuid: get_sprite_frame_json_by_uuid,
     is_sprite_frame_from_texture_packer: is_sprite_frame_from_texture_packer,
+    get_file_by_uuid:get_file_by_uuid,
+    get_meta_by_uuid:get_meta_by_uuid,
 }

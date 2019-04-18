@@ -28,6 +28,7 @@
 #include "AnimationClipProperties.h"
 #include "Easing.h"
 #include "Bezier.h"
+#include "ui/CocosGUI.h"
 
 #include <functional>
 
@@ -323,7 +324,24 @@ void AnimateClip::doUpdate(const AnimProperties& animProperties) const
 
 		std::string nextPath;
 		if (getNextValue(animProperties.animSpriteFrame, elapsed, nextPath))
-			((cocos2d::Sprite*)target)->setTexture(nextPath);
+		{
+			cocos2d::ui::Button* pButton = dynamic_cast<cocos2d::ui::Button*>(target);
+
+			if (pButton)
+			{
+				pButton->getRendererNormal()->setTexture(nextPath);
+			}
+			else
+			{
+				cocos2d::Sprite* pSprite = dynamic_cast<cocos2d::Sprite*>(target);
+				if (pSprite)
+				{
+					pSprite->setTexture(nextPath);
+				}
+			}
+			
+		}
+			
     }
 }
 

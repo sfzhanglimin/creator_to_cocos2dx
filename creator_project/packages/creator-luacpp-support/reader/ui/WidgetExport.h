@@ -54,14 +54,92 @@ public:
         TOP_CENTER_HORIZONTAL = CREATOR_ALIGN_CENTER | CREATOR_ALIGN_TOP,
         TOP_RIGHT = CREATOR_ALIGN_TOP | CREATOR_ALIGN_RIGHT,
         LEFT_CENTER_VERTICAL = CREATOR_ALIGN_MID | CREATOR_ALIGN_LEFT,
+		TOP_BOTTOM = CREATOR_ALIGN_TOP | CREATOR_ALIGN_BOT,
 
         CENTER_IN_PARENT = CREATOR_ALIGN_CENTER | CREATOR_ALIGN_MID,
 
         RIGHT_CENTER_VERTICAL = CREATOR_ALIGN_MID | CREATOR_ALIGN_RIGHT,
         LEFT_BOTTOM = CREATOR_ALIGN_BOT | CREATOR_ALIGN_LEFT,
         BOTTOM_CENTER_HORIZONTAL = CREATOR_ALIGN_CENTER | CREATOR_ALIGN_BOT,
-        RIGHT_BOTTOM = CREATOR_ALIGN_RIGHT | CREATOR_ALIGN_BOT
+        RIGHT_BOTTOM = CREATOR_ALIGN_RIGHT | CREATOR_ALIGN_BOT,
+
+		LEFT_TOP_BOTTOM_RIGHT = CREATOR_ALIGN_LEFT | CREATOR_ALIGN_RIGHT| CREATOR_ALIGN_TOP| CREATOR_ALIGN_BOT,
+
+		LEFT_TOP_RIGHT = CREATOR_ALIGN_LEFT | CREATOR_ALIGN_RIGHT | CREATOR_ALIGN_TOP,
+		LEFT_BOTTOM_RIGHT = CREATOR_ALIGN_LEFT | CREATOR_ALIGN_RIGHT | CREATOR_ALIGN_BOT,
+		LEFT_BOTTOM_TOP = CREATOR_ALIGN_LEFT  | CREATOR_ALIGN_TOP | CREATOR_ALIGN_BOT,
+		RIGHT_BOTTOM_TOP =   CREATOR_ALIGN_RIGHT | CREATOR_ALIGN_TOP | CREATOR_ALIGN_BOT,
+		LEFT_RIGHT_CENTER_VERTICAL = CREATOR_ALIGN_RIGHT | CREATOR_ALIGN_LEFT | CREATOR_ALIGN_MID,
+		BOTTOM_TOP_CENTER_HORIZONTAL = CREATOR_ALIGN_TOP | CREATOR_ALIGN_BOT | CREATOR_ALIGN_CENTER,
+
+		TOP= CREATOR_ALIGN_TOP,
+		LEFT= CREATOR_ALIGN_LEFT,
+		RIGHT= CREATOR_ALIGN_RIGHT,
+		BOTTOM = CREATOR_ALIGN_BOT,
+		CENTER_VERTICAL = CREATOR_ALIGN_MID,
+		CENTER_HORIZONTAL = CREATOR_ALIGN_CENTER,
     };
+
+
+	class  Margin
+	{
+	public:
+		/**
+		* Left margin.
+		*/
+		float left;
+		/**
+		* Top margin.
+		*/
+		float top;
+		/**
+		* Right margin.
+		*/
+		float right;
+		/**
+		* Bottom margin.
+		*/
+		float bottom;
+
+		float hcenter;
+
+		float vcenter;
+
+	public:
+		/**
+		* Default constructor.
+		*/
+		//Margin() {};
+
+		/**
+		* Construct a Margin instance with left, top, right and bottom margins.
+		*@param l Left margin in float.
+		*@param t Top margin in float.
+		*@param r Right margin in float.
+		*@param b Bottom margin in float.
+		*/
+		Margin(float l, float t, float r, float b,float hc,float vc) {
+			left = l;
+			top = t;
+			right = r;
+			bottom = b;
+			hcenter = hc;
+			vcenter = vc;
+		};
+
+
+		void setMargin(float l, float t, float r, float b, float hc, float vc) {
+			left = l;
+			top = t;
+			right = r;
+			bottom = b;
+			hcenter = hc;
+			vcenter = vc;
+
+		};
+	};
+
+
 
     static WidgetAdapter* create();
     WidgetAdapter();
@@ -72,7 +150,9 @@ public:
     void setAdaptNode(cocos2d::Node* needAdaptNode);
 
 
-	void setLayoutParameter(cocos2d::ui::RelativeLayoutParameter *parameter);
+	//void setLayoutParameter(cocos2d::ui::RelativeLayoutParameter *parameter);
+	void setMargin(const Margin &sMargin);
+	void setAlignComb(AlignComb align);
 
     // TODO: support the align target of a widget component, default target is parent Node
     void setLayoutTarget(cocos2d::Node* layoutTarget);
@@ -87,12 +167,24 @@ private:
     // insert the _layout between _nodeNeedWidget and its parent
    // cocos2d::ui::Layout* _layoutNode;
 
-	cocos2d::ui::RelativeLayoutParameter *_parameter;
+	//cocos2d::ui::RelativeLayoutParameter *_parameter;
+	Margin _sMargin;
+	AlignComb _alignComb;
 
     // insert Layout Node to support widget component.
     void setupLayout();
     // adapt layout property depend on _layoutTarget
     void syncLayoutProperty();
+
+
+	float getLeftX(float nodeWidth, float anchorX, float left);
+	float getRightX(float parentWidth, float nodeWidth, float anchorX, float right);
+	float getTopY(float parentHeight,float nodeHeight,float anchorY,float top);
+	float getBottomY(float nodeHeight, float anchorY, float bottom);
+	float getCenterX(float parentWidth, float nodeWidth, float anchorX, float offset);
+	float getCenterY(float parentHeight, float nodeHeight, float anchorY, float offset);
+	
+
 };
 
 // manager all the widget component align

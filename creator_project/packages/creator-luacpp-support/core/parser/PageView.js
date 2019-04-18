@@ -61,7 +61,7 @@ class PageView extends Node {
             indicator._properties.spriteFrame = Utils.get_sprite_frame_name_by_uuid(sprite_frame_uuid);
             indicator._properties.spriteFrameFromTP = Utils.is_sprite_frame_from_texture_packer(sprite_frame_uuid);
             if (!indicator.spriteFrameFromTP)
-                indicator._properties.spriteFrame = state._assetpath + indicator._properties.spriteFrame;
+                indicator._properties.spriteFrame = indicator._properties.spriteFrame;
         }
         else
             log('indicator name(' + indicator_node._name  + ') does not have sprite frame');
@@ -95,7 +95,7 @@ class PageView extends Node {
                 page._properties.spriteFrame = Utils.get_sprite_frame_name_by_uuid(sprite_frame_uuid);
                 page._properties.spriteFrameFromTP = Utils.is_sprite_frame_from_texture_packer(sprite_frame_uuid);
                 if (!page._properties.spriteFrameFromTP)
-                    page._properties.spriteFrame = state._assetpath + page._properties.spriteFrame;
+                    page._properties.spriteFrame =  page._properties.spriteFrame;
             }
             else
                 log('page name(' + page._name + ') does not have sprite frame');
@@ -130,7 +130,7 @@ class PageView extends Node {
             background.spriteFrame = Utils.get_sprite_frame_name_by_uuid(uuid);
             background.spriteFrameFromTP = Utils.is_sprite_frame_from_texture_packer(uuid);
             if (!background.spriteFrameFromTP)
-                background.spriteFrame = state._assetpath + background.spriteFrame;
+                background.spriteFrame = background.spriteFrame;
 
             this._properties.background = background;
         }

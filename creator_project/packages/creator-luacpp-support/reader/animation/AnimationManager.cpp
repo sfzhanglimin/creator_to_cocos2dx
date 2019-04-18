@@ -51,12 +51,13 @@ void AnimationManager::playAnimationClip(cocos2d::Node *target, const std::strin
                 {
                     runAnimationClip(target, animClip);
                     foundAnimationClip = true;
+					foundTarget = true;
                     break;
                 }
             }
             
-            foundTarget = true;
-            break;
+            
+           // break;
         }
     }
     

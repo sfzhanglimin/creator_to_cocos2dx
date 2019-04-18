@@ -51,7 +51,7 @@ class Node {
 
     static guess_type_from_components(components) {
         // ScrollView, Button & ProgressBar should be before Sprite
-        let supported_components = ['cc.Button', 'cc.ProgressBar', 'cc.ScrollView',
+        let supported_components = ['cc.Button', 'cc.ProgressBar', 'cc.ScrollView', 'cc.Layout',
             'cc.EditBox', 'cc.Label', 'sp.Skeleton', 'cc.Sprite',
             'cc.ParticleSystem', 'cc.TiledMap', 'cc.Canvas', 'cc.RichText',
             'cc.VideoPlayer', 'cc.WebView', 'cc.Slider', 'cc.Toggle', 'cc.ToggleGroup',
@@ -115,10 +115,18 @@ class Node {
         }
     }
 
+    add_property_int_width_floor(newkey, value, data) {
+        if (value in data) {
+            let i = Math.floor(data[value]);
+            this._properties[newkey] = i;
+        }
+    }
+
+
     add_property_int(newkey, value, data) {
         if (value in data) {
-            let i = data[value];
-            this._properties[newkey] = i;
+           //let i = Math.floor(data[value]);
+            this._properties[newkey] = data[value];
         }
     }
 
@@ -136,6 +144,16 @@ class Node {
             let g = data[value].g;
             let b = data[value].b;
             this._properties[newkey] = {r:parseInt(r), g:parseInt(g), b:parseInt(b)};
+        }
+    }
+
+    add_property_rgba(newkey, value, data) {
+        if (value in data) {
+            let r = data[value].r;
+            let g = data[value].g;
+            let b = data[value].b;
+            let a = data[value].a;
+            this._properties[newkey] = {r:parseInt(r), g:parseInt(g), b:parseInt(b),a:parseInt(a)};
         }
     }
 
@@ -184,7 +202,7 @@ class Node {
         this.add_property_rgb('color', '_color', data);
         this.add_property_int('globalZOrder', '_globalZOrder', data);
         this.add_property_int('localZOrder', '_localZOrder', data);
-        this.add_property_int('opacity', '_opacity', data);
+        this.add_property_int_width_floor('opacity', '_opacity', data);
         this.add_property_bool('opacityModifyRGB', '_opacityModifyRGB', data);
         this.add_property_vec2('position', '_position', data);
         this.add_property_int('rotationSkewX', '_rotationX', data);
@@ -288,6 +306,8 @@ class Node {
                 addProp(props, 'skewX', result, 'skewX');
                 addProp(props, 'skewY', result, 'skewY');
                 addProp(props, 'opacity', result, 'opacity');
+                addProp(props, 'height', result, 'height');
+                addProp(props, 'width', result, 'width');
                 
 
                 //cc.Sprite.spriteFrame
@@ -296,14 +316,19 @@ class Node {
                     //addProp(props, 'cc.Sprite',  result, 'cc.Sprite');
                     props['cc.Sprite'].spriteFrame.forEach(function(sprite){
 
-                        let path = Utils.get_sprite_frame_name_by_uuid(sprite.value.__uuid__);
-                        path = 'creator/'+path;
-                        let value = {
-                            frame: sprite.frame,
-                            value: path
-                        };
-                        parseCurveProperty(sprite, value);
-                        result['spriteFrame'].push(value);
+                         try{
+                            let path = Utils.get_sprite_frame_name_by_uuid(sprite.value.__uuid__);
+                           // path = 'creator/'+path;
+                            let value = {
+                                frame: sprite.frame,
+                                value: path
+                            };
+                            parseCurveProperty(sprite, value);
+                            result['spriteFrame'].push(value);
+                        }catch(e)
+                        {
+                            Utils2.log("spriteFrame not find "+sprite.value.__uuid__)
+                        }
 
                     });
                 }
@@ -368,7 +393,7 @@ class Node {
                 }
                 else
                 {
-                    let clip_content = JSON.parse(fs.readFileSync(uuidinfos[clip_uuid]));
+                    let clip_content = JSON.parse(fs.readFileSync(Utils.get_file_by_uuid(clip_uuid)));//uuidinfos[clip_uuid]));
                     
                     // parse curveData
                     let animationClip = {
@@ -402,6 +427,14 @@ class Node {
                                 animationClip.curveData.push(subAnim);
                             }
                         }
+                    }
+                    else if(curveData.comps)
+                    {
+                        let subAnim = {
+                                    path: "",
+                                    props: parseCurveDataProps(curveData.comps)
+                                };
+                        animationClip.curveData.push(subAnim);
                     }
 
                     // parse self animationclip

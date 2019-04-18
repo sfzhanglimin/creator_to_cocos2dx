@@ -32,6 +32,12 @@
 
 #include "collider/ColliderManager.h"
 #include "ui/PageView.h"
+#include "ui/RadioButton.h"
+#include "ui/RadioButtonGroup.h"
+#include "ui/Button.h"
+#include "ui/Layout.h"
+#include "ui/RichText.h"
+
 
 
 static int lua_ColliderManager_unregisterCollisionCallback(lua_State* L)
@@ -144,11 +150,220 @@ static int lua_register_creator_reader_pageView(lua_State* tolua_S)
 }
 
 
+static int lua_register_creator_reader_button(lua_State* tolua_S)
+{
+	tolua_usertype(tolua_S, "creator.CreatorButton");
+	tolua_cclass(tolua_S, "CreatorButton", "creator.CreatorButton", "ccui.Button", nullptr);
+
+	tolua_beginmodule(tolua_S, "CreatorButton");
+
+	tolua_endmodule(tolua_S);
+	std::string typeName = typeid(creator::CreatorButton).name();
+	g_luaType[typeName] = "creator.CreatorButton";
+	g_typeCast["CreatorButton"] = "creator.CreatorButton";
+	return 1;
+}
+
+
+
+static int lua_register_creator_reader_radioButton(lua_State* tolua_S)
+{
+	tolua_usertype(tolua_S, "creator.CreatorRadioButton");
+	tolua_cclass(tolua_S, "CreatorRadioButton", "creator.CreatorRadioButton", "ccui.RadioButton", nullptr);
+
+	tolua_beginmodule(tolua_S, "CreatorRadioButton");
+
+	tolua_endmodule(tolua_S);
+	std::string typeName = typeid(creator::CreatorRadioButton).name();
+	g_luaType[typeName] = "creator.CreatorRadioButton";
+	g_typeCast["CreatorRadioButton"] = "creator.CreatorRadioButton";
+	return 1;
+}
+
+static int lua_register_creator_reader_radioButtonGroup(lua_State* tolua_S)
+{
+	tolua_usertype(tolua_S, "creator.CreatorRadioButtonGroup");
+	tolua_cclass(tolua_S, "CreatorRadioButtonGroup", "creator.CreatorRadioButtonGroup", "ccui.RadioButtonGroup", nullptr);
+
+	tolua_beginmodule(tolua_S, "CreatorRadioButtonGroup");
+
+	tolua_endmodule(tolua_S);
+	std::string typeName = typeid(creator::CreatorRadioButtonGroup).name();
+	g_luaType[typeName] = "creator.CreatorRadioButtonGroup";
+	g_typeCast["CreatorRadioButtonGroup"] = "creator.CreatorRadioButtonGroup";
+	return 1;
+}
+
+
+
+
+
+static int lua_register_creator_reader_layout(lua_State* tolua_S)
+{
+	tolua_usertype(tolua_S, "creator.CreatorLayout");
+	tolua_cclass(tolua_S, "CreatorLayout", "creator.CreatorLayout", "ccui.Layout", nullptr);
+
+	tolua_beginmodule(tolua_S, "CreatorLayout");
+
+	tolua_endmodule(tolua_S);
+	std::string typeName = typeid(creator::CreatorLayout).name();
+	g_luaType[typeName] = "creator.CreatorLayout";
+	g_typeCast["CreatorLayout"] = "creator.CreatorLayout";
+	return 1;
+}
+
+
+
+static int lua_richText_getElement(lua_State* L)
+{
+	if (nullptr == L)
+		return 0;
+
+	tolua_Error tolua_err;
+	if (!tolua_isusertype(L, 1, "creator.CreatorRichText", 0, &tolua_err))
+	{
+		tolua_error(L, "'getElement' is not executed with CreatorRichText\n", NULL);
+		return 0;
+	}
+
+	auto self = static_cast<creator::CreatorRichText*>(tolua_tousertype(L, 1, 0));
+
+	int argc = lua_gettop(L) - 1;
+	if (1 == argc)
+	{
+		
+		if (!lua_isnumber(L, 2))
+		{
+			luaL_error(L, "'getElement' first parameter is not a number\n");
+			return 0;
+		}
+
+
+		int index = lua_tointeger(L, 2);
+
+		auto pElement = self->getElement(index);
+
+		auto pElementText = dynamic_cast<ui::RichElementText*>(pElement);
+		if (pElementText)
+		{
+
+			object_to_luaval<cocos2d::ui::RichElementText>(L, "ccui.RichElementText", (cocos2d::ui::RichElementText*)pElementText);
+			return 1;
+		}
+
+		auto pElementImage= dynamic_cast<ui::RichElementImage*>(pElement);
+		if (pElementImage)
+		{
+
+			object_to_luaval<cocos2d::ui::RichElementImage>(L, "ccui.RichElementImage", (cocos2d::ui::RichElementImage*)pElementImage);
+			return 1;
+		}
+
+		auto pElementNewLine = dynamic_cast<ui::RichElementNewLine*>(pElement);
+		if (pElementNewLine)
+		{
+
+			object_to_luaval<cocos2d::ui::RichElementNewLine>(L, "ccui.RichElementNewLine", (cocos2d::ui::RichElementNewLine*)pElementNewLine);
+			return 1;
+		}
+
+		auto pElementNode = dynamic_cast<ui::RichElementCustomNode*>(pElement);
+		if (pElementNode)
+		{
+
+			object_to_luaval<cocos2d::ui::RichElementCustomNode>(L, "ccui.RichElementCustomNode", (cocos2d::ui::RichElementCustomNode*)pElementNode);
+			return 1;
+		}
+
+
+	}
+	else
+		luaL_error(L, "'getElement' function of CreatorRichText has wrong number of arguments: %d, was expecting %d\n", argc, 1);
+
+	return 0;
+}
+
+
+static int lua_richText_setElementText(lua_State* L)
+{
+	if (nullptr == L)
+		return 0;
+
+	tolua_Error tolua_err;
+	if (!tolua_isusertype(L, 1, "creator.CreatorRichText", 0, &tolua_err))
+	{
+		tolua_error(L, "'setElementText' is not executed with CreatorRichText\n", NULL);
+		return 0;
+	}
+
+	auto self = static_cast<creator::CreatorRichText*>(tolua_tousertype(L, 1, 0));
+
+	int argc = lua_gettop(L) - 1;
+	if (2 == argc)
+	{
+
+		if (!lua_isnumber(L, 2))
+		{
+			luaL_error(L, "'setElementText' first parameter is not a number\n");
+			return 0;
+		}
+
+		if (!lua_isstring(L, 3))
+		{
+			luaL_error(L, "'setElementText' second parameter is not a string\n");
+			return 0;
+		}
+
+		int index = lua_tointeger(L, 2);
+		std::string sText = lua_tostring(L, 3);
+
+
+		self->setElementText(index, sText);
+		
+		return 1;
+		
+
+
+	}
+	else
+		luaL_error(L, "'getElement' function of CreatorRichText has wrong number of arguments: %d, was expecting %d\n", argc, 2);
+
+	return 0;
+}
+
+
+
+static int lua_register_creator_reader_richText(lua_State* tolua_S)
+{
+	tolua_usertype(tolua_S, "creator.CreatorRichText");
+	tolua_cclass(tolua_S, "CreatorRichText", "creator.CreatorRichText", "ccui.RichText", nullptr);
+
+	tolua_beginmodule(tolua_S, "CreatorRichText");
+	tolua_function(tolua_S, "getElement", lua_richText_getElement);
+	tolua_function(tolua_S, "setElementText", lua_richText_setElementText);
+	
+	tolua_endmodule(tolua_S);
+	std::string typeName = typeid(creator::CreatorRichText).name();
+	g_luaType[typeName] = "creator.CreatorRichText";
+	g_typeCast["CreatorRichText"] = "creator.CreatorRichText";
+	return 1;
+}
+
+
+
+
 int register_all_creator_reader_manual(lua_State* L)
 {
     if (nullptr == L)
         return 0;
+	
 	lua_register_creator_reader_pageView(L);
+	lua_register_creator_reader_button(L);
+	lua_register_creator_reader_radioButton(L);
+	lua_register_creator_reader_radioButtonGroup(L);
+	lua_register_creator_reader_layout(L);
+	lua_register_creator_reader_richText(L);
+	
     extendColliderManager(L);
 
     return 0;

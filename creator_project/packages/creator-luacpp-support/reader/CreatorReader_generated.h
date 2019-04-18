@@ -14,6 +14,8 @@ struct CollisionLine;
 
 struct NodeTree;
 
+struct Meta;
+
 struct SpriteFrame;
 
 struct CreatorScene;
@@ -33,6 +35,8 @@ struct TileMap;
 struct Scene;
 
 struct Button;
+
+struct Layout;
 
 struct ProgressBar;
 
@@ -317,6 +321,37 @@ inline const char **EnumNamesColliderType() {
 
 inline const char *EnumNameColliderType(ColliderType e) { return EnumNamesColliderType()[static_cast<int>(e)]; }
 
+enum LayoutType {
+  LayoutType_None = 0,
+  LayoutType_Horizontal = 1,
+  LayoutType_Vertical = 2,
+  LayoutType_Grid = 3,
+  LayoutType_MIN = LayoutType_None,
+  LayoutType_MAX = LayoutType_Grid
+};
+
+inline const char **EnumNamesLayoutType() {
+  static const char *names[] = { "None", "Horizontal", "Vertical", "Grid", nullptr };
+  return names;
+}
+
+inline const char *EnumNameLayoutType(LayoutType e) { return EnumNamesLayoutType()[static_cast<int>(e)]; }
+
+enum ResizeMode {
+  ResizeMode_None = 0,
+  ResizeMode_Container = 1,
+  ResizeMode_Children = 2,
+  ResizeMode_MIN = ResizeMode_None,
+  ResizeMode_MAX = ResizeMode_Children
+};
+
+inline const char **EnumNamesResizeMode() {
+  static const char *names[] = { "None", "Container", "Children", nullptr };
+  return names;
+}
+
+inline const char *EnumNameResizeMode(ResizeMode e) { return EnumNamesResizeMode()[static_cast<int>(e)]; }
+
 enum AnyNode {
   AnyNode_NONE = 0,
   AnyNode_Scene = 1,
@@ -341,12 +376,13 @@ enum AnyNode {
   AnyNode_Mask = 20,
   AnyNode_DragonBones = 21,
   AnyNode_MotionStreak = 22,
+  AnyNode_Layout = 23,
   AnyNode_MIN = AnyNode_NONE,
-  AnyNode_MAX = AnyNode_MotionStreak
+  AnyNode_MAX = AnyNode_Layout
 };
 
 inline const char **EnumNamesAnyNode() {
-  static const char *names[] = { "NONE", "Scene", "Sprite", "Label", "Particle", "TileMap", "Node", "Button", "ProgressBar", "ScrollView", "CreatorScene", "EditBox", "RichText", "SpineSkeleton", "VideoPlayer", "WebView", "Slider", "Toggle", "ToggleGroup", "PageView", "Mask", "DragonBones", "MotionStreak", nullptr };
+  static const char *names[] = { "NONE", "Scene", "Sprite", "Label", "Particle", "TileMap", "Node", "Button", "ProgressBar", "ScrollView", "CreatorScene", "EditBox", "RichText", "SpineSkeleton", "VideoPlayer", "WebView", "Slider", "Toggle", "ToggleGroup", "PageView", "Mask", "DragonBones", "MotionStreak", "Layout", nullptr };
   return names;
 }
 
@@ -442,6 +478,10 @@ template<> struct AnyNodeTraits<DragonBones> {
 
 template<> struct AnyNodeTraits<MotionStreak> {
   static const AnyNode enum_value = AnyNode_MotionStreak;
+};
+
+template<> struct AnyNodeTraits<Layout> {
+  static const AnyNode enum_value = AnyNode_Layout;
 };
 
 inline bool VerifyAnyNode(flatbuffers::Verifier &verifier, const void *union_obj, AnyNode type);
@@ -738,6 +778,165 @@ inline flatbuffers::Offset<NodeTree> CreateNodeTreeDirect(flatbuffers::FlatBuffe
     AnyNode object_type = AnyNode_NONE,
     flatbuffers::Offset<void> object = 0) {
   return CreateNodeTree(_fbb, children ? _fbb.CreateVector<flatbuffers::Offset<NodeTree>>(*children) : 0, object_type, object);
+}
+
+struct Meta FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  enum {
+    VT_TYPE = 4,
+    VT_WRAPMODE = 6,
+    VT_FILTERMODE = 8,
+    VT_TRIMTYPE = 10,
+    VT_TRIMTHRESHOLD = 12,
+    VT_ROTATED = 14,
+    VT_OFFSETX = 16,
+    VT_OFFSETY = 18,
+    VT_TRIMX = 20,
+    VT_TRIMY = 22,
+    VT_WIDTH = 24,
+    VT_HEIGHT = 26,
+    VT_RAWWIDTH = 28,
+    VT_RAWHEIGHT = 30,
+    VT_BORDERTOP = 32,
+    VT_BORDERBOTTOM = 34,
+    VT_BORDERLEFT = 36,
+    VT_BORDERRIGHT = 38
+  };
+  const flatbuffers::String *type() const { return GetPointer<const flatbuffers::String *>(VT_TYPE); }
+  const flatbuffers::String *wrapMode() const { return GetPointer<const flatbuffers::String *>(VT_WRAPMODE); }
+  const flatbuffers::String *filterMode() const { return GetPointer<const flatbuffers::String *>(VT_FILTERMODE); }
+  const flatbuffers::String *trimType() const { return GetPointer<const flatbuffers::String *>(VT_TRIMTYPE); }
+  int32_t trimThreshold() const { return GetField<int32_t>(VT_TRIMTHRESHOLD, 0); }
+  bool rotated() const { return GetField<uint8_t>(VT_ROTATED, 0) != 0; }
+  float offsetX() const { return GetField<float>(VT_OFFSETX, 0.0f); }
+  float offsetY() const { return GetField<float>(VT_OFFSETY, 0.0f); }
+  int32_t trimX() const { return GetField<int32_t>(VT_TRIMX, 0); }
+  int32_t trimY() const { return GetField<int32_t>(VT_TRIMY, 0); }
+  int32_t width() const { return GetField<int32_t>(VT_WIDTH, 0); }
+  int32_t height() const { return GetField<int32_t>(VT_HEIGHT, 0); }
+  int32_t rawWidth() const { return GetField<int32_t>(VT_RAWWIDTH, 0); }
+  int32_t rawHeight() const { return GetField<int32_t>(VT_RAWHEIGHT, 0); }
+  int32_t borderTop() const { return GetField<int32_t>(VT_BORDERTOP, 0); }
+  int32_t borderBottom() const { return GetField<int32_t>(VT_BORDERBOTTOM, 0); }
+  int32_t borderLeft() const { return GetField<int32_t>(VT_BORDERLEFT, 0); }
+  int32_t borderRight() const { return GetField<int32_t>(VT_BORDERRIGHT, 0); }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<flatbuffers::uoffset_t>(verifier, VT_TYPE) &&
+           verifier.Verify(type()) &&
+           VerifyField<flatbuffers::uoffset_t>(verifier, VT_WRAPMODE) &&
+           verifier.Verify(wrapMode()) &&
+           VerifyField<flatbuffers::uoffset_t>(verifier, VT_FILTERMODE) &&
+           verifier.Verify(filterMode()) &&
+           VerifyField<flatbuffers::uoffset_t>(verifier, VT_TRIMTYPE) &&
+           verifier.Verify(trimType()) &&
+           VerifyField<int32_t>(verifier, VT_TRIMTHRESHOLD) &&
+           VerifyField<uint8_t>(verifier, VT_ROTATED) &&
+           VerifyField<float>(verifier, VT_OFFSETX) &&
+           VerifyField<float>(verifier, VT_OFFSETY) &&
+           VerifyField<int32_t>(verifier, VT_TRIMX) &&
+           VerifyField<int32_t>(verifier, VT_TRIMY) &&
+           VerifyField<int32_t>(verifier, VT_WIDTH) &&
+           VerifyField<int32_t>(verifier, VT_HEIGHT) &&
+           VerifyField<int32_t>(verifier, VT_RAWWIDTH) &&
+           VerifyField<int32_t>(verifier, VT_RAWHEIGHT) &&
+           VerifyField<int32_t>(verifier, VT_BORDERTOP) &&
+           VerifyField<int32_t>(verifier, VT_BORDERBOTTOM) &&
+           VerifyField<int32_t>(verifier, VT_BORDERLEFT) &&
+           VerifyField<int32_t>(verifier, VT_BORDERRIGHT) &&
+           verifier.EndTable();
+  }
+};
+
+struct MetaBuilder {
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_type(flatbuffers::Offset<flatbuffers::String> type) { fbb_.AddOffset(Meta::VT_TYPE, type); }
+  void add_wrapMode(flatbuffers::Offset<flatbuffers::String> wrapMode) { fbb_.AddOffset(Meta::VT_WRAPMODE, wrapMode); }
+  void add_filterMode(flatbuffers::Offset<flatbuffers::String> filterMode) { fbb_.AddOffset(Meta::VT_FILTERMODE, filterMode); }
+  void add_trimType(flatbuffers::Offset<flatbuffers::String> trimType) { fbb_.AddOffset(Meta::VT_TRIMTYPE, trimType); }
+  void add_trimThreshold(int32_t trimThreshold) { fbb_.AddElement<int32_t>(Meta::VT_TRIMTHRESHOLD, trimThreshold, 0); }
+  void add_rotated(bool rotated) { fbb_.AddElement<uint8_t>(Meta::VT_ROTATED, static_cast<uint8_t>(rotated), 0); }
+  void add_offsetX(float offsetX) { fbb_.AddElement<float>(Meta::VT_OFFSETX, offsetX, 0.0f); }
+  void add_offsetY(float offsetY) { fbb_.AddElement<float>(Meta::VT_OFFSETY, offsetY, 0.0f); }
+  void add_trimX(int32_t trimX) { fbb_.AddElement<int32_t>(Meta::VT_TRIMX, trimX, 0); }
+  void add_trimY(int32_t trimY) { fbb_.AddElement<int32_t>(Meta::VT_TRIMY, trimY, 0); }
+  void add_width(int32_t width) { fbb_.AddElement<int32_t>(Meta::VT_WIDTH, width, 0); }
+  void add_height(int32_t height) { fbb_.AddElement<int32_t>(Meta::VT_HEIGHT, height, 0); }
+  void add_rawWidth(int32_t rawWidth) { fbb_.AddElement<int32_t>(Meta::VT_RAWWIDTH, rawWidth, 0); }
+  void add_rawHeight(int32_t rawHeight) { fbb_.AddElement<int32_t>(Meta::VT_RAWHEIGHT, rawHeight, 0); }
+  void add_borderTop(int32_t borderTop) { fbb_.AddElement<int32_t>(Meta::VT_BORDERTOP, borderTop, 0); }
+  void add_borderBottom(int32_t borderBottom) { fbb_.AddElement<int32_t>(Meta::VT_BORDERBOTTOM, borderBottom, 0); }
+  void add_borderLeft(int32_t borderLeft) { fbb_.AddElement<int32_t>(Meta::VT_BORDERLEFT, borderLeft, 0); }
+  void add_borderRight(int32_t borderRight) { fbb_.AddElement<int32_t>(Meta::VT_BORDERRIGHT, borderRight, 0); }
+  MetaBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
+  MetaBuilder &operator=(const MetaBuilder &);
+  flatbuffers::Offset<Meta> Finish() {
+    auto o = flatbuffers::Offset<Meta>(fbb_.EndTable(start_, 18));
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<Meta> CreateMeta(flatbuffers::FlatBufferBuilder &_fbb,
+    flatbuffers::Offset<flatbuffers::String> type = 0,
+    flatbuffers::Offset<flatbuffers::String> wrapMode = 0,
+    flatbuffers::Offset<flatbuffers::String> filterMode = 0,
+    flatbuffers::Offset<flatbuffers::String> trimType = 0,
+    int32_t trimThreshold = 0,
+    bool rotated = false,
+    float offsetX = 0.0f,
+    float offsetY = 0.0f,
+    int32_t trimX = 0,
+    int32_t trimY = 0,
+    int32_t width = 0,
+    int32_t height = 0,
+    int32_t rawWidth = 0,
+    int32_t rawHeight = 0,
+    int32_t borderTop = 0,
+    int32_t borderBottom = 0,
+    int32_t borderLeft = 0,
+    int32_t borderRight = 0) {
+  MetaBuilder builder_(_fbb);
+  builder_.add_borderRight(borderRight);
+  builder_.add_borderLeft(borderLeft);
+  builder_.add_borderBottom(borderBottom);
+  builder_.add_borderTop(borderTop);
+  builder_.add_rawHeight(rawHeight);
+  builder_.add_rawWidth(rawWidth);
+  builder_.add_height(height);
+  builder_.add_width(width);
+  builder_.add_trimY(trimY);
+  builder_.add_trimX(trimX);
+  builder_.add_offsetY(offsetY);
+  builder_.add_offsetX(offsetX);
+  builder_.add_trimThreshold(trimThreshold);
+  builder_.add_trimType(trimType);
+  builder_.add_filterMode(filterMode);
+  builder_.add_wrapMode(wrapMode);
+  builder_.add_type(type);
+  builder_.add_rotated(rotated);
+  return builder_.Finish();
+}
+
+inline flatbuffers::Offset<Meta> CreateMetaDirect(flatbuffers::FlatBufferBuilder &_fbb,
+    const char *type = nullptr,
+    const char *wrapMode = nullptr,
+    const char *filterMode = nullptr,
+    const char *trimType = nullptr,
+    int32_t trimThreshold = 0,
+    bool rotated = false,
+    float offsetX = 0.0f,
+    float offsetY = 0.0f,
+    int32_t trimX = 0,
+    int32_t trimY = 0,
+    int32_t width = 0,
+    int32_t height = 0,
+    int32_t rawWidth = 0,
+    int32_t rawHeight = 0,
+    int32_t borderTop = 0,
+    int32_t borderBottom = 0,
+    int32_t borderLeft = 0,
+    int32_t borderRight = 0) {
+  return CreateMeta(_fbb, type ? _fbb.CreateString(type) : 0, wrapMode ? _fbb.CreateString(wrapMode) : 0, filterMode ? _fbb.CreateString(filterMode) : 0, trimType ? _fbb.CreateString(trimType) : 0, trimThreshold, rotated, offsetX, offsetY, trimX, trimY, width, height, rawWidth, rawHeight, borderTop, borderBottom, borderLeft, borderRight);
 }
 
 struct SpriteFrame FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
@@ -1053,7 +1252,8 @@ struct Sprite FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     VT_SRCBLEND = 10,
     VT_DSTBLEND = 12,
     VT_TRIMENABLED = 14,
-    VT_SIZEMODE = 16
+    VT_SIZEMODE = 16,
+    VT_META = 18
   };
   const Node *node() const { return GetPointer<const Node *>(VT_NODE); }
   const flatbuffers::String *spriteFrameName() const { return GetPointer<const flatbuffers::String *>(VT_SPRITEFRAMENAME); }
@@ -1062,6 +1262,7 @@ struct Sprite FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   int32_t dstBlend() const { return GetField<int32_t>(VT_DSTBLEND, 771); }
   bool trimEnabled() const { return GetField<uint8_t>(VT_TRIMENABLED, 0) != 0; }
   SpriteSizeMode sizeMode() const { return static_cast<SpriteSizeMode>(GetField<int8_t>(VT_SIZEMODE, 0)); }
+  const Meta *meta() const { return GetPointer<const Meta *>(VT_META); }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<flatbuffers::uoffset_t>(verifier, VT_NODE) &&
@@ -1073,6 +1274,8 @@ struct Sprite FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            VerifyField<int32_t>(verifier, VT_DSTBLEND) &&
            VerifyField<uint8_t>(verifier, VT_TRIMENABLED) &&
            VerifyField<int8_t>(verifier, VT_SIZEMODE) &&
+           VerifyField<flatbuffers::uoffset_t>(verifier, VT_META) &&
+           verifier.VerifyTable(meta()) &&
            verifier.EndTable();
   }
 };
@@ -1087,10 +1290,11 @@ struct SpriteBuilder {
   void add_dstBlend(int32_t dstBlend) { fbb_.AddElement<int32_t>(Sprite::VT_DSTBLEND, dstBlend, 771); }
   void add_trimEnabled(bool trimEnabled) { fbb_.AddElement<uint8_t>(Sprite::VT_TRIMENABLED, static_cast<uint8_t>(trimEnabled), 0); }
   void add_sizeMode(SpriteSizeMode sizeMode) { fbb_.AddElement<int8_t>(Sprite::VT_SIZEMODE, static_cast<int8_t>(sizeMode), 0); }
+  void add_meta(flatbuffers::Offset<Meta> meta) { fbb_.AddOffset(Sprite::VT_META, meta); }
   SpriteBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
   SpriteBuilder &operator=(const SpriteBuilder &);
   flatbuffers::Offset<Sprite> Finish() {
-    auto o = flatbuffers::Offset<Sprite>(fbb_.EndTable(start_, 7));
+    auto o = flatbuffers::Offset<Sprite>(fbb_.EndTable(start_, 8));
     return o;
   }
 };
@@ -1102,8 +1306,10 @@ inline flatbuffers::Offset<Sprite> CreateSprite(flatbuffers::FlatBufferBuilder &
     int32_t srcBlend = 770,
     int32_t dstBlend = 771,
     bool trimEnabled = false,
-    SpriteSizeMode sizeMode = SpriteSizeMode_Custom) {
+    SpriteSizeMode sizeMode = SpriteSizeMode_Custom,
+    flatbuffers::Offset<Meta> meta = 0) {
   SpriteBuilder builder_(_fbb);
+  builder_.add_meta(meta);
   builder_.add_dstBlend(dstBlend);
   builder_.add_srcBlend(srcBlend);
   builder_.add_spriteFrameName(spriteFrameName);
@@ -1121,8 +1327,9 @@ inline flatbuffers::Offset<Sprite> CreateSpriteDirect(flatbuffers::FlatBufferBui
     int32_t srcBlend = 770,
     int32_t dstBlend = 771,
     bool trimEnabled = false,
-    SpriteSizeMode sizeMode = SpriteSizeMode_Custom) {
-  return CreateSprite(_fbb, node, spriteFrameName ? _fbb.CreateString(spriteFrameName) : 0, spriteType, srcBlend, dstBlend, trimEnabled, sizeMode);
+    SpriteSizeMode sizeMode = SpriteSizeMode_Custom,
+    flatbuffers::Offset<Meta> meta = 0) {
+  return CreateSprite(_fbb, node, spriteFrameName ? _fbb.CreateString(spriteFrameName) : 0, spriteType, srcBlend, dstBlend, trimEnabled, sizeMode, meta);
 }
 
 struct Label FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
@@ -1457,25 +1664,40 @@ struct Button FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   enum {
     VT_NODE = 4,
     VT_TRANSITION = 6,
-    VT_ZOOMSCALE = 8,
-    VT_SPRITEFRAMENAME = 10,
-    VT_PRESSEDSPRITEFRAMENAME = 12,
-    VT_DISABLEDSPRITEFRAMENAME = 14,
-    VT_IGNORECONTENTADAPTWITHSIZE = 16
+    VT_DURATION = 8,
+    VT_ZOOMSCALE = 10,
+    VT_SPRITETYPE = 12,
+    VT_TRIMENABLED = 14,
+    VT_SPRITEFRAMENAME = 16,
+    VT_PRESSEDSPRITEFRAMENAME = 18,
+    VT_DISABLEDSPRITEFRAMENAME = 20,
+    VT_IGNORECONTENTADAPTWITHSIZE = 22,
+    VT_NORMALCOLOR = 24,
+    VT_PRESSEDCOLOR = 26,
+    VT_DISABLECOLOR = 28
   };
   const Node *node() const { return GetPointer<const Node *>(VT_NODE); }
   int32_t transition() const { return GetField<int32_t>(VT_TRANSITION, 0); }
+  float duration() const { return GetField<float>(VT_DURATION, 0.0f); }
   float zoomScale() const { return GetField<float>(VT_ZOOMSCALE, 0.0f); }
+  SpriteType spriteType() const { return static_cast<SpriteType>(GetField<int8_t>(VT_SPRITETYPE, 0)); }
+  bool trimEnabled() const { return GetField<uint8_t>(VT_TRIMENABLED, 0) != 0; }
   const flatbuffers::String *spriteFrameName() const { return GetPointer<const flatbuffers::String *>(VT_SPRITEFRAMENAME); }
   const flatbuffers::String *pressedSpriteFrameName() const { return GetPointer<const flatbuffers::String *>(VT_PRESSEDSPRITEFRAMENAME); }
   const flatbuffers::String *disabledSpriteFrameName() const { return GetPointer<const flatbuffers::String *>(VT_DISABLEDSPRITEFRAMENAME); }
   bool ignoreContentAdaptWithSize() const { return GetField<uint8_t>(VT_IGNORECONTENTADAPTWITHSIZE, 0) != 0; }
+  const ColorRGBA *normalColor() const { return GetStruct<const ColorRGBA *>(VT_NORMALCOLOR); }
+  const ColorRGBA *pressedColor() const { return GetStruct<const ColorRGBA *>(VT_PRESSEDCOLOR); }
+  const ColorRGBA *disableColor() const { return GetStruct<const ColorRGBA *>(VT_DISABLECOLOR); }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<flatbuffers::uoffset_t>(verifier, VT_NODE) &&
            verifier.VerifyTable(node()) &&
            VerifyField<int32_t>(verifier, VT_TRANSITION) &&
+           VerifyField<float>(verifier, VT_DURATION) &&
            VerifyField<float>(verifier, VT_ZOOMSCALE) &&
+           VerifyField<int8_t>(verifier, VT_SPRITETYPE) &&
+           VerifyField<uint8_t>(verifier, VT_TRIMENABLED) &&
            VerifyField<flatbuffers::uoffset_t>(verifier, VT_SPRITEFRAMENAME) &&
            verifier.Verify(spriteFrameName()) &&
            VerifyField<flatbuffers::uoffset_t>(verifier, VT_PRESSEDSPRITEFRAMENAME) &&
@@ -1483,6 +1705,9 @@ struct Button FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            VerifyField<flatbuffers::uoffset_t>(verifier, VT_DISABLEDSPRITEFRAMENAME) &&
            verifier.Verify(disabledSpriteFrameName()) &&
            VerifyField<uint8_t>(verifier, VT_IGNORECONTENTADAPTWITHSIZE) &&
+           VerifyField<ColorRGBA>(verifier, VT_NORMALCOLOR) &&
+           VerifyField<ColorRGBA>(verifier, VT_PRESSEDCOLOR) &&
+           VerifyField<ColorRGBA>(verifier, VT_DISABLECOLOR) &&
            verifier.EndTable();
   }
 };
@@ -1492,15 +1717,21 @@ struct ButtonBuilder {
   flatbuffers::uoffset_t start_;
   void add_node(flatbuffers::Offset<Node> node) { fbb_.AddOffset(Button::VT_NODE, node); }
   void add_transition(int32_t transition) { fbb_.AddElement<int32_t>(Button::VT_TRANSITION, transition, 0); }
+  void add_duration(float duration) { fbb_.AddElement<float>(Button::VT_DURATION, duration, 0.0f); }
   void add_zoomScale(float zoomScale) { fbb_.AddElement<float>(Button::VT_ZOOMSCALE, zoomScale, 0.0f); }
+  void add_spriteType(SpriteType spriteType) { fbb_.AddElement<int8_t>(Button::VT_SPRITETYPE, static_cast<int8_t>(spriteType), 0); }
+  void add_trimEnabled(bool trimEnabled) { fbb_.AddElement<uint8_t>(Button::VT_TRIMENABLED, static_cast<uint8_t>(trimEnabled), 0); }
   void add_spriteFrameName(flatbuffers::Offset<flatbuffers::String> spriteFrameName) { fbb_.AddOffset(Button::VT_SPRITEFRAMENAME, spriteFrameName); }
   void add_pressedSpriteFrameName(flatbuffers::Offset<flatbuffers::String> pressedSpriteFrameName) { fbb_.AddOffset(Button::VT_PRESSEDSPRITEFRAMENAME, pressedSpriteFrameName); }
   void add_disabledSpriteFrameName(flatbuffers::Offset<flatbuffers::String> disabledSpriteFrameName) { fbb_.AddOffset(Button::VT_DISABLEDSPRITEFRAMENAME, disabledSpriteFrameName); }
   void add_ignoreContentAdaptWithSize(bool ignoreContentAdaptWithSize) { fbb_.AddElement<uint8_t>(Button::VT_IGNORECONTENTADAPTWITHSIZE, static_cast<uint8_t>(ignoreContentAdaptWithSize), 0); }
+  void add_normalColor(const ColorRGBA *normalColor) { fbb_.AddStruct(Button::VT_NORMALCOLOR, normalColor); }
+  void add_pressedColor(const ColorRGBA *pressedColor) { fbb_.AddStruct(Button::VT_PRESSEDCOLOR, pressedColor); }
+  void add_disableColor(const ColorRGBA *disableColor) { fbb_.AddStruct(Button::VT_DISABLECOLOR, disableColor); }
   ButtonBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
   ButtonBuilder &operator=(const ButtonBuilder &);
   flatbuffers::Offset<Button> Finish() {
-    auto o = flatbuffers::Offset<Button>(fbb_.EndTable(start_, 7));
+    auto o = flatbuffers::Offset<Button>(fbb_.EndTable(start_, 13));
     return o;
   }
 };
@@ -1508,31 +1739,185 @@ struct ButtonBuilder {
 inline flatbuffers::Offset<Button> CreateButton(flatbuffers::FlatBufferBuilder &_fbb,
     flatbuffers::Offset<Node> node = 0,
     int32_t transition = 0,
+    float duration = 0.0f,
     float zoomScale = 0.0f,
+    SpriteType spriteType = SpriteType_Simple,
+    bool trimEnabled = false,
     flatbuffers::Offset<flatbuffers::String> spriteFrameName = 0,
     flatbuffers::Offset<flatbuffers::String> pressedSpriteFrameName = 0,
     flatbuffers::Offset<flatbuffers::String> disabledSpriteFrameName = 0,
-    bool ignoreContentAdaptWithSize = false) {
+    bool ignoreContentAdaptWithSize = false,
+    const ColorRGBA *normalColor = 0,
+    const ColorRGBA *pressedColor = 0,
+    const ColorRGBA *disableColor = 0) {
   ButtonBuilder builder_(_fbb);
+  builder_.add_disableColor(disableColor);
+  builder_.add_pressedColor(pressedColor);
+  builder_.add_normalColor(normalColor);
   builder_.add_disabledSpriteFrameName(disabledSpriteFrameName);
   builder_.add_pressedSpriteFrameName(pressedSpriteFrameName);
   builder_.add_spriteFrameName(spriteFrameName);
   builder_.add_zoomScale(zoomScale);
+  builder_.add_duration(duration);
   builder_.add_transition(transition);
   builder_.add_node(node);
   builder_.add_ignoreContentAdaptWithSize(ignoreContentAdaptWithSize);
+  builder_.add_trimEnabled(trimEnabled);
+  builder_.add_spriteType(spriteType);
   return builder_.Finish();
 }
 
 inline flatbuffers::Offset<Button> CreateButtonDirect(flatbuffers::FlatBufferBuilder &_fbb,
     flatbuffers::Offset<Node> node = 0,
     int32_t transition = 0,
+    float duration = 0.0f,
     float zoomScale = 0.0f,
+    SpriteType spriteType = SpriteType_Simple,
+    bool trimEnabled = false,
     const char *spriteFrameName = nullptr,
     const char *pressedSpriteFrameName = nullptr,
     const char *disabledSpriteFrameName = nullptr,
-    bool ignoreContentAdaptWithSize = false) {
-  return CreateButton(_fbb, node, transition, zoomScale, spriteFrameName ? _fbb.CreateString(spriteFrameName) : 0, pressedSpriteFrameName ? _fbb.CreateString(pressedSpriteFrameName) : 0, disabledSpriteFrameName ? _fbb.CreateString(disabledSpriteFrameName) : 0, ignoreContentAdaptWithSize);
+    bool ignoreContentAdaptWithSize = false,
+    const ColorRGBA *normalColor = 0,
+    const ColorRGBA *pressedColor = 0,
+    const ColorRGBA *disableColor = 0) {
+  return CreateButton(_fbb, node, transition, duration, zoomScale, spriteType, trimEnabled, spriteFrameName ? _fbb.CreateString(spriteFrameName) : 0, pressedSpriteFrameName ? _fbb.CreateString(pressedSpriteFrameName) : 0, disabledSpriteFrameName ? _fbb.CreateString(disabledSpriteFrameName) : 0, ignoreContentAdaptWithSize, normalColor, pressedColor, disableColor);
+}
+
+struct Layout FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  enum {
+    VT_NODE = 4,
+    VT_LAYOUTTYPE = 6,
+    VT_RESIZEMODE = 8,
+    VT_BACKGROUNDVISIBLE = 10,
+    VT_SPRITEFRAMENAME = 12,
+    VT_PADDINGTOP = 14,
+    VT_PADDINGBOTTOM = 16,
+    VT_PADDINGLEFT = 18,
+    VT_PADDINGRIGHT = 20,
+    VT_SPACINGX = 22,
+    VT_SPACINGY = 24,
+    VT_STARTAXIS = 26,
+    VT_HORIZONTALDIRECTION = 28,
+    VT_VERTICALDIRECTION = 30,
+    VT_CELLSIZE = 32
+  };
+  const Node *node() const { return GetPointer<const Node *>(VT_NODE); }
+  LayoutType layoutType() const { return static_cast<LayoutType>(GetField<int8_t>(VT_LAYOUTTYPE, 0)); }
+  ResizeMode resizeMode() const { return static_cast<ResizeMode>(GetField<int8_t>(VT_RESIZEMODE, 0)); }
+  bool backgroundVisible() const { return GetField<uint8_t>(VT_BACKGROUNDVISIBLE, 1) != 0; }
+  const flatbuffers::String *spriteFrameName() const { return GetPointer<const flatbuffers::String *>(VT_SPRITEFRAMENAME); }
+  float paddingTop() const { return GetField<float>(VT_PADDINGTOP, 0.0f); }
+  float paddingBottom() const { return GetField<float>(VT_PADDINGBOTTOM, 0.0f); }
+  float paddingLeft() const { return GetField<float>(VT_PADDINGLEFT, 0.0f); }
+  float paddingRight() const { return GetField<float>(VT_PADDINGRIGHT, 0.0f); }
+  float spacingX() const { return GetField<float>(VT_SPACINGX, 0.0f); }
+  float spacingY() const { return GetField<float>(VT_SPACINGY, 0.0f); }
+  int32_t startAxis() const { return GetField<int32_t>(VT_STARTAXIS, 0); }
+  int32_t horizontalDirection() const { return GetField<int32_t>(VT_HORIZONTALDIRECTION, 0); }
+  int32_t verticalDirection() const { return GetField<int32_t>(VT_VERTICALDIRECTION, 0); }
+  const Size *cellSize() const { return GetStruct<const Size *>(VT_CELLSIZE); }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<flatbuffers::uoffset_t>(verifier, VT_NODE) &&
+           verifier.VerifyTable(node()) &&
+           VerifyField<int8_t>(verifier, VT_LAYOUTTYPE) &&
+           VerifyField<int8_t>(verifier, VT_RESIZEMODE) &&
+           VerifyField<uint8_t>(verifier, VT_BACKGROUNDVISIBLE) &&
+           VerifyField<flatbuffers::uoffset_t>(verifier, VT_SPRITEFRAMENAME) &&
+           verifier.Verify(spriteFrameName()) &&
+           VerifyField<float>(verifier, VT_PADDINGTOP) &&
+           VerifyField<float>(verifier, VT_PADDINGBOTTOM) &&
+           VerifyField<float>(verifier, VT_PADDINGLEFT) &&
+           VerifyField<float>(verifier, VT_PADDINGRIGHT) &&
+           VerifyField<float>(verifier, VT_SPACINGX) &&
+           VerifyField<float>(verifier, VT_SPACINGY) &&
+           VerifyField<int32_t>(verifier, VT_STARTAXIS) &&
+           VerifyField<int32_t>(verifier, VT_HORIZONTALDIRECTION) &&
+           VerifyField<int32_t>(verifier, VT_VERTICALDIRECTION) &&
+           VerifyField<Size>(verifier, VT_CELLSIZE) &&
+           verifier.EndTable();
+  }
+};
+
+struct LayoutBuilder {
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_node(flatbuffers::Offset<Node> node) { fbb_.AddOffset(Layout::VT_NODE, node); }
+  void add_layoutType(LayoutType layoutType) { fbb_.AddElement<int8_t>(Layout::VT_LAYOUTTYPE, static_cast<int8_t>(layoutType), 0); }
+  void add_resizeMode(ResizeMode resizeMode) { fbb_.AddElement<int8_t>(Layout::VT_RESIZEMODE, static_cast<int8_t>(resizeMode), 0); }
+  void add_backgroundVisible(bool backgroundVisible) { fbb_.AddElement<uint8_t>(Layout::VT_BACKGROUNDVISIBLE, static_cast<uint8_t>(backgroundVisible), 1); }
+  void add_spriteFrameName(flatbuffers::Offset<flatbuffers::String> spriteFrameName) { fbb_.AddOffset(Layout::VT_SPRITEFRAMENAME, spriteFrameName); }
+  void add_paddingTop(float paddingTop) { fbb_.AddElement<float>(Layout::VT_PADDINGTOP, paddingTop, 0.0f); }
+  void add_paddingBottom(float paddingBottom) { fbb_.AddElement<float>(Layout::VT_PADDINGBOTTOM, paddingBottom, 0.0f); }
+  void add_paddingLeft(float paddingLeft) { fbb_.AddElement<float>(Layout::VT_PADDINGLEFT, paddingLeft, 0.0f); }
+  void add_paddingRight(float paddingRight) { fbb_.AddElement<float>(Layout::VT_PADDINGRIGHT, paddingRight, 0.0f); }
+  void add_spacingX(float spacingX) { fbb_.AddElement<float>(Layout::VT_SPACINGX, spacingX, 0.0f); }
+  void add_spacingY(float spacingY) { fbb_.AddElement<float>(Layout::VT_SPACINGY, spacingY, 0.0f); }
+  void add_startAxis(int32_t startAxis) { fbb_.AddElement<int32_t>(Layout::VT_STARTAXIS, startAxis, 0); }
+  void add_horizontalDirection(int32_t horizontalDirection) { fbb_.AddElement<int32_t>(Layout::VT_HORIZONTALDIRECTION, horizontalDirection, 0); }
+  void add_verticalDirection(int32_t verticalDirection) { fbb_.AddElement<int32_t>(Layout::VT_VERTICALDIRECTION, verticalDirection, 0); }
+  void add_cellSize(const Size *cellSize) { fbb_.AddStruct(Layout::VT_CELLSIZE, cellSize); }
+  LayoutBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
+  LayoutBuilder &operator=(const LayoutBuilder &);
+  flatbuffers::Offset<Layout> Finish() {
+    auto o = flatbuffers::Offset<Layout>(fbb_.EndTable(start_, 15));
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<Layout> CreateLayout(flatbuffers::FlatBufferBuilder &_fbb,
+    flatbuffers::Offset<Node> node = 0,
+    LayoutType layoutType = LayoutType_None,
+    ResizeMode resizeMode = ResizeMode_None,
+    bool backgroundVisible = true,
+    flatbuffers::Offset<flatbuffers::String> spriteFrameName = 0,
+    float paddingTop = 0.0f,
+    float paddingBottom = 0.0f,
+    float paddingLeft = 0.0f,
+    float paddingRight = 0.0f,
+    float spacingX = 0.0f,
+    float spacingY = 0.0f,
+    int32_t startAxis = 0,
+    int32_t horizontalDirection = 0,
+    int32_t verticalDirection = 0,
+    const Size *cellSize = 0) {
+  LayoutBuilder builder_(_fbb);
+  builder_.add_cellSize(cellSize);
+  builder_.add_verticalDirection(verticalDirection);
+  builder_.add_horizontalDirection(horizontalDirection);
+  builder_.add_startAxis(startAxis);
+  builder_.add_spacingY(spacingY);
+  builder_.add_spacingX(spacingX);
+  builder_.add_paddingRight(paddingRight);
+  builder_.add_paddingLeft(paddingLeft);
+  builder_.add_paddingBottom(paddingBottom);
+  builder_.add_paddingTop(paddingTop);
+  builder_.add_spriteFrameName(spriteFrameName);
+  builder_.add_node(node);
+  builder_.add_backgroundVisible(backgroundVisible);
+  builder_.add_resizeMode(resizeMode);
+  builder_.add_layoutType(layoutType);
+  return builder_.Finish();
+}
+
+inline flatbuffers::Offset<Layout> CreateLayoutDirect(flatbuffers::FlatBufferBuilder &_fbb,
+    flatbuffers::Offset<Node> node = 0,
+    LayoutType layoutType = LayoutType_None,
+    ResizeMode resizeMode = ResizeMode_None,
+    bool backgroundVisible = true,
+    const char *spriteFrameName = nullptr,
+    float paddingTop = 0.0f,
+    float paddingBottom = 0.0f,
+    float paddingLeft = 0.0f,
+    float paddingRight = 0.0f,
+    float spacingX = 0.0f,
+    float spacingY = 0.0f,
+    int32_t startAxis = 0,
+    int32_t horizontalDirection = 0,
+    int32_t verticalDirection = 0,
+    const Size *cellSize = 0) {
+  return CreateLayout(_fbb, node, layoutType, resizeMode, backgroundVisible, spriteFrameName ? _fbb.CreateString(spriteFrameName) : 0, paddingTop, paddingBottom, paddingLeft, paddingRight, spacingX, spacingY, startAxis, horizontalDirection, verticalDirection, cellSize);
 }
 
 struct ProgressBar FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
@@ -2013,17 +2398,37 @@ struct Toggle FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     VT_INTERACTABLE = 6,
     VT_ENABLEAUTOGRAYEFFECT = 8,
     VT_ISCHECKED = 10,
-    VT_BACKGROUNDSPRITEPATH = 12,
-    VT_CHECKMARKSPRITEPATH = 14,
-    VT_ZOOMSCALE = 16
+    VT_ISTOGGLEGROUP = 12,
+    VT_BACKGROUNDNODENAME = 14,
+    VT_CHECKMARKNODENAME = 16,
+    VT_BACKGROUNDSPRITEPATH = 18,
+    VT_CHECKMARKSPRITEPATH = 20,
+    VT_ZOOMSCALE = 22,
+    VT_TRANSITION = 24,
+    VT_DURATION = 26,
+    VT_PRESSEDSPRITEFRAMENAME = 28,
+    VT_DISABLEDSPRITEFRAMENAME = 30,
+    VT_NORMALCOLOR = 32,
+    VT_PRESSEDCOLOR = 34,
+    VT_DISABLECOLOR = 36
   };
   const Node *node() const { return GetPointer<const Node *>(VT_NODE); }
   bool interactable() const { return GetField<uint8_t>(VT_INTERACTABLE, 0) != 0; }
   bool enableAutoGrayEffect() const { return GetField<uint8_t>(VT_ENABLEAUTOGRAYEFFECT, 0) != 0; }
   bool isChecked() const { return GetField<uint8_t>(VT_ISCHECKED, 0) != 0; }
+  bool isToggleGroup() const { return GetField<uint8_t>(VT_ISTOGGLEGROUP, 0) != 0; }
+  const flatbuffers::String *backgroundNodeName() const { return GetPointer<const flatbuffers::String *>(VT_BACKGROUNDNODENAME); }
+  const flatbuffers::String *checkMarkNodeName() const { return GetPointer<const flatbuffers::String *>(VT_CHECKMARKNODENAME); }
   const flatbuffers::String *backgroundSpritePath() const { return GetPointer<const flatbuffers::String *>(VT_BACKGROUNDSPRITEPATH); }
   const flatbuffers::String *checkMarkSpritePath() const { return GetPointer<const flatbuffers::String *>(VT_CHECKMARKSPRITEPATH); }
   float zoomScale() const { return GetField<float>(VT_ZOOMSCALE, 0.0f); }
+  int32_t transition() const { return GetField<int32_t>(VT_TRANSITION, 0); }
+  float duration() const { return GetField<float>(VT_DURATION, 0.0f); }
+  const flatbuffers::String *pressedSpriteFrameName() const { return GetPointer<const flatbuffers::String *>(VT_PRESSEDSPRITEFRAMENAME); }
+  const flatbuffers::String *disabledSpriteFrameName() const { return GetPointer<const flatbuffers::String *>(VT_DISABLEDSPRITEFRAMENAME); }
+  const ColorRGBA *normalColor() const { return GetStruct<const ColorRGBA *>(VT_NORMALCOLOR); }
+  const ColorRGBA *pressedColor() const { return GetStruct<const ColorRGBA *>(VT_PRESSEDCOLOR); }
+  const ColorRGBA *disableColor() const { return GetStruct<const ColorRGBA *>(VT_DISABLECOLOR); }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<flatbuffers::uoffset_t>(verifier, VT_NODE) &&
@@ -2031,11 +2436,25 @@ struct Toggle FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            VerifyField<uint8_t>(verifier, VT_INTERACTABLE) &&
            VerifyField<uint8_t>(verifier, VT_ENABLEAUTOGRAYEFFECT) &&
            VerifyField<uint8_t>(verifier, VT_ISCHECKED) &&
+           VerifyField<uint8_t>(verifier, VT_ISTOGGLEGROUP) &&
+           VerifyField<flatbuffers::uoffset_t>(verifier, VT_BACKGROUNDNODENAME) &&
+           verifier.Verify(backgroundNodeName()) &&
+           VerifyField<flatbuffers::uoffset_t>(verifier, VT_CHECKMARKNODENAME) &&
+           verifier.Verify(checkMarkNodeName()) &&
            VerifyField<flatbuffers::uoffset_t>(verifier, VT_BACKGROUNDSPRITEPATH) &&
            verifier.Verify(backgroundSpritePath()) &&
            VerifyField<flatbuffers::uoffset_t>(verifier, VT_CHECKMARKSPRITEPATH) &&
            verifier.Verify(checkMarkSpritePath()) &&
            VerifyField<float>(verifier, VT_ZOOMSCALE) &&
+           VerifyField<int32_t>(verifier, VT_TRANSITION) &&
+           VerifyField<float>(verifier, VT_DURATION) &&
+           VerifyField<flatbuffers::uoffset_t>(verifier, VT_PRESSEDSPRITEFRAMENAME) &&
+           verifier.Verify(pressedSpriteFrameName()) &&
+           VerifyField<flatbuffers::uoffset_t>(verifier, VT_DISABLEDSPRITEFRAMENAME) &&
+           verifier.Verify(disabledSpriteFrameName()) &&
+           VerifyField<ColorRGBA>(verifier, VT_NORMALCOLOR) &&
+           VerifyField<ColorRGBA>(verifier, VT_PRESSEDCOLOR) &&
+           VerifyField<ColorRGBA>(verifier, VT_DISABLECOLOR) &&
            verifier.EndTable();
   }
 };
@@ -2047,13 +2466,23 @@ struct ToggleBuilder {
   void add_interactable(bool interactable) { fbb_.AddElement<uint8_t>(Toggle::VT_INTERACTABLE, static_cast<uint8_t>(interactable), 0); }
   void add_enableAutoGrayEffect(bool enableAutoGrayEffect) { fbb_.AddElement<uint8_t>(Toggle::VT_ENABLEAUTOGRAYEFFECT, static_cast<uint8_t>(enableAutoGrayEffect), 0); }
   void add_isChecked(bool isChecked) { fbb_.AddElement<uint8_t>(Toggle::VT_ISCHECKED, static_cast<uint8_t>(isChecked), 0); }
+  void add_isToggleGroup(bool isToggleGroup) { fbb_.AddElement<uint8_t>(Toggle::VT_ISTOGGLEGROUP, static_cast<uint8_t>(isToggleGroup), 0); }
+  void add_backgroundNodeName(flatbuffers::Offset<flatbuffers::String> backgroundNodeName) { fbb_.AddOffset(Toggle::VT_BACKGROUNDNODENAME, backgroundNodeName); }
+  void add_checkMarkNodeName(flatbuffers::Offset<flatbuffers::String> checkMarkNodeName) { fbb_.AddOffset(Toggle::VT_CHECKMARKNODENAME, checkMarkNodeName); }
   void add_backgroundSpritePath(flatbuffers::Offset<flatbuffers::String> backgroundSpritePath) { fbb_.AddOffset(Toggle::VT_BACKGROUNDSPRITEPATH, backgroundSpritePath); }
   void add_checkMarkSpritePath(flatbuffers::Offset<flatbuffers::String> checkMarkSpritePath) { fbb_.AddOffset(Toggle::VT_CHECKMARKSPRITEPATH, checkMarkSpritePath); }
   void add_zoomScale(float zoomScale) { fbb_.AddElement<float>(Toggle::VT_ZOOMSCALE, zoomScale, 0.0f); }
+  void add_transition(int32_t transition) { fbb_.AddElement<int32_t>(Toggle::VT_TRANSITION, transition, 0); }
+  void add_duration(float duration) { fbb_.AddElement<float>(Toggle::VT_DURATION, duration, 0.0f); }
+  void add_pressedSpriteFrameName(flatbuffers::Offset<flatbuffers::String> pressedSpriteFrameName) { fbb_.AddOffset(Toggle::VT_PRESSEDSPRITEFRAMENAME, pressedSpriteFrameName); }
+  void add_disabledSpriteFrameName(flatbuffers::Offset<flatbuffers::String> disabledSpriteFrameName) { fbb_.AddOffset(Toggle::VT_DISABLEDSPRITEFRAMENAME, disabledSpriteFrameName); }
+  void add_normalColor(const ColorRGBA *normalColor) { fbb_.AddStruct(Toggle::VT_NORMALCOLOR, normalColor); }
+  void add_pressedColor(const ColorRGBA *pressedColor) { fbb_.AddStruct(Toggle::VT_PRESSEDCOLOR, pressedColor); }
+  void add_disableColor(const ColorRGBA *disableColor) { fbb_.AddStruct(Toggle::VT_DISABLECOLOR, disableColor); }
   ToggleBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
   ToggleBuilder &operator=(const ToggleBuilder &);
   flatbuffers::Offset<Toggle> Finish() {
-    auto o = flatbuffers::Offset<Toggle>(fbb_.EndTable(start_, 7));
+    auto o = flatbuffers::Offset<Toggle>(fbb_.EndTable(start_, 17));
     return o;
   }
 };
@@ -2063,14 +2492,34 @@ inline flatbuffers::Offset<Toggle> CreateToggle(flatbuffers::FlatBufferBuilder &
     bool interactable = false,
     bool enableAutoGrayEffect = false,
     bool isChecked = false,
+    bool isToggleGroup = false,
+    flatbuffers::Offset<flatbuffers::String> backgroundNodeName = 0,
+    flatbuffers::Offset<flatbuffers::String> checkMarkNodeName = 0,
     flatbuffers::Offset<flatbuffers::String> backgroundSpritePath = 0,
     flatbuffers::Offset<flatbuffers::String> checkMarkSpritePath = 0,
-    float zoomScale = 0.0f) {
+    float zoomScale = 0.0f,
+    int32_t transition = 0,
+    float duration = 0.0f,
+    flatbuffers::Offset<flatbuffers::String> pressedSpriteFrameName = 0,
+    flatbuffers::Offset<flatbuffers::String> disabledSpriteFrameName = 0,
+    const ColorRGBA *normalColor = 0,
+    const ColorRGBA *pressedColor = 0,
+    const ColorRGBA *disableColor = 0) {
   ToggleBuilder builder_(_fbb);
+  builder_.add_disableColor(disableColor);
+  builder_.add_pressedColor(pressedColor);
+  builder_.add_normalColor(normalColor);
+  builder_.add_disabledSpriteFrameName(disabledSpriteFrameName);
+  builder_.add_pressedSpriteFrameName(pressedSpriteFrameName);
+  builder_.add_duration(duration);
+  builder_.add_transition(transition);
   builder_.add_zoomScale(zoomScale);
   builder_.add_checkMarkSpritePath(checkMarkSpritePath);
   builder_.add_backgroundSpritePath(backgroundSpritePath);
+  builder_.add_checkMarkNodeName(checkMarkNodeName);
+  builder_.add_backgroundNodeName(backgroundNodeName);
   builder_.add_node(node);
+  builder_.add_isToggleGroup(isToggleGroup);
   builder_.add_isChecked(isChecked);
   builder_.add_enableAutoGrayEffect(enableAutoGrayEffect);
   builder_.add_interactable(interactable);
@@ -2082,10 +2531,20 @@ inline flatbuffers::Offset<Toggle> CreateToggleDirect(flatbuffers::FlatBufferBui
     bool interactable = false,
     bool enableAutoGrayEffect = false,
     bool isChecked = false,
+    bool isToggleGroup = false,
+    const char *backgroundNodeName = nullptr,
+    const char *checkMarkNodeName = nullptr,
     const char *backgroundSpritePath = nullptr,
     const char *checkMarkSpritePath = nullptr,
-    float zoomScale = 0.0f) {
-  return CreateToggle(_fbb, node, interactable, enableAutoGrayEffect, isChecked, backgroundSpritePath ? _fbb.CreateString(backgroundSpritePath) : 0, checkMarkSpritePath ? _fbb.CreateString(checkMarkSpritePath) : 0, zoomScale);
+    float zoomScale = 0.0f,
+    int32_t transition = 0,
+    float duration = 0.0f,
+    const char *pressedSpriteFrameName = nullptr,
+    const char *disabledSpriteFrameName = nullptr,
+    const ColorRGBA *normalColor = 0,
+    const ColorRGBA *pressedColor = 0,
+    const ColorRGBA *disableColor = 0) {
+  return CreateToggle(_fbb, node, interactable, enableAutoGrayEffect, isChecked, isToggleGroup, backgroundNodeName ? _fbb.CreateString(backgroundNodeName) : 0, checkMarkNodeName ? _fbb.CreateString(checkMarkNodeName) : 0, backgroundSpritePath ? _fbb.CreateString(backgroundSpritePath) : 0, checkMarkSpritePath ? _fbb.CreateString(checkMarkSpritePath) : 0, zoomScale, transition, duration, pressedSpriteFrameName ? _fbb.CreateString(pressedSpriteFrameName) : 0, disabledSpriteFrameName ? _fbb.CreateString(disabledSpriteFrameName) : 0, normalColor, pressedColor, disableColor);
 }
 
 struct ToggleGroup FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
@@ -4221,6 +4680,7 @@ inline bool VerifyAnyNode(flatbuffers::Verifier &verifier, const void *union_obj
     case AnyNode_Mask: return verifier.VerifyTable(reinterpret_cast<const Mask *>(union_obj));
     case AnyNode_DragonBones: return verifier.VerifyTable(reinterpret_cast<const DragonBones *>(union_obj));
     case AnyNode_MotionStreak: return verifier.VerifyTable(reinterpret_cast<const MotionStreak *>(union_obj));
+    case AnyNode_Layout: return verifier.VerifyTable(reinterpret_cast<const Layout *>(union_obj));
     default: return false;
   }
 }
