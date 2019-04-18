@@ -44,12 +44,20 @@ public :
 	*/
 	static CreatorRichText* create();
 
+	ProtectedNode* createArrangeNode();
+
+	void removeAllElements();
+
+	void formatRenderers();
+
 	ui::RichElement * getElement(int index);
 
 	void setElementText(int index, std::string sContent);
 
-public:
+	void setXMLData(std::string);
 
+private:
+	ProtectedNode* _arrangeNode;
 
 };
 

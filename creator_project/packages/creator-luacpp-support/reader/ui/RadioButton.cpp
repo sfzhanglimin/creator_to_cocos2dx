@@ -1,4 +1,5 @@
 #include "RadioButton.h"
+#include "RadioButtonGroup.h"
 
 NS_CCR_BEGIN
 
@@ -109,7 +110,29 @@ void CreatorRadioButton::releaseUpEvent()
 {
 	if (_isToggleGroup)
 	{
-		RadioButton::releaseUpEvent();
+		Widget::releaseUpEvent();
+
+		if (!_isSelected)
+		{
+			setSelected(true);
+			dispatchSelectChangedEvent(true);
+		}
+		else
+		{
+			if (_group && _group->isAllowedNoSelection())
+			{
+				_group->setSelectedButtonWithoutEvent(nullptr);
+
+				auto g = dynamic_cast<CreatorRadioButtonGroup*>( _group);
+				if (g)
+				{
+					 g->callGroupCallback(this, 0);
+	
+				}
+			}
+			//isAllowedNoSelection
+			
+		}
 	}
 	else
 	{
@@ -117,6 +140,9 @@ void CreatorRadioButton::releaseUpEvent()
 		Widget::releaseUpEvent();
 	}
 }
+
+
+
 
 
 
@@ -143,6 +169,93 @@ void CreatorRadioButton::dispatchSelectChangedEvent(bool selected)
 		this->release();
 	}
 	
+}
+
+void CreatorRadioButton::addChild(Node *child)
+{
+	
+	std::string sChildName = child->getName();
+	if (sChildName == getNodeCheckmarkName())
+	{
+		auto spirte = dynamic_cast<Sprite*>(child);
+		if (spirte)
+		{
+			setCheckMarkNode(spirte);
+			ui::RadioButton::addChild(spirte);
+			spirte->setLocalZOrder(1);
+			return;
+		}
+	}
+
+	if (sChildName == getNodeBgName())
+	{
+		auto spirte = dynamic_cast<Sprite*>(child);
+		if (spirte)
+		{
+			setBgNode(spirte);
+			addProtectedChild(spirte, -1, -1);
+			return;
+		}
+	}
+
+	ui::RadioButton::addChild(child);
+}
+
+void CreatorRadioButton::setCheckMarkNode(cocos2d::Sprite * pNode)
+{
+
+	removeProtectedChild(_frontCrossRenderer);
+	removeChild(_frontCrossRenderer);
+
+	_frontCrossRenderer = pNode;
+
+	//_backGroundBoxRenderer->REMO
+	//_backGroundSelectedBoxRenderer = Sprite::create();
+	//_frontCrossRenderer = Sprite::create();
+	//_backGroundBoxDisabledRenderer = Sprite::create();
+	//_frontCrossDisabledRenderer = Sprite::create();
+}
+
+void CreatorRadioButton::setBgNode(cocos2d::Sprite * pNode)
+{
+	removeProtectedChild(_backGroundBoxRenderer);
+	removeChild(_backGroundBoxRenderer);
+
+	_backGroundBoxRenderer = pNode;
+}
+
+void CreatorRadioButton::setNodeBgName(std::string sBgName) {
+	_nodeBgName = sBgName;
+};
+
+void CreatorRadioButton::setNodeCheckmarkName(std::string sName) {
+	_nodeCheckmarkName = sName;
+};
+
+
+void CreatorRadioButton::backGroundTextureScaleChangedWithSize()
+{
+
+}
+
+void CreatorRadioButton::backGroundSelectedTextureScaleChangedWithSize()
+{
+
+}
+
+void CreatorRadioButton::frontCrossTextureScaleChangedWithSize()
+{
+
+}
+
+void CreatorRadioButton::backGroundDisabledTextureScaleChangedWithSize()
+{
+
+}
+
+void CreatorRadioButton::frontCrossDisabledTextureScaleChangedWithSize()
+{
+
 }
 
 

@@ -39,6 +39,7 @@ CreatorButton::CreatorButton()
 	_actionDuration = 0.1;
 	_transitionType = TransitionType::NONE;
 	_enableAutoGrayEffect = false;
+	_orignScale = 1.0;
 
 }
 
@@ -75,12 +76,12 @@ void CreatorButton::onPressStateChangedToNormal()
 		{
 			
 			float orignScale = this->getOrignScale();
-			float childScale = (orignScale == -1.0f ? this->getScale() : orignScale);
+			//float childScale = (orignScale == -1.0f ? this->getScale() : orignScale);
 			//this->setScale(childScale);
-			this->setOrignScale(-1);
+			//this->setOrignScale(-1);
 
 			this->stopAllActions();
-			this->runAction(EaseSineOut::create(ScaleTo::create(_actionDuration, childScale, childScale)));
+			this->runAction(EaseSineOut::create(ScaleTo::create(_actionDuration, orignScale, orignScale)));
 		}
 
 
@@ -130,12 +131,12 @@ void CreatorButton::onPressStateChangedToPressed()
 
 			this->stopAllActions();
 			float orignScale = this->getOrignScale();
-			float childScale = (orignScale == -1.0f ? this->getScale() : orignScale);
-			this->setOrignScale(childScale);
+			//float childScale = (orignScale == -1.0f ? this->getScale() : orignScale);
+			//this->setOrignScale(childScale);
 
 			ScaleTo *zoomChildAction = ScaleTo::create(_actionDuration,
-				childScale * (1.0f + _zoomScale),
-				childScale * (1.0f + _zoomScale));
+				orignScale * (1.0f + _zoomScale),
+				orignScale * (1.0f + _zoomScale));
 
 			this->runAction(EaseSineOut::create(zoomChildAction));
 

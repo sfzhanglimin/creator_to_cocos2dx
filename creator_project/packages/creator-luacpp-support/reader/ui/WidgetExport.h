@@ -50,6 +50,7 @@ public:
     // only 9 creator align combinations are supported by cocos2d-x
     enum class AlignComb
     {
+		NONE = 0,
         TOP_LEFT = CREATOR_ALIGN_LEFT | CREATOR_ALIGN_TOP,
         TOP_CENTER_HORIZONTAL = CREATOR_ALIGN_CENTER | CREATOR_ALIGN_TOP,
         TOP_RIGHT = CREATOR_ALIGN_TOP | CREATOR_ALIGN_RIGHT,
@@ -62,6 +63,7 @@ public:
         LEFT_BOTTOM = CREATOR_ALIGN_BOT | CREATOR_ALIGN_LEFT,
         BOTTOM_CENTER_HORIZONTAL = CREATOR_ALIGN_CENTER | CREATOR_ALIGN_BOT,
         RIGHT_BOTTOM = CREATOR_ALIGN_RIGHT | CREATOR_ALIGN_BOT,
+		LEFT_RIGHT = CREATOR_ALIGN_LEFT| CREATOR_ALIGN_RIGHT,
 
 		LEFT_TOP_BOTTOM_RIGHT = CREATOR_ALIGN_LEFT | CREATOR_ALIGN_RIGHT| CREATOR_ALIGN_TOP| CREATOR_ALIGN_BOT,
 
@@ -78,6 +80,8 @@ public:
 		BOTTOM = CREATOR_ALIGN_BOT,
 		CENTER_VERTICAL = CREATOR_ALIGN_MID,
 		CENTER_HORIZONTAL = CREATOR_ALIGN_CENTER,
+
+		
     };
 
 
@@ -105,6 +109,14 @@ public:
 
 		float vcenter;
 
+
+		bool _isAbsLeft;
+		bool _isAbsRight;
+		bool _isAbsTop;
+		bool _isAbsBottom;
+		bool _isAbsHorizontalCenter;
+		bool _isAbsVerticalCenter;
+
 	public:
 		/**
 		* Default constructor.
@@ -125,6 +137,14 @@ public:
 			bottom = b;
 			hcenter = hc;
 			vcenter = vc;
+
+			_isAbsLeft = true;
+			_isAbsRight = true;
+			_isAbsTop = true;
+			_isAbsBottom = true;
+
+			_isAbsHorizontalCenter = true;
+			_isAbsVerticalCenter = true;
 		};
 
 
@@ -137,6 +157,17 @@ public:
 			vcenter = vc;
 
 		};
+
+		void setMarginAbs(bool l, bool t, bool r, bool b, bool hc, bool vc) {
+
+			 _isAbsLeft = l;
+			 _isAbsRight = r;
+			 _isAbsTop = t;
+			 _isAbsBottom = b;
+
+			 _isAbsHorizontalCenter = hc;
+			 _isAbsVerticalCenter = vc;
+		}
 	};
 
 
@@ -171,19 +202,22 @@ private:
 	Margin _sMargin;
 	AlignComb _alignComb;
 
+
+
+
+
     // insert Layout Node to support widget component.
     void setupLayout();
     // adapt layout property depend on _layoutTarget
     void syncLayoutProperty();
 
 
-	float getLeftX(float nodeWidth, float anchorX, float left);
-	float getRightX(float parentWidth, float nodeWidth, float anchorX, float right);
-	float getTopY(float parentHeight,float nodeHeight,float anchorY,float top);
-	float getBottomY(float nodeHeight, float anchorY, float bottom);
-	float getCenterX(float parentWidth, float nodeWidth, float anchorX, float offset);
-	float getCenterY(float parentHeight, float nodeHeight, float anchorY, float offset);
-	
+	float getLeftX(float parentWidth, float nodeWidth, float anchorX, float left, bool isAbs = true);
+	float getRightX(float parentWidth, float nodeWidth, float anchorX, float right, bool isAbs = true);
+	float getTopY(float parentHeight,float nodeHeight,float anchorY,float top, bool isAbs = true);
+	float getBottomY(float parentHeight, float nodeHeight, float anchorY, float bottom, bool isAbs = true);
+	float getCenterX(float parentWidth, float nodeWidth, float anchorX, float offset, bool isAbs = true);
+	float getCenterY(float parentHeight, float nodeHeight, float anchorY, float offset, bool isAbs = true);
 
 };
 

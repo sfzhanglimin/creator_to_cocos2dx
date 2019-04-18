@@ -68,6 +68,14 @@ public :
 
 	
 
+	void addChild(Node *child) override;
+
+	void backGroundTextureScaleChangedWithSize();
+	void backGroundSelectedTextureScaleChangedWithSize();
+	void frontCrossTextureScaleChangedWithSize();
+	void backGroundDisabledTextureScaleChangedWithSize();
+	void frontCrossDisabledTextureScaleChangedWithSize();
+
 
 	virtual void onPressStateChangedToNormal() override;
 	virtual void onPressStateChangedToPressed() override;
@@ -97,8 +105,24 @@ public :
 
 	void setTouchEnabled(bool enable)override;
 
+
+	void setNodeBgName(std::string sBgName);
+	std::string getNodeBgName() { return _nodeBgName; }
+
+
+	void setNodeCheckmarkName(std::string sName);
+	std::string getNodeCheckmarkName() { return _nodeCheckmarkName; }
+
+
+	void setCheckMarkNode(cocos2d::Sprite * pNode);
+	void setBgNode(cocos2d::Sprite * pNode);
+
+
 	protected:
 	void dispatchSelectChangedEvent(bool selected)override;
+
+
+
 
 public:
 	float _actionDuration;
@@ -111,6 +135,9 @@ public:
 	bool _enableAutoGrayEffect;
 
 	bool _isToggleGroup;
+
+	std::string _nodeBgName;
+	std::string _nodeCheckmarkName;
 
 };
 

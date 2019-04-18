@@ -38,6 +38,7 @@
 #include <vector>
 #include <cmath>
 #include <algorithm>
+#include "VxNativeUtils.h"
 
 using namespace cocos2d;
 using namespace creator;
@@ -244,6 +245,8 @@ void CreatorReader::setup()
     }*/
 }
 
+static std::map<std::string, bool> s_checkSpriteFrameFixed;
+
 void CreatorReader::setupSpriteFrames()
 {
     const void* buffer = _data.getBytes();
@@ -255,8 +258,9 @@ void CreatorReader::setupSpriteFrames()
         for (const auto& spriteFrame: *spriteFrames) {
 			const auto& filename = spriteFrame->texturePath()->str();
 
-			//if (!frameCache->getSpriteFrameByName(filename))
-			//{
+			auto pSpriteFrame = frameCache->getSpriteFrameByName(filename);
+			if (!pSpriteFrame)
+			{
 				const auto& name = spriteFrame->name()->str();
 				const auto& rect = spriteFrame->rect();
 				const auto& rotated = spriteFrame->rotated();
@@ -279,7 +283,39 @@ void CreatorReader::setupSpriteFrames()
 					frameCache->addSpriteFrame(sf, name);
 					CCLOG("Adding sprite frame: %s", name.c_str());
 				}
-			//}
+
+				s_checkSpriteFrameFixed[filename] = true;
+			}
+			else
+			{
+				if (!s_checkSpriteFrameFixed[filename])
+				{
+					const auto& centerRect = spriteFrame->centerRect();
+					if (centerRect) {
+
+						//cocos2d::Rect(rect->x(), rect->y(), rect->w(), rect->h()),
+						//rotated,
+						//cocos2d::Vec2(offset->x(), offset->y()),
+
+						const auto& rect = spriteFrame->rect();
+						const auto& rotated = spriteFrame->rotated();
+						const auto& offset = spriteFrame->offset();
+
+						auto sFrameRect = pSpriteFrame->getRect();
+						sFrameRect.origin.x = sFrameRect.origin.x + rect->x();
+						sFrameRect.origin.y = sFrameRect.origin.y + rect->y();
+						sFrameRect.size.width = rect->w();
+						sFrameRect.size.height = rect->h();
+						pSpriteFrame->setRect(sFrameRect);
+						pSpriteFrame->setRect(sFrameRect);
+						pSpriteFrame->setOffset(cocos2d::Vec2(offset->x(), offset->y()));
+
+						pSpriteFrame->setCenterRectInPixels(cocos2d::Rect(centerRect->x(), centerRect->y(), centerRect->w(), centerRect->h()));
+
+					}
+					s_checkSpriteFrameFixed[filename] = true;
+				}
+			}
         }
     }
 }
@@ -503,6 +539,8 @@ cocos2d::Node* CreatorReader::createTree(const buffers::NodeTree* tree, bool isS
 	{
 		auto pGroup = dynamic_cast<CreatorRadioButtonGroup*>(node);
 		auto children = pGroup->getChildren();
+		auto isAllowedNoSelection = pGroup->isAllowedNoSelection();
+		pGroup->setAllowedNoSelection(false);
 		for (auto it= children.begin();it != children.end();it++)
 		{
 			auto pToggle = dynamic_cast<CreatorRadioButton*>(*it);
@@ -511,6 +549,7 @@ cocos2d::Node* CreatorReader::createTree(const buffers::NodeTree* tree, bool isS
 				pGroup->addRadioButton(pToggle);
 			}
 		}
+		pGroup->setAllowedNoSelection(isAllowedNoSelection);
 	}
 
 	if (static_cast<int>(bufferType) == buffers::AnyNode_Layout)
@@ -667,6 +706,13 @@ void CreatorReader::parseNodeAnimation(cocos2d::Node* node, const buffers::Node*
                     // anchor y
                     setupAnimClipsPropValue(fbAnimProps->anchorY(), properties.animAnchorY);
 
+
+					// width
+					setupAnimClipsPropValue(fbAnimProps->width(), properties.animWidth);
+
+					// height
+					setupAnimClipsPropValue(fbAnimProps->height(), properties.animHeight);
+
 					setupAnimClipsPropString(fbAnimProps->spriteFrame(), properties.animSpriteFrame);
                     
                     // path: self's animation doesn't have path
@@ -730,12 +776,18 @@ void CreatorReader::parseWidget(cocos2d::Node *node, const buffers::Node *nodeBu
 	auto pNode = dynamic_cast<cocos2d::Node*>(node);
 	if ((info != nullptr) && (pNode != nullptr)) {
 		// save the widget margin info
-		const auto& margin = WidgetAdapter::Margin(info->left(), info->top(), info->right(), info->bottom(), info->horizontalCenter(),info->verticalCenter());
+		auto margin = WidgetAdapter::Margin(info->left(), info->top(), info->right(), info->bottom(), info->horizontalCenter(),info->verticalCenter());
+		margin.setMarginAbs(info->isAbsLeft(), info->isAbsTop(), info->isAbsRight(), info->isAbsBottom(), info->isAbsHorizontalCenter(), info->isAbsVerticalCenter());
 		//auto parameter = ui::RelativeLayoutParameter::create();
 		//parameter->setMargin(margin);
 
 		WidgetAdapter::AlignComb alignComb = static_cast<WidgetAdapter::AlignComb>(info->alignFlags());
+
+
 		switch (alignComb) {
+		case WidgetAdapter::AlignComb::NONE:
+			CCLOG("align combination of UI Node: %s is NONE Align", node->getName().c_str());
+			break;
 		case WidgetAdapter::AlignComb::TOP:
 		case WidgetAdapter::AlignComb::LEFT:
 		case WidgetAdapter::AlignComb::RIGHT:
@@ -748,6 +800,7 @@ void CreatorReader::parseWidget(cocos2d::Node *node, const buffers::Node *nodeBu
 		case WidgetAdapter::AlignComb::TOP_RIGHT:
 		case WidgetAdapter::AlignComb::RIGHT_BOTTOM:
 		case WidgetAdapter::AlignComb::LEFT_BOTTOM:
+		case WidgetAdapter::AlignComb::LEFT_RIGHT:
 		case WidgetAdapter::AlignComb::LEFT_CENTER_VERTICAL:
 		case WidgetAdapter::AlignComb::RIGHT_CENTER_VERTICAL:
 		case WidgetAdapter::AlignComb::TOP_CENTER_HORIZONTAL:
@@ -757,7 +810,8 @@ void CreatorReader::parseWidget(cocos2d::Node *node, const buffers::Node *nodeBu
 		case WidgetAdapter::AlignComb::LEFT_TOP_RIGHT:
 		case WidgetAdapter::AlignComb::LEFT_BOTTOM_RIGHT:
 		case WidgetAdapter::AlignComb::LEFT_BOTTOM_TOP:
-		case WidgetAdapter::AlignComb::RIGHT_BOTTOM_TOP:	
+		case WidgetAdapter::AlignComb::RIGHT_BOTTOM_TOP:
+		case WidgetAdapter::AlignComb::TOP_BOTTOM:
 			break;
 		default:
 			CCLOG("align combination of UI Node: %s isn't supported", node->getName().c_str());
@@ -766,17 +820,20 @@ void CreatorReader::parseWidget(cocos2d::Node *node, const buffers::Node *nodeBu
 		}
 
 
-
-		auto widgetInfo = WidgetAdapter::create();
-		// TODO: support Layout target, how to get the layout target?
-		// parameter->setRelativeToWidgetName(const std::string &name);
-		// widgetInfo->setLayoutTarget(cocos2d::Node *layoutTarget);
-		//widgetInfo->setLayoutParameter(parameter);
-		widgetInfo->setMargin(margin);
-		widgetInfo->setAlignComb(alignComb);
-		widgetInfo->setAdaptNode(pNode);
-		widgetInfo->setIsAlignOnce(info->isAlignOnce());
-		_widgetManager->_needAdaptWidgets.pushBack(widgetInfo);
+		if (alignComb != WidgetAdapter::AlignComb::NONE)
+		{
+			auto widgetInfo = WidgetAdapter::create();
+			// TODO: support Layout target, how to get the layout target?
+			// parameter->setRelativeToWidgetName(const std::string &name);
+			// widgetInfo->setLayoutTarget(cocos2d::Node *layoutTarget);
+			//widgetInfo->setLayoutParameter(parameter);
+			widgetInfo->setMargin(margin);
+			widgetInfo->setAlignComb(alignComb);
+			widgetInfo->setAdaptNode(pNode);
+			widgetInfo->setIsAlignOnce(info->isAlignOnce());
+			_widgetManager->_needAdaptWidgets.pushBack(widgetInfo);
+		}
+		
 	}
 }
 
@@ -911,20 +968,30 @@ cocos2d::Label* CreatorReader::createLabel(const buffers::Label* labelBuffer) co
     cocos2d::Label* label = nullptr;
     auto text = labelBuffer->labelText();
     auto fontSize = labelBuffer->fontSize();
-    auto fontName = labelBuffer->fontName();
+    std::string fontName = labelBuffer->fontName()->str();
 
     auto fontType = labelBuffer->fontType();
+
+	if (fontName.compare("arial") == 0 || fontName.compare("Arial") == 0)
+	{
+		auto temp = VxNativeUtils::getDefaultFontName();
+		if (!temp.empty())
+		{
+			fontType = FontType_TTF;
+			fontName = VxNativeUtils::getDefaultFontName();
+		}
+	}
     switch (fontType) {
         case buffers::FontType_TTF:
-            label = cocos2d::Label::createWithTTF(text->str(), fontName->str(), fontSize);
+            label = cocos2d::Label::createWithTTF(text->str(), fontName, fontSize);
             break;
         case buffers::FontType_BMFont:
-            label = cocos2d::Label::createWithBMFont(fontName->str(), text->str());
+            label = cocos2d::Label::createWithBMFont(fontName, text->str());
             if (label)
                 label->setBMFontSize(fontSize);
             break;
         case buffers::FontType_System:
-            label = cocos2d::Label::createWithSystemFont(text->str(), fontName->str(), fontSize);
+            label = cocos2d::Label::createWithSystemFont(text->str(), fontName, fontSize);
             break;
     }
 
@@ -944,7 +1011,10 @@ void CreatorReader::parseLabel(cocos2d::Label* label, const buffers::Label* labe
     const auto& overflowType = labelBuffer->overflowType();
     const auto& enableWrap = labelBuffer->enableWrap();
 	const auto contentSize = nodeBuffer->contentSize();
+	const auto& fontSize = labelBuffer->fontSize();
 
+	auto dh = lineHeight - fontSize;
+	if (dh < 0)dh = 0;
 
 	if ((cocos2d::Label::Overflow)overflowType == cocos2d::Label::Overflow::NONE)
 	{
@@ -980,8 +1050,7 @@ void CreatorReader::parseLabel(cocos2d::Label* label, const buffers::Label* labe
 	 
 	if ((cocos2d::Label::Overflow)overflowType == cocos2d::Label::Overflow::CLAMP)
 	{
-		const auto& fontSize = labelBuffer->fontSize();
-		label->setLineSpacing(lineHeight- fontSize);
+		label->setLineSpacing(dh);
 		label->setDimensions(contentSize->w(), contentSize->h());
 		label->enableWrap(enableWrap);
 	}
@@ -989,8 +1058,7 @@ void CreatorReader::parseLabel(cocos2d::Label* label, const buffers::Label* labe
 
 	if ((cocos2d::Label::Overflow)overflowType == cocos2d::Label::Overflow::SHRINK)
 	{
-		const auto& fontSize = labelBuffer->fontSize();
-		label->setLineSpacing(lineHeight - fontSize);
+		label->setLineSpacing(dh);
 		label->setDimensions(contentSize->w(), contentSize->h());
 		label->enableWrap(enableWrap);
 	}
@@ -998,8 +1066,7 @@ void CreatorReader::parseLabel(cocos2d::Label* label, const buffers::Label* labe
 
 	if ((cocos2d::Label::Overflow)overflowType == cocos2d::Label::Overflow::RESIZE_HEIGHT)
 	{
-		const auto& fontSize = labelBuffer->fontSize();
-		label->setLineSpacing(lineHeight - fontSize);
+		label->setLineSpacing(dh);
 		label->setDimensions(contentSize->w(), contentSize->h());
 		//label->enableWrap(enableWrap);
 	}
@@ -1061,6 +1128,8 @@ void CreatorReader::parseRichText(CreatorRichText* richText, const buffers::Rich
 	richText->setWrapMode(cocos2d::ui::RichText::WRAP_PER_CHAR);
 	richText->setVerticalSpace(richTextBuffer->lineHeight()- fontSize);
 
+
+	richText->setHorizontalAlignment((cocos2d::ui::RichText::HorizontalAlignment)richTextBuffer->horizontalAlignment());
     const auto& text = richTextBuffer->text();
     if (text)
     {
@@ -1318,6 +1387,7 @@ void CreatorReader::parseButton(CreatorButton* button, const buffers::Button* bu
     {
         button->setZoomScale(buttonBuffer->zoomScale() - 1);
         button->setPressedActionEnabled(true);
+		button->setOrignScale(button->getScale());
     }
 	else
 	{
@@ -1372,9 +1442,20 @@ void CreatorReader::parseLayout(CreatorLayout* layout, const buffers::Layout* la
 	const auto& frameName = layoutBuffer->spriteFrameName();
 	if (frameName)
 	{
+		auto bgFrame = cocos2d::SpriteFrameCache::getInstance()->getSpriteFrameByName(frameName->str());
+		cocos2d::Rect sRect;
+		if (bgFrame)
+		{
+			sRect = bgFrame->getCenterRect();
+		}
 		layout->setBackGroundImageScale9Enabled(true);
 		layout->setBackGroundImage(frameName->str(), ui::Widget::TextureResType::LOCAL);
 		layout->setBackGroundImageColor(layout->getColor());
+
+		if (bgFrame)
+		{
+			layout->setBackGroundImageCapInsets(sRect);
+		}
 	}
 
 	layout->setPaddingBottom(layoutBuffer->paddingBottom());
@@ -1531,8 +1612,10 @@ void CreatorReader::parseToggle(CreatorRadioButton* checkBox, const buffers::Tog
 	checkBox->setToggleGroup(isToggleGroup);
 
 	//name
-	if (toggleBuffer->backgroundNodeName()){
+	checkBox->setNodeBgName("Background");
+	if (toggleBuffer->backgroundNodeName()) {
 		checkBox->getRendererBackground()->setName(toggleBuffer->backgroundNodeName()->str());
+		checkBox->setNodeBgName(toggleBuffer->backgroundNodeName()->str());
 	}
 	else
 	{
@@ -1546,6 +1629,10 @@ void CreatorReader::parseToggle(CreatorRadioButton* checkBox, const buffers::Tog
 
 	
 	if (toggleBuffer->checkMarkNodeName()) {
+
+		std::string sName = toggleBuffer->checkMarkNodeName()->str();
+		checkBox->setNodeCheckmarkName(sName);
+
 		auto frontNode = checkBox->getRendererFrontCross();
 		frontNode->setName(toggleBuffer->checkMarkNodeName()->str());
 		

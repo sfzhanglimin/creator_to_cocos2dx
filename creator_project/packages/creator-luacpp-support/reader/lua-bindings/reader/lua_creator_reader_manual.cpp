@@ -31,6 +31,7 @@
 #include "base/CCEventListenerFocus.h"
 
 #include "collider/ColliderManager.h"
+#include "AnimationManager.h"
 #include "ui/PageView.h"
 #include "ui/RadioButton.h"
 #include "ui/RadioButtonGroup.h"
@@ -123,16 +124,163 @@ static int lua_ColliderManager_registerCollitionCallback(lua_State* L)
 
 static void extendColliderManager(lua_State* L)
 {
-    lua_pushstring(L, "creator.ColliderManager");
-    lua_rawget(L, LUA_REGISTRYINDEX);
-    if (lua_istable(L,-1))
-    {
-        tolua_function(L, "registerCollitionCallback", lua_ColliderManager_registerCollitionCallback);
-        tolua_function(L, "unregisterCollisionCallback", lua_ColliderManager_unregisterCollisionCallback);
-    }
-    lua_pop(L, 1);
+	lua_pushstring(L, "creator.ColliderManager");
+	lua_rawget(L, LUA_REGISTRYINDEX);
+	if (lua_istable(L, -1))
+	{
+		tolua_function(L, "registerCollitionCallback", lua_ColliderManager_registerCollitionCallback);
+		tolua_function(L, "unregisterCollisionCallback", lua_ColliderManager_unregisterCollisionCallback);
+	}
+	lua_pop(L, 1);
 }
 
+
+
+int lua_creator_reader_AnimationManager_playAnimationClip(lua_State* tolua_S)
+{
+	int argc = 0;
+	creator::AnimationManager* cobj = nullptr;
+	bool ok = true;
+
+#if COCOS2D_DEBUG >= 1
+	tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+	if (!tolua_isusertype(tolua_S, 1, "creator.AnimationManager", 0, &tolua_err)) goto tolua_lerror;
+#endif
+
+	cobj = (creator::AnimationManager*)tolua_tousertype(tolua_S, 1, 0);
+
+#if COCOS2D_DEBUG >= 1
+	if (!cobj)
+	{
+		tolua_error(tolua_S, "invalid 'cobj' in function 'lua_creator_reader_AnimationManager_playAnimationClip'", nullptr);
+		return 0;
+	}
+#endif
+
+	argc = lua_gettop(tolua_S) - 1;
+	if (argc == 2)
+	{
+		cocos2d::Node* arg0;
+		std::string arg1;
+
+		ok &= luaval_to_object<cocos2d::Node>(tolua_S, 2, "cc.Node", &arg0, "creator.AnimationManager:playAnimationClip");
+
+		ok &= luaval_to_std_string(tolua_S, 3, &arg1, "creator.AnimationManager:playAnimationClip");
+		if (!ok)
+		{
+			tolua_error(tolua_S, "invalid arguments in function 'lua_creator_reader_AnimationManager_playAnimationClip'", nullptr);
+			return 0;
+		}
+		cobj->playAnimationClip(arg0, arg1);
+		lua_settop(tolua_S, 1);
+		return 1;
+	}
+
+	else if (argc == 3)
+	{
+
+
+
+		cocos2d::Node* arg0;
+		std::string arg1;
+
+		ok &= luaval_to_object<cocos2d::Node>(tolua_S, 2, "cc.Node", &arg0, "creator.AnimationManager:playAnimationClip");
+
+		ok &= luaval_to_std_string(tolua_S, 3, &arg1, "creator.AnimationManager:playAnimationClip");
+		if (!ok)
+		{
+			tolua_error(tolua_S, "invalid arguments in function 'lua_creator_reader_AnimationManager_playAnimationClip'", nullptr);
+			return 0;
+		}
+
+
+		LUA_FUNCTION handler = (toluafix_ref_function(tolua_S, 4, 0));
+
+
+		auto func = [=]()
+		{
+			auto stack = cocos2d::LuaEngine::getInstance()->getLuaStack();
+			stack->executeFunctionByHandler(handler, 0);
+			stack->clean();
+		};
+
+		ScriptHandlerMgr::getInstance()->addCustomHandler((void*)cobj, handler);
+
+		cobj->playAnimationClip(arg0, arg1, func);
+
+		lua_settop(tolua_S, 1);
+		return 1;
+
+	}
+	luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "creator.AnimationManager:playAnimationClip", argc, 2);
+	return 0;
+
+#if COCOS2D_DEBUG >= 1
+	tolua_lerror:
+				tolua_error(tolua_S, "#ferror in function 'lua_creator_reader_AnimationManager_playAnimationClip'.", &tolua_err);
+#endif
+
+				return 0;
+}
+
+
+int lua_creator_reader_AnimationManager_stopAllAnimationClips(lua_State* tolua_S)
+{
+	int argc = 0;
+	creator::AnimationManager* cobj = nullptr;
+	bool ok = true;
+
+#if COCOS2D_DEBUG >= 1
+	tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+	if (!tolua_isusertype(tolua_S, 1, "creator.AnimationManager", 0, &tolua_err)) goto tolua_lerror;
+#endif
+
+	cobj = (creator::AnimationManager*)tolua_tousertype(tolua_S, 1, 0);
+
+#if COCOS2D_DEBUG >= 1
+	if (!cobj)
+	{
+		tolua_error(tolua_S, "invalid 'cobj' in function 'lua_creator_reader_AnimationManager_stopAllAnimationClips'", nullptr);
+		return 0;
+	}
+#endif
+
+	
+	cobj->stopAllAnimationClips();
+	lua_settop(tolua_S, 1);
+	return 1;
+	
+
+#if COCOS2D_DEBUG >= 1
+	tolua_lerror:
+				tolua_error(tolua_S, "#ferror in function 'lua_creator_reader_AnimationManager_stopAllAnimationClips'.", &tolua_err);
+#endif
+
+				return 0;
+}
+
+
+static void extendAnimationManager(lua_State* L)
+{
+	lua_pushstring(L, "creator.AnimationManager");
+	lua_rawget(L, LUA_REGISTRYINDEX);
+	if (lua_istable(L, -1))
+	{
+		tolua_function(L, "playAnimationClip", lua_creator_reader_AnimationManager_playAnimationClip);
+		tolua_function(L, "stopAllAnimationClips", lua_creator_reader_AnimationManager_stopAllAnimationClips);
+		
+	
+	}
+	lua_pop(L, 1);
+}
 
 
 static int lua_register_creator_reader_pageView(lua_State* tolua_S)
@@ -166,13 +314,52 @@ static int lua_register_creator_reader_button(lua_State* tolua_S)
 
 
 
+
+
+
+
+static int lua_radioButton_create(lua_State* tolua_S)
+{
+	int argc = 0;
+	bool ok = true;
+
+#if COCOS2D_DEBUG >= 1
+	tolua_Error tolua_err;
+#endif
+
+#if COCOS2D_DEBUG >= 1
+	if (!tolua_isusertable(tolua_S, 1, "creator.CreatorRadioButton", 0, &tolua_err)) goto tolua_lerror;
+#endif
+
+	argc = lua_gettop(tolua_S) - 1;
+
+	if (argc == 2)
+	{
+		std::string sBG = lua_tostring(tolua_S, 2);
+
+		std::string sSelect = lua_tostring(tolua_S, 3);
+
+		creator::CreatorRadioButton* ret = creator::CreatorRadioButton::create(sBG,sSelect);
+		object_to_luaval<creator::CreatorRadioButton>(tolua_S, "creator.CreatorRadioButton", (creator::CreatorRadioButton*)ret);
+		return 1;
+	}
+	luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "creator.CreatorRadioButton:create", argc, 2);
+	return 0;
+#if COCOS2D_DEBUG >= 1
+	tolua_lerror:
+				tolua_error(tolua_S, "#ferror in function 'lua_radioButton_create'.", &tolua_err);
+#endif
+				return 0;
+}
+
+
 static int lua_register_creator_reader_radioButton(lua_State* tolua_S)
 {
 	tolua_usertype(tolua_S, "creator.CreatorRadioButton");
 	tolua_cclass(tolua_S, "CreatorRadioButton", "creator.CreatorRadioButton", "ccui.RadioButton", nullptr);
 
 	tolua_beginmodule(tolua_S, "CreatorRadioButton");
-
+	tolua_function(tolua_S, "create", lua_radioButton_create);
 	tolua_endmodule(tolua_S);
 	std::string typeName = typeid(creator::CreatorRadioButton).name();
 	g_luaType[typeName] = "creator.CreatorRadioButton";
@@ -198,13 +385,46 @@ static int lua_register_creator_reader_radioButtonGroup(lua_State* tolua_S)
 
 
 
+static int lua_Layout_create(lua_State* tolua_S)
+{
+	int argc = 0;
+	bool ok = true;
+
+#if COCOS2D_DEBUG >= 1
+	tolua_Error tolua_err;
+#endif
+
+#if COCOS2D_DEBUG >= 1
+	if (!tolua_isusertable(tolua_S, 1, "creator.CreatorLayout", 0, &tolua_err)) goto tolua_lerror;
+#endif
+
+	argc = lua_gettop(tolua_S) - 1;
+
+	if (argc == 0)
+	{
+		
+		creator::CreatorLayout* ret = creator::CreatorLayout::create();
+		object_to_luaval<creator::CreatorLayout>(tolua_S, "creator.CreatorLayout", (creator::CreatorLayout*)ret);
+		return 1;
+	}
+	luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "creator.CreatorLayout:create", argc, 0);
+	return 0;
+#if COCOS2D_DEBUG >= 1
+	tolua_lerror:
+				tolua_error(tolua_S, "#ferror in function 'lua_Layout_create'.", &tolua_err);
+#endif
+				return 0;
+}
+
+
+
 static int lua_register_creator_reader_layout(lua_State* tolua_S)
 {
 	tolua_usertype(tolua_S, "creator.CreatorLayout");
 	tolua_cclass(tolua_S, "CreatorLayout", "creator.CreatorLayout", "ccui.Layout", nullptr);
 
 	tolua_beginmodule(tolua_S, "CreatorLayout");
-
+	tolua_function(tolua_S, "create", lua_Layout_create);
 	tolua_endmodule(tolua_S);
 	std::string typeName = typeid(creator::CreatorLayout).name();
 	g_luaType[typeName] = "creator.CreatorLayout";
@@ -212,6 +432,63 @@ static int lua_register_creator_reader_layout(lua_State* tolua_S)
 	return 1;
 }
 
+
+
+
+
+static int lua_richText_create(lua_State* tolua_S)
+{
+		int argc = 0;
+		bool ok = true;
+
+#if COCOS2D_DEBUG >= 1
+		tolua_Error tolua_err;
+#endif
+
+#if COCOS2D_DEBUG >= 1
+		if (!tolua_isusertable(tolua_S, 1, "creator.CreatorRichText", 0, &tolua_err)) goto tolua_lerror;
+#endif
+
+		argc = lua_gettop(tolua_S) - 1;
+
+		if (argc == 0)
+		{
+
+			creator::CreatorRichText* ret = creator::CreatorRichText::create();
+			object_to_luaval<creator::CreatorRichText>(tolua_S, "creator.CreatorRichText", (creator::CreatorRichText*)ret);
+			return 1;
+		}
+		luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "creator.CreatorRichText:create", argc, 0);
+		return 0;
+#if COCOS2D_DEBUG >= 1
+		tolua_lerror:
+					tolua_error(tolua_S, "#ferror in function 'lua_richText_create'.", &tolua_err);
+#endif
+					return 0;
+	}
+static int lua_richText_removeAllElements(lua_State* L)
+{
+
+
+	tolua_Error tolua_err;
+	if (!tolua_isusertype(L, 1, "creator.CreatorRichText", 0, &tolua_err))
+	{
+		tolua_error(L, "'removeAllElements' is not executed with CreatorRichText\n", NULL);
+		return 0;
+	}
+
+	auto self = static_cast<creator::CreatorRichText*>(tolua_tousertype(L, 1, 0));
+
+	int argc = lua_gettop(L) - 1;
+	if (0 == argc)
+	{
+		self->removeAllElements();
+	}
+	else
+		luaL_error(L, "'lua_richText_removeAllElements' function of CreatorRichText has wrong number of arguments: %d, was expecting %d\n", argc, 0);
+
+	return 0;
+}
 
 
 static int lua_richText_getElement(lua_State* L)
@@ -332,6 +609,48 @@ static int lua_richText_setElementText(lua_State* L)
 }
 
 
+static int lua_richText_setXMLData(lua_State* L)
+{
+	if (nullptr == L)
+		return 0;
+
+	tolua_Error tolua_err;
+	if (!tolua_isusertype(L, 1, "creator.CreatorRichText", 0, &tolua_err))
+	{
+		tolua_error(L, "'setXMLData' is not executed with CreatorRichText\n", NULL);
+		return 0;
+	}
+
+	auto self = static_cast<creator::CreatorRichText*>(tolua_tousertype(L, 1, 0));
+
+	int argc = lua_gettop(L) - 1;
+	if (1 == argc)
+	{
+		if (!lua_isstring(L, 2))
+		{
+			luaL_error(L, "'setXMLData' first parameter is not a string\n");
+			return 0;
+		}
+
+	
+		std::string sText = lua_tostring(L, 2);
+
+
+		self->setXMLData( sText);
+
+		return 1;
+
+	}
+	else
+		luaL_error(L, "'getElement' function of CreatorRichText has wrong number of arguments: %d, was expecting %d\n", argc, 1);
+
+	return 0;
+}
+
+
+
+
+
 
 static int lua_register_creator_reader_richText(lua_State* tolua_S)
 {
@@ -339,8 +658,13 @@ static int lua_register_creator_reader_richText(lua_State* tolua_S)
 	tolua_cclass(tolua_S, "CreatorRichText", "creator.CreatorRichText", "ccui.RichText", nullptr);
 
 	tolua_beginmodule(tolua_S, "CreatorRichText");
+	tolua_function(tolua_S, "create", lua_richText_create);
+	tolua_function(tolua_S, "removeAllElements", lua_richText_removeAllElements);
+	
 	tolua_function(tolua_S, "getElement", lua_richText_getElement);
 	tolua_function(tolua_S, "setElementText", lua_richText_setElementText);
+	tolua_function(tolua_S, "setXMLData", lua_richText_setXMLData);
+	
 	
 	tolua_endmodule(tolua_S);
 	std::string typeName = typeid(creator::CreatorRichText).name();
@@ -365,6 +689,6 @@ int register_all_creator_reader_manual(lua_State* L)
 	lua_register_creator_reader_richText(L);
 	
     extendColliderManager(L);
-
+	extendAnimationManager(L);
     return 0;
 }

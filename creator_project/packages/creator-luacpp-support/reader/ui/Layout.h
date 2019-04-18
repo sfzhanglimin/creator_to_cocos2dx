@@ -86,9 +86,12 @@ public :
 	void doVerticalLayout();
 	void doGridLayout();
 	
+	cocos2d::Node* getFirstNode();
 	void doLayout();
 
-	cocos2d::Vec2 &getGridStartPos();
+
+
+	cocos2d::Vec2 getGridStartPos();
 	cocos2d::Vec2 setGridCellPos(Node* pNode, cocos2d::Vec2& desPos, cocos2d::Size &sCurLineSize);
 	cocos2d::Vec2 setGridCellPosInHAxizAndNoneMode(Node* pNode, cocos2d::Vec2& desPos, cocos2d::Size &sCurLineSize);
 	cocos2d::Vec2 setGridCellPosInVAxizAndNoneMode(Node* pNode, cocos2d::Vec2& desPos, cocos2d::Size &sCurLineSize);

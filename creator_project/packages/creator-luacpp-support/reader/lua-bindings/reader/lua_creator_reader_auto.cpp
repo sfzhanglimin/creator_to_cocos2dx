@@ -113,59 +113,7 @@ int lua_creator_reader_AnimationManager_stopAnimationClip(lua_State* tolua_S)
 
     return 0;
 }
-int lua_creator_reader_AnimationManager_playAnimationClip(lua_State* tolua_S)
-{
-    int argc = 0;
-    creator::AnimationManager* cobj = nullptr;
-    bool ok  = true;
 
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"creator.AnimationManager",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (creator::AnimationManager*)tolua_tousertype(tolua_S,1,0);
-
-#if COCOS2D_DEBUG >= 1
-    if (!cobj) 
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_creator_reader_AnimationManager_playAnimationClip'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 2) 
-    {
-        cocos2d::Node* arg0;
-        std::string arg1;
-
-        ok &= luaval_to_object<cocos2d::Node>(tolua_S, 2, "cc.Node",&arg0, "creator.AnimationManager:playAnimationClip");
-
-        ok &= luaval_to_std_string(tolua_S, 3,&arg1, "creator.AnimationManager:playAnimationClip");
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_creator_reader_AnimationManager_playAnimationClip'", nullptr);
-            return 0;
-        }
-        cobj->playAnimationClip(arg0, arg1);
-        lua_settop(tolua_S, 1);
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "creator.AnimationManager:playAnimationClip",argc, 2);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_creator_reader_AnimationManager_playAnimationClip'.",&tolua_err);
-#endif
-
-    return 0;
-}
 int lua_creator_reader_AnimationManager_resumeAnimationClip(lua_State* tolua_S)
 {
     int argc = 0;
@@ -233,7 +181,6 @@ int lua_register_creator_reader_AnimationManager(lua_State* tolua_S)
     tolua_beginmodule(tolua_S,"AnimationManager");
         tolua_function(tolua_S,"pauseAnimationClip",lua_creator_reader_AnimationManager_pauseAnimationClip);
         tolua_function(tolua_S,"stopAnimationClip",lua_creator_reader_AnimationManager_stopAnimationClip);
-        tolua_function(tolua_S,"playAnimationClip",lua_creator_reader_AnimationManager_playAnimationClip);
         tolua_function(tolua_S,"resumeAnimationClip",lua_creator_reader_AnimationManager_resumeAnimationClip);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(creator::AnimationManager).name();

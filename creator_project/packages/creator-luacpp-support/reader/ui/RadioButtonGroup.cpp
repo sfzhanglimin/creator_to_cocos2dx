@@ -1,4 +1,5 @@
 #include "RadioButtonGroup.h"
+#include "RadioButton.h"
 
 NS_CCR_BEGIN
 
@@ -27,5 +28,28 @@ CreatorRadioButtonGroup::~CreatorRadioButtonGroup()
 {
 }
 
+
+void CreatorRadioButtonGroup::addRadioButton(ui::RadioButton* radioButton)
+{
+	ui::RadioButtonGroup::addRadioButton(radioButton);
+
+	if (radioButton->isSelected())
+	{
+		if (radioButton != _selectedRadioButton)
+		{
+			radioButton->setSelected(false);
+		}
+	}
+}
+
+
+void CreatorRadioButtonGroup::callGroupCallback(CreatorRadioButton* pButton, int eventType)
+{
+	if (_radioButtonGroupEventCallback)
+	{
+		int index = (int)_radioButtons.getIndex(pButton);
+		_radioButtonGroupEventCallback(pButton, index, EventType::SELECT_CHANGED);
+	}
+}
 
 NS_CCR_END

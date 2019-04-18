@@ -195,12 +195,16 @@ void AnimateClip::startAnimate()
 
 void AnimateClip::stopAnimate()
 {
-    if (_endCallback)
-        _endCallback();
+	if (_running)
+	{
+		if (_endCallback)
+			_endCallback();
 
-    unscheduleUpdate();
-    // release self
-    _running = false;
+		unscheduleUpdate();
+		// release self
+		_running = false;
+	}
+
 }
 
 void AnimateClip::pauseAnimate()
@@ -261,7 +265,7 @@ void AnimateClip::update(float dt) {
 void AnimateClip::doUpdate(const AnimProperties& animProperties) const
 {
     auto target = getTarget(animProperties.path);
-    if (target)
+    if (target && target->getParent())
     {
         auto elapsed = computeElapse();
 
@@ -270,8 +274,9 @@ void AnimateClip::doUpdate(const AnimProperties& animProperties) const
 		if (getNextValue(animProperties.animPosition, elapsed, nextPos))
 		{
 			auto s =target->getParent()->getContentSize();
-			nextPos.x += s.width*0.5;
-			nextPos.y += s.height*0.5;
+			auto ap = target->getParent()->getAnchorPoint();
+			nextPos.x += s.width*ap.x;
+			nextPos.y += s.height*ap.y;
 			target->setPosition(nextPos);
 		}
             
@@ -315,12 +320,41 @@ void AnimateClip::doUpdate(const AnimProperties& animProperties) const
             target->setAnchorPoint(cocos2d::Vec2(target->getAnchorPoint().x, nextValue));
 
         // positoin x
-        if (getNextValue(animProperties.animPositionX, elapsed, nextValue))
-            target->setPositionX(nextValue);
+		if (getNextValue(animProperties.animPositionX, elapsed, nextValue))
+		{
+			auto s = target->getParent()->getContentSize();
+			auto ap = target->getParent()->getAnchorPoint();
+			nextValue += s.width*ap.x;
+
+			target->setPositionX(nextValue);
+		}
 
         // position y
-        if (getNextValue(animProperties.animPositionY, elapsed, nextValue))
-            target->setPositionY(nextValue);
+		if (getNextValue(animProperties.animPositionY, elapsed, nextValue))
+		{
+			auto s = target->getParent()->getContentSize();
+			auto ap = target->getParent()->getAnchorPoint();
+			nextValue += s.height*ap.y;
+			target->setPositionY(nextValue);
+		} 
+
+
+		// width 
+		if (getNextValue(animProperties.animWidth, elapsed, nextValue))
+		{
+			auto size = target->getContentSize();
+			size.width = nextValue;
+			target->setContentSize(size);
+		}
+
+		// height 
+		if (getNextValue(animProperties.animHeight, elapsed, nextValue))
+		{
+			auto size = target->getContentSize();
+			size.height = nextValue;
+			target->setContentSize(size);
+		}
+
 
 		std::string nextPath;
 		if (getNextValue(animProperties.animSpriteFrame, elapsed, nextPath))

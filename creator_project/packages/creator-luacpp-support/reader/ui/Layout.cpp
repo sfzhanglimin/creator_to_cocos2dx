@@ -81,6 +81,12 @@ void CreatorLayout::doHorizonalLayout()
 		for (int i = 0; i < count; i++)
 		{
 			auto pChild = pChildren.at(i);
+
+			if (!pChild->isVisible())
+			{
+				continue;
+			}
+
 			auto size = pChild->getContentSize();
 			auto anr = pChild->getAnchorPoint();
 
@@ -135,11 +141,15 @@ void CreatorLayout::doHorizonalLayout()
 		int count = getChildrenCount();
 		
 
-		float startX = parentSize.width - _paddingRight;
+		float startX = - _paddingRight;
 
 		for (int i = 0; i < count; i++)
 		{
 			auto pChild = pChildren.at(i);
+			if (!pChild->isVisible())
+			{
+				continue;
+			}
 			auto size = pChild->getContentSize();
 			auto anr = pChild->getAnchorPoint();
 
@@ -158,9 +168,23 @@ void CreatorLayout::doHorizonalLayout()
 		switch (_resizeModeType)
 		{
 		case creator::CreatorLayout::ResizeModeType::CONTAINER:
+		case creator::CreatorLayout::ResizeModeType::NONE:
 		{
-			float targetWidth = parentSize.width - (startX + _spacingX - _paddingLeft);
+			float targetWidth = - (startX + _spacingX - _paddingLeft);
 			this->setContentSize(Size(targetWidth, parentSize.height));
+
+
+		
+
+			for (int i = 0; i < count; i++)
+			{
+				auto pChild = pChildren.at(i);
+
+				float x = pChild->getPositionX();
+				x += targetWidth;
+				pChild->setPositionX(x);
+			}
+
 
 		}
 		break;
@@ -206,6 +230,10 @@ void CreatorLayout::doVerticalLayout()
 		for (int i = 0; i < count; i++)
 		{
 			auto pChild = pChildren.at(i);
+			if (!pChild->isVisible())
+			{
+				continue;
+			}
 			auto size = pChild->getContentSize();
 			auto anr = pChild->getAnchorPoint();
 
@@ -259,11 +287,15 @@ void CreatorLayout::doVerticalLayout()
 		int count = getChildrenCount();
 
 
-		float startY = parentSize.height - _paddingTop;
+		float startY = 0 - _paddingTop; //parentSize.height - _paddingTop;
 
 		for (int i = 0; i < count; i++)
 		{
 			auto pChild = pChildren.at(i);
+			if (!pChild->isVisible())
+			{
+				continue;
+			}
 			auto size = pChild->getContentSize();
 			auto anr = pChild->getAnchorPoint();
 
@@ -279,15 +311,10 @@ void CreatorLayout::doVerticalLayout()
 
 
 
+
 		switch (_resizeModeType)
 		{
-		case creator::CreatorLayout::ResizeModeType::CONTAINER:
-		{
-			float targetHeight= parentSize.height- (startY + _spacingY - _paddingBottom);
-			this->setContentSize(Size(parentSize.width, targetHeight ));
-
-		}
-		break;
+		
 		case creator::CreatorLayout::ResizeModeType::CHILDREN:
 		{
 
@@ -309,7 +336,28 @@ void CreatorLayout::doVerticalLayout()
 		}
 
 		break;
+		case creator::CreatorLayout::ResizeModeType::CONTAINER:
+		case creator::CreatorLayout::ResizeModeType::NONE:
+		{
+			startY = startY + _spacingY - _paddingBottom;
+
+			float targetHeight = -startY;//parentSize.height- (startY + _spacingY - _paddingBottom);
+			this->setContentSize(Size(parentSize.width, targetHeight));
+
+
+			for (int i = 0; i < count; i++)
+			{
+				auto pChild = pChildren.at(i);
+
+				float y = pChild->getPositionY();
+				y += targetHeight;
+				pChild->setPositionY(y);
+			}
+
+		}
 		default:
+
+
 			break;
 		}
 
@@ -325,17 +373,21 @@ void CreatorLayout::doGridLayout()
 	auto parentSize = this->getContentSize();
 
 
-	if (count > 1)
+	if (count > 0)
 	{
 		
 		Vec2 sCurPos = getGridStartPos();
 		Vec2 sNextPos = sCurPos;
-		auto node = pChildren.at(0);
+		auto node = getFirstNode();//pChildren.at(0);
 		auto sCurlineSize = node->getContentSize();
 
 		for (int i = 0; i < count; i++)
 		{
 			auto pChild = pChildren.at(i);
+			if (!pChild->isVisible())
+			{
+				continue;
+			}
 			sCurPos = sNextPos;
 			sNextPos = setGridCellPos(pChild, sCurPos, sCurlineSize);
 			
@@ -353,8 +405,21 @@ void CreatorLayout::doGridLayout()
 				}
 				else
 				{
-					float h = parentSize.height -  (sCurPos.y - sCurlineSize.height ) + _paddingBottom;
-					this->setContentSize(Size(parentSize.width, h));
+
+					float targetHeight = - (sCurPos.y - sCurlineSize.height) + _paddingBottom;
+					this->setContentSize(Size(parentSize.width, targetHeight));
+
+
+					for (int i = 0; i < count; i++)
+					{
+						auto pChild = pChildren.at(i);
+
+						float y = pChild->getPositionY();
+						y += targetHeight;
+						pChild->setPositionY(y);
+					}
+
+					
 				}				
 			}
 			else
@@ -366,8 +431,17 @@ void CreatorLayout::doGridLayout()
 				}
 				else
 				{
-					float w = parentSize.width - (sCurPos.x - sCurlineSize.width) + _paddingLeft;
+					float w =  - (sCurPos.x - sCurlineSize.width) + _paddingLeft;
 					this->setContentSize(Size(w, parentSize.height));
+
+					for (int i = 0; i < count; i++)
+					{
+						auto pChild = pChildren.at(i);
+
+						float x = pChild->getPositionX();
+						x += w;
+						pChild->setPositionX(x);
+					}
 				}
 			}
 		}
@@ -379,6 +453,19 @@ void CreatorLayout::doGridLayout()
 	
 
 	
+}
+
+cocos2d::Node* CreatorLayout::getFirstNode()
+{
+	auto pChildren = getChildren();
+	for (auto it = pChildren.begin(); it != pChildren.end(); it++)
+	{
+		if ((*it)->isVisible())
+		{
+			return (*it);
+		}
+	}
+	return pChildren.at(0);
 }
 
 void CreatorLayout::doLayout()
@@ -412,14 +499,28 @@ void CreatorLayout::doLayout()
 }
 
 
-cocos2d::Vec2 &CreatorLayout::getGridStartPos()
+cocos2d::Vec2 CreatorLayout::getGridStartPos()
 {
 	cocos2d::Vec2 sRet;
-	auto parentSize = this->getContentSize();
+	
 
-	sRet.x = _horizontalDirection == HDirectionType::LEFT_TO_RIGHT ? _paddingLeft : parentSize.width - _paddingRight;
 
-	sRet.y = _verticalDirection == VDirectionType::BOTTOM_TO_TOP ? _paddingBottom : parentSize.height - _paddingTop;
+	if (_resizeModeType == ResizeModeType::CHILDREN)
+	{
+		auto parentSize = this->getContentSize();
+		sRet.x = _horizontalDirection == HDirectionType::LEFT_TO_RIGHT ? _paddingLeft : parentSize.width -_paddingRight;
+
+		sRet.y = _verticalDirection == VDirectionType::BOTTOM_TO_TOP ? _paddingBottom : parentSize.height -_paddingTop;
+	}
+	else
+
+	{
+		sRet.x = _horizontalDirection == HDirectionType::LEFT_TO_RIGHT ? _paddingLeft : -_paddingRight;
+
+		sRet.y = _verticalDirection == VDirectionType::BOTTOM_TO_TOP ? _paddingBottom : -_paddingTop;
+	}
+
+	
 
 	return sRet;
 }

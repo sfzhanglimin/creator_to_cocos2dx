@@ -31,7 +31,7 @@
 #include"ShaderCache.h"
 using namespace cocos2d;
 NS_CCR_BEGIN
-
+class CreatorRadioButton;
 class CreatorRadioButtonGroup : public ui::RadioButtonGroup
 {
 public :
@@ -41,6 +41,9 @@ public :
 
 	static CreatorRadioButtonGroup* create();
 
+	virtual void addRadioButton(ui::RadioButton* radioButton);
+
+	void callGroupCallback(CreatorRadioButton* pButton,int eventType);
 
 };
 

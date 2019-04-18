@@ -45,13 +45,21 @@ struct AnimationInfo
 class AnimationManager : public cocos2d::Node
 {
 public:
-    void playAnimationClip(cocos2d::Node *target, const std::string &animationClipName);
+	typedef std::function<void()> AnimationCallback;
+
+	virtual void cleanup();
+
+    void playAnimationClip(cocos2d::Node *target, const std::string &animationClipName, AnimationCallback cb=nullptr);
     // if AnimationClip is stopped, can not run it again.
     void stopAnimationClip(cocos2d::Node *target, const std::string &animationClipName);
     void pauseAnimationClip(cocos2d::Node *target, const std::string &animationClipName);
     void resumeAnimationClip(cocos2d::Node *target, const std::string &animationClipName);
     // if a "Play On Load" animation is a loop animation, please stop it manually.
     void stopAnimationClipsRunByPlayOnLoad();
+	void stopAllAnimationClips();
+
+	
+
 private:
     friend class CreatorReader;
     
@@ -62,7 +70,7 @@ private:
     void addAnimation(const AnimationInfo& animationInfo);
     void playOnLoad();
 
-    void runAnimationClip(cocos2d::Node *target, AnimationClip* animationClip);
+    void runAnimationClip(cocos2d::Node *target, AnimationClip* animationClip, AnimationCallback cb);
     // AnimateClip will be released
     void removeAnimateClip(cocos2d::Node *target, const std::string &animationClipName);
     AnimateClip* getAnimateClip(cocos2d::Node *target, const std::string &animationClipName) const;
