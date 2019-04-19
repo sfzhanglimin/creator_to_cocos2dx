@@ -23,7 +23,16 @@ class SpineSkeleton extends Node {
         this.add_property_str('defaultAnimation', 'defaultAnimation', component);
         this.add_property_bool('loop', 'loop', component);
         this.add_property_bool('premultipliedAlpha', '_premultipliedAlpha', component);
-        this.add_property_int('timeScale', '_N$timeScale', component);
+        if(component._N$timeScale)
+        {
+            this.add_property_int('timeScale', '_N$timeScale', component);
+        }
+        if(component.timeScale)
+        {
+            this.add_property_int('timeScale', 'timeScale', component);
+        }
+        
+
         this.add_property_bool('debugSlots', '_N$debugSlots', component);
         this.add_property_bool('debugBones', '_N$debugBones', component);
     }

@@ -208,9 +208,19 @@ let get_spine_info_by_uuid = function (uuid) {
     if (uuid in state._uuid)
         return state._uuid[uuid];
 
-    let jsonfile = get_file_by_uuid(uuid);//uuidinfos[uuid];
+
+    let jsonfile = get_meta_by_uuid(uuid);//uuidinfos[uuid];
     if (jsonfile) {
-        let contents = fs.readFileSync(jsonfile);
+
+
+        let jsonPath = get_relative_full_path_by_uuid(uuid);
+        let atlasPath = get_relative_full_path_by_uuid(jsonfile.atlas);
+
+
+        state._uuid[uuid] = jsonPath;
+        state._uuid[uuid].atlas_url = atlasPath;
+
+       /* let contents = fs.readFileSync(jsonfile);
         let contents_json = JSON.parse(contents);
         let current_dir = path.basename(jsonfile, '.json');
         
@@ -224,9 +234,9 @@ let get_spine_info_by_uuid = function (uuid) {
         });
         
         // get atlas path
-        state._uuid[uuid].atlas_url = get_relative_full_path_by_uuid(contents_json.atlasUrl.__uuid__);
+       // state._uuid[uuid].atlas_url = get_relative_full_path_by_uuid(contents_json.atlasUrl.__uuid__);
         // add to _uuid to copy resources
-        state._uuid[uuid + '-atlas'] = state._uuid[uuid].atlas_url;
+        //state._uuid[uuid + '-atlas'] = state._uuid[uuid].atlas_url;
 
         // get textures path
         for (let i = 0, len = contents_json.textures.length; i < len; ++i) {
@@ -234,7 +244,7 @@ let get_spine_info_by_uuid = function (uuid) {
             // just create a unique key
             let new_key = uuid + '-texture-' + i;
             state._uuid[new_key] = get_relative_full_path_by_uuid(texture.__uuid__);
-        }
+        }*/
 
         return state._uuid[uuid];
     }

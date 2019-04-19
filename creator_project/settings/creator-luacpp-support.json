@@ -1,7 +1,7 @@
 {
   "autoBuild": false,
   "exportResourceDynamicallyLoaded": false,
-  "exportResourceOnly": false,
-  "path": "",
+  "exportResourceOnly": true,
+  "path": "D:\\learn\\kv_creator_to_cocos2dx\\HelloWorld",
   "setup": false
 }

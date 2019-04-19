@@ -2,7 +2,7 @@
   "__type__": "cc.AnimationClip",
   "_name": "Animation1",
   "_objFlags": 0,
-  "_rawFiles": null,
+  "_native": "",
   "_duration": 5.4,
   "sample": 60,
   "speed": 1,
@@ -128,7 +128,7 @@
           {
             "frame": 0.15,
             "value": {
-              "__uuid__": "4f39fc84-eaed-4f05-95ff-f636066e8de8"
+              "__uuid__": "fb83d83d-136a-463f-9d42-455a6b624d39"
             }
           }
         ],
