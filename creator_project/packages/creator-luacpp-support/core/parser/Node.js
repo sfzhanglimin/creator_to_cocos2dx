@@ -207,8 +207,19 @@ class Node {
         this.add_property_vec2('position', '_position', data);
         this.add_property_int('rotationSkewX', '_rotationX', data);
         this.add_property_int('rotationSkewY', '_rotationY', data);
-        this.add_property_int('scaleX', '_scaleX', data);
-        this.add_property_int('scaleY', '_scaleY', data);
+
+        if(data._scale)
+        {
+            this.add_property_int('scaleX', 'x', data._scale);
+            this.add_property_int('scaleY', 'y', data._scale);
+        }   
+        else
+        {
+            this.add_property_int('scaleX', '_scaleX', data);
+            this.add_property_int('scaleY', '_scaleY', data);
+        }
+        
+
         this.add_property_int('skewX', '_skewX', data);
         this.add_property_int('skewY', '_skewY', data);
         this.add_property_int('tag', '_tag', data);
