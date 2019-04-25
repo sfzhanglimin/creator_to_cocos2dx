@@ -38,7 +38,6 @@
 #include <vector>
 #include <cmath>
 #include <algorithm>
-#include "VxNativeUtils.h"
 
 using namespace cocos2d;
 using namespace creator;
@@ -968,30 +967,20 @@ cocos2d::Label* CreatorReader::createLabel(const buffers::Label* labelBuffer) co
     cocos2d::Label* label = nullptr;
     auto text = labelBuffer->labelText();
     auto fontSize = labelBuffer->fontSize();
-    std::string fontName = labelBuffer->fontName()->str();
+    auto fontName = labelBuffer->fontName();
 
     auto fontType = labelBuffer->fontType();
-
-	if (fontName.compare("arial") == 0 || fontName.compare("Arial") == 0)
-	{
-		auto temp = VxNativeUtils::getDefaultFontName();
-		if (!temp.empty())
-		{
-			fontType = FontType_TTF;
-			fontName = VxNativeUtils::getDefaultFontName();
-		}
-	}
     switch (fontType) {
         case buffers::FontType_TTF:
-            label = cocos2d::Label::createWithTTF(text->str(), fontName, fontSize);
+            label = cocos2d::Label::createWithTTF(text->str(), fontName->str(), fontSize);
             break;
         case buffers::FontType_BMFont:
-            label = cocos2d::Label::createWithBMFont(fontName, text->str());
+            label = cocos2d::Label::createWithBMFont(fontName->str(), text->str());
             if (label)
                 label->setBMFontSize(fontSize);
             break;
         case buffers::FontType_System:
-            label = cocos2d::Label::createWithSystemFont(text->str(), fontName, fontSize);
+            label = cocos2d::Label::createWithSystemFont(text->str(), fontName->str(), fontSize);
             break;
     }
 
@@ -1237,7 +1226,7 @@ void CreatorReader::parseScrollView(cocos2d::ui::ScrollView* scrollView, const b
     scrollView->setDirection(static_cast<cocos2d::ui::ScrollView::Direction>(direction));
     scrollView->setBounceEnabled(bounceEnabled);
     scrollView->setInnerContainerSize(cocos2d::Size(innerContainerSize->w(), innerContainerSize->h()));
-
+	scrollView->setScrollBarEnabled(false);
     // FIXME: Call setJumpToPercent at the end, because it depens on having the contentSize correct
     // FIXME: uses the anchorPoint for the percent in the bar, but this migh break if it changes the position of the bar content node
     const auto& anchorPoint = scrollViewBuffer->node()->anchorPoint();
@@ -1365,8 +1354,13 @@ void CreatorReader::parseButton(CreatorButton* button, const buffers::Button* bu
 	button->setActionDuration(buttonBuffer->duration());
 
 
-
 	const auto transtionTyp = buttonBuffer->transition();
+
+
+	if (buttonBuffer->backgroundNodeName()) {
+		//checkBox->getRendererBackground()->setName(button->backgroundNodeName()->str());
+		button->setNodeBgName(buttonBuffer->backgroundNodeName()->str());
+	}
 
 
 	if (transtionTyp == CreatorButton::COLOR)

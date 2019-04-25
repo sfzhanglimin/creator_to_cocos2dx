@@ -65,9 +65,9 @@ public :
 		const std::string& disableImage = "",
 		TextureResType texType = TextureResType::LOCAL);
 
+	void addChild(Node *child) override;
 
-
-
+	virtual void onPressStateChangedToCancel();
 	virtual void onPressStateChangedToNormal() override;
 	virtual void onPressStateChangedToPressed() override;
 	virtual void onPressStateChangedToDisabled() override;
@@ -90,6 +90,13 @@ public :
 	inline void enableAutoGrayEffect(bool  enableAutoGrayEffect) { _enableAutoGrayEffect = enableAutoGrayEffect; }
 	int isAutoGrayEffect() const { return _enableAutoGrayEffect; }
 
+	virtual void onTouchEnded(Touch *touch, Event *unusedEvent)override;
+
+	void cancelUpEvent()override;
+
+	void setNodeBgName(std::string sBgName);
+	std::string getNodeBgName() { return _nodeBgName; }
+
 public:
 	float _actionDuration;
 	TransitionType _transitionType;
@@ -99,7 +106,7 @@ public:
 	Color4B _disableColor;
 
 	bool _enableAutoGrayEffect;
-
+	std::string _nodeBgName;
 };
 
 NS_CCR_END
