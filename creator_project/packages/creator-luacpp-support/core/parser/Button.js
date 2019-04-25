@@ -1,6 +1,7 @@
 const Node = require('./Node');
 const Utils = require('../Utils');
 const Sprite = require('./Sprite');
+const state = require('./Global').state;
 const get_sprite_frame_name_by_uuid = require('./Utils').get_sprite_frame_name_by_uuid;
 
 class Button extends Node {
@@ -26,6 +27,20 @@ class Button extends Node {
             this._properties.spriteFrameName = get_sprite_frame_name_by_uuid(spr_component._spriteFrame.__uuid__);
             this._properties.trimEnabled = spr_component._isTrimmedMode
             this._properties.spriteType = Sprite.SPRITE_TYPES[spr_component._type];
+        }
+        else{
+            let background_node_id = but_component._N$target.__id__;
+            let background_node_data = state._json_data[background_node_id];
+            let background_component_id = background_node_data._components[0].__id__;
+            let background_component = state._json_data[background_component_id];
+             if (background_component._spriteFrame)
+            {
+                this._properties.spriteFrameName = get_sprite_frame_name_by_uuid(background_component._spriteFrame.__uuid__);
+
+                this._properties.backgroundNodeName = background_node_data._name
+            }
+        
+
         }
         
         // transition

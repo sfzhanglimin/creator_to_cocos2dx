@@ -204,6 +204,7 @@ table Button
     zoomScale:float;
     spriteType:SpriteType;
     trimEnabled:bool = false;
+    backgroundNodeName:string;
     spriteFrameName:string;
     pressedSpriteFrameName:string;
     disabledSpriteFrameName:string;
