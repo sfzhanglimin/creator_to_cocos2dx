@@ -1,6 +1,9 @@
 # 使用操作
+
 1，拉取代码
+
 2，运行 Hello world 目录下的 mklink.bat，创建软链接
+
 3，运行 simulator/win32 目录下 HelloWorld.exe
 
 
@@ -12,24 +15,24 @@
 
 ## 2，Label
 bugfixed：
-    * 因 Line height 影响位置问题
+  * 因 Line height 影响位置问题
 新支持 feat:
-    - CLAMP 裁剪，超出宽高将不显示
-    - Enable Wrap 自动换行
-    - SHRINK 自动根据节点约束框缩放大小
-    - RESIZE_HEIGHT 根据文本自动更新 height
+  - CLAMP 裁剪，超出宽高将不显示
+  - Enable Wrap 自动换行
+  - SHRINK 自动根据节点约束框缩放大小
+  - RESIZE_HEIGHT 根据文本自动更新 height
 
 ## 3，Sprite
 bugfixed：
-    - 因图片四周有透明裁剪而引起的位置问题
-    - 选择 SLICED 时，不管有没勾选 Trim 项，都会裁剪透明部分，修复此设置引起的位置问题
+  - 因图片四周有透明裁剪而引起的位置问题
+  - 选择 SLICED 时，不管有没勾选 Trim 项，都会裁剪透明部分，修复此设置引起的位置问题
 新支持 feat：
-    - Trim 裁剪周围透明部分，或者不裁剪都支持
-    - SLICED 九宫格模式
-    - TILED 平铺原始大小图片
+  - Trim 裁剪周围透明部分，或者不裁剪都支持
+  - SLICED 九宫格模式
+  - TILED 平铺原始大小图片
 
 暂不支持：
-    - FILLED 模式，计划支持
+  - FILLED 模式，计划支持
 
 
 ## 4，Button
@@ -38,23 +41,23 @@ bugfixed：
   - 选择缩放模式时，不会缩放子节点问题
 
 新支持
-    -  COLOR 模式
-    -  SCALE 模式的 duration
-    -  SPRIT 模式
-    -  enable Auto gray effect，就是禁用的时候自动变成灰色按钮
+  -  COLOR 模式
+  -  SCALE 模式的 duration
+  -  SPRIT 模式
+  -  enable Auto gray effect，就是禁用的时候自动变成灰色按钮
     
 ## 5，Toggle
 bugFixed：
-    - 多了一张选择的精灵，显示效果不一致
-    - 没有选择背景target时，显示问题不一致
-    - 不能有其它节点作为子树的问题
+  - 多了一张选择的精灵，显示效果不一致
+  - 没有选择背景target时，显示问题不一致
+  - 不能有其它节点作为子树的问题
 新支持：
     
-    -  COLOR 模式
-    -  SCALE 模式
-    -  SPRIT 模式
-    -  enable Auto gray effect
-    这三种模式与按钮类似
+  -  COLOR 模式
+  -  SCALE 模式
+  -  SPRIT 模式
+  -  enable Auto gray effect
+  这三种模式与按钮类似
     
 使用例子
 ``` lua
