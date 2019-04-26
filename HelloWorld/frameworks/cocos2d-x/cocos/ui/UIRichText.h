@@ -175,6 +175,7 @@ public:
                                    const Color3B& outlineColor = Color3B::WHITE, int outlineSize = -1,
                                    const Color3B& shadowColor = Color3B::BLACK, const cocos2d::Size& shadowOffset = Size(2.0, -2.0), int shadowBlurRadius = 0,
                                    const Color3B& glowColor = Color3B::WHITE);
+	void setText(std::string & text) { _text = text; }
 protected:
     std::string _text;
     std::string _fontName;
