@@ -26,7 +26,7 @@
 #include "scripting/lua-bindings/manual/CCLuaEngine.h"
 #include "cocos2d.h"
 #include "scripting/lua-bindings/manual/lua_module_register.h"
-
+#include "reader/lua-bindings/creator_reader_bindings.hpp"
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
 
@@ -78,6 +78,21 @@ void AppDelegate::initGLContextAttrs()
 // don't modify or remove this function
 static int register_all_packages()
 {
+
+		lua_State *L = LuaEngine::getInstance()->getLuaStack()->getLuaState();
+
+
+		lua_module_register(L);
+	
+
+		lua_getglobal(L, "_G");
+		if (lua_istable(L, -1))//stack:...,_G,
+		{
+			register_creator_reader_module(L);
+		}
+		lua_pop(L, 1);
+
+
     return 0; //flag for packages manager
 }
 
@@ -89,8 +104,7 @@ bool AppDelegate::applicationDidFinishLaunching()
     // register lua module
     auto engine = LuaEngine::getInstance();
     ScriptEngineManager::getInstance()->setScriptEngine(engine);
-    lua_State* L = engine->getLuaStack()->getLuaState();
-    lua_module_register(L);
+ 
 
     register_all_packages();
 
