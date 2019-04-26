@@ -6,13 +6,13 @@
   "_duration": 5.4,
   "sample": 60,
   "speed": 1,
-  "wrapMode": 1,
+  "wrapMode": "2",
   "curveData": {
     "props": {
       "rotation": [
         {
           "frame": 0,
-          "value": 0
+          "value": 90
         },
         {
           "frame": 2.95,
@@ -29,26 +29,31 @@
       ],
       "position": [
         {
+          "frame": 0,
+          "value": [
+            600,
+            270
+          ]
+        },
+        {
           "frame": 2.9833333333333334,
           "value": [
-            690,
-            300
-          ],
-          "motionPath": []
+            500,
+            500
+          ]
         },
         {
           "frame": 4.616666666666666,
           "value": [
-            630,
-            446
-          ],
-          "motionPath": []
+            700,
+            600
+          ]
         }
       ],
       "scaleX": [
         {
           "frame": 0,
-          "value": 1
+          "value": 2.993894959647449
         },
         {
           "frame": 5.4,
