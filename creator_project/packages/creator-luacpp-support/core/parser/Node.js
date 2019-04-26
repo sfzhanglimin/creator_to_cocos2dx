@@ -198,7 +198,15 @@ class Node {
         this.add_property_bool('enabled', '_active', data);
         this.add_property_str('name', '_name', data);
         this.add_property_vec2('anchorPoint', '_anchorPoint', data);
-        this.add_property_bool('cascadeOpacityEnabled', '_cascadeOpacityEnabled', data);
+        if(data._cascadeOpacityEnabled){
+            this.add_property_bool('cascadeOpacityEnabled', '_cascadeOpacityEnabled', data);    
+        }else{
+            this._properties['cascadeOpacityEnabled'] = true;
+        }
+
+
+        
+        
         this.add_property_rgb('color', '_color', data);
         this.add_property_int('globalZOrder', '_globalZOrder', data);
         this.add_property_int('localZOrder', '_localZOrder', data);

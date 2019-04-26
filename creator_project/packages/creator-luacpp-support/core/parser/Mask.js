@@ -20,7 +20,17 @@ class Mask extends Node {
         this.add_property_bool('inverted', '_N$inverted', component);
 
         if (this._properties.type === 'Ellipse')
-            this.add_property_int('segments', '_segements', component);
+        {
+            if(component._segements)
+            {
+                this.add_property_int('segments', '_segements', component);
+            }
+            else
+            {
+                 this.add_property_int('segments', '_segments', component);
+            }
+            
+        }
 
         if (this._properties.type === 'ImageStencil') {
             this.add_property_int('alphaThreshold', '_N$alphaThreshold', component);
