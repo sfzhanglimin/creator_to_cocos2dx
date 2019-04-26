@@ -16,6 +16,7 @@
 ## 2，Label
 bugfixed：
   * 因 Line height 影响位置问题
+
 新支持 feat:
   - CLAMP 裁剪，超出宽高将不显示
   - Enable Wrap 自动换行
@@ -26,6 +27,7 @@ bugfixed：
 bugfixed：
   - 因图片四周有透明裁剪而引起的位置问题
   - 选择 SLICED 时，不管有没勾选 Trim 项，都会裁剪透明部分，修复此设置引起的位置问题
+  
 新支持 feat：
   - Trim 裁剪周围透明部分，或者不裁剪都支持
   - SLICED 九宫格模式
