@@ -97,6 +97,9 @@ public :
 	void setNodeBgName(std::string sBgName);
 	std::string getNodeBgName() { return _nodeBgName; }
 
+
+	float getOrignScale() { return _orignScale; }
+	void setOrignScale(float scale) { _orignScale = scale; }
 public:
 	float _actionDuration;
 	TransitionType _transitionType;
@@ -107,6 +110,7 @@ public:
 
 	bool _enableAutoGrayEffect;
 	std::string _nodeBgName;
+	float _orignScale;
 };
 
 NS_CCR_END
