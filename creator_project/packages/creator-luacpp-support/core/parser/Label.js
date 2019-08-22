@@ -49,8 +49,13 @@ class Label extends Node {
             this._properties.fontName = 'arial';
         }
         else {
-            let fontName = Utils.get_font_path_by_uuid(component._N$file.__uuid__);
-            this._properties.fontName = state._assetpath + fontName;
+            let fontName = "";
+            if(component._N$file && component._N$file.__uuid__)
+            {
+                fontName = Utils.get_font_path_by_uuid(component._N$file.__uuid__);
+                this._properties.fontName = state._assetpath + fontName;
+            }
+            
             if (fontName.endsWith('.ttf'))
                 this._properties.fontType = 'TTF';
             else if (fontName.endsWith('.fnt')) {
@@ -58,7 +63,12 @@ class Label extends Node {
                 this.add_property_int('fontSize', '_fontSize', component);
             }
             else
-                throw 'can not find font file for uuid: ' + component._N$file.__uuid__;
+            {
+
+                this._properties.fontType = 'System';
+                this._properties.fontName = 'arial';
+                //throw 'can not find font file for uuid: ' + component._N$file.__uuid__;
+            }
 
             this.add_property_int('lineHeight' ,'_lineHeight', component);
         }

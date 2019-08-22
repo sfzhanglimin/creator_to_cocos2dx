@@ -250,7 +250,7 @@ bool AnimateClip::initWithAnimationClip(cocos2d::Node* rootTarget, AnimationClip
 void AnimateClip::update(float dt) {
     _elapsed += dt;
 
-    if (_needStop && _elapsed*_clip->getSpeed() >= _durationToStop)
+    if (_needStop && _elapsed >= _durationToStop)
     {
         stopAnimate();
 
@@ -363,32 +363,14 @@ void AnimateClip::doUpdate(const AnimProperties& animProperties) const
 
 			if (pButton)
 			{
-				auto frameCache = cocos2d::SpriteFrameCache::getInstance();
-				auto pSpriteFrame = frameCache->getSpriteFrameByName(nextPath);
-				if (pSpriteFrame)
-				{
-					pButton->getRendererNormal()->setSpriteFrame(pSpriteFrame);
-				}
-				else
-				{
-					pButton->getRendererNormal()->setTexture(nextPath);
-				}
+				pButton->getRendererNormal()->setTexture(nextPath);
 			}
 			else
 			{
 				cocos2d::Sprite* pSprite = dynamic_cast<cocos2d::Sprite*>(target);
 				if (pSprite)
 				{
-					auto frameCache = cocos2d::SpriteFrameCache::getInstance();
-					auto pSpriteFrame = frameCache->getSpriteFrameByName(nextPath);
-					if (pSpriteFrame)
-					{
-						pSprite->setSpriteFrame(pSpriteFrame);
-					}
-					else
-					{
-						pSprite->setTexture(nextPath);
-					}
+					pSprite->setTexture(nextPath);
 				}
 			}
 			
@@ -412,7 +394,7 @@ cocos2d::Node* AnimateClip::getTarget(const std::string &path) const
 
 float AnimateClip::computeElapse() const
 {
-    auto elapsed = _elapsed* _clip->getSpeed();
+    auto elapsed = _elapsed;
     auto duration = _clip->getDuration();
 
     // as the time goes, _elapsed will be bigger than duration when _needStop = false

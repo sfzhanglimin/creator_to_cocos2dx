@@ -5,7 +5,7 @@ class Widget {
     static parse(data) {
         let result = {};
 
-        result.isAlignOnce = data.isAlignOnce;
+        result.isAlignOnce = true;//data.isAlignOnce;
         result.alignFlags = data._alignFlags;
 
         // margin value, only support pixel, didn't support percentage

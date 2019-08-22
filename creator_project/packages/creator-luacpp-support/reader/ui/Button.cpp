@@ -47,81 +47,6 @@ CreatorButton::~CreatorButton()
 {
 }
 
-void CreatorButton::setNodeBgName(std::string sBgName) {
-	_nodeBgName = sBgName;
-};
-
-void CreatorButton::addChild(Node *child)
-{
-
-	std::string sChildName = child->getName();
-	
-	if (sChildName == _nodeBgName && !_nodeBgName.empty())
-	{
-		auto spirte = dynamic_cast<cocos2d::ui::Scale9Sprite*>(child);
-		if (spirte)
-		{
-			removeProtectedChild(_buttonNormalRenderer);
-			_buttonNormalRenderer = spirte;
-			addProtectedChild(_buttonNormalRenderer, -2, -1);
-			return;
-		}
-	}
-
-	ui::Button::addChild(child);
-}
-
-void CreatorButton::onPressStateChangedToCancel()
-{
-	_buttonNormalRenderer->setVisible(true);
-	_buttonClickedRenderer->setVisible(false);
-	_buttonDisabledRenderer->setVisible(false);
-	_buttonNormalRenderer->setState(ui::Scale9Sprite::State::NORMAL);
-
-	if (_pressedTextureLoaded)
-	{
-		if (_transitionType == TransitionType::COLOR)
-		{
-			//this->stopAllActions();
-			//this->setColor(Color3B(_normalColor.r, _normalColor.b, _normalColor.g));
-			//this->setOpacity(_normalColor.a);
-
-
-			this->stopAllActions();
-			this->setColor(Color3B(_normalColor.r, _normalColor.b, _normalColor.g));
-			this->setOpacity(_normalColor.a);
-
-		}
-		else if (_pressedActionEnabled)
-		{
-
-			float orignScale = this->getOrignScale();
-			//float childScale = (orignScale == -1.0f ? this->getScale() : orignScale);
-			//this->setScale(childScale);
-			//this->setOrignScale(-1);
-
-			this->stopAllActions();
-			//this->runAction(EaseSineOut::create(ScaleTo::create(_actionDuration, orignScale, orignScale)));
-			this->setScale(orignScale, orignScale);
-		}
-
-
-	}
-	else
-	{
-		_buttonNormalRenderer->stopAllActions();
-		_buttonNormalRenderer->setScale(1.0);
-
-		if (nullptr != _titleRenderer)
-		{
-			_titleRenderer->stopAllActions();
-			_titleRenderer->setScaleX(1.0f);
-			_titleRenderer->setScaleY(1.0f);
-		}
-
-	}
-}
-
 
 void CreatorButton::onPressStateChangedToNormal()
 {
@@ -318,25 +243,6 @@ Color4B CreatorButton::getDisableColor()const
 }
 
 
-
-void CreatorButton::onTouchEnded(Touch *touch, Event* unusedEvent)
-{
-	ui::Button::onTouchEnded(touch, unusedEvent);
-}
-
-
-void CreatorButton::cancelUpEvent()
-{
-	this->retain();
-
-	ui::Button::cancelUpEvent();
-	
-	if (isEnabled())
-	{
-		onPressStateChangedToCancel();
-	}
-	this->release();
-}
 
 
 NS_CCR_END
