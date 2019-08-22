@@ -87,6 +87,8 @@ public:
      */
     void setup();
 
+	static void resetSpriteFrames();
+
 protected:
     CreatorReader();
     ~CreatorReader();
@@ -170,6 +172,7 @@ protected:
     void setupSpriteFrames();
     void setupCollisionMatrix();
 
+	
 
     /** Creator uses parent's anchorpoint for child positioning.
      cocos2d-x uses parent's (0,0) for child positioning
