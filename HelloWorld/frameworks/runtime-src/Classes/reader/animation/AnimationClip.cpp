@@ -52,6 +52,10 @@ AnimationClip::AnimationClip()
 
 AnimationClip::~AnimationClip()
 {
+	for (auto it = _animPropertiesVec.begin(); it != _animPropertiesVec.end(); it++)
+	{
+		delete (*it);
+	}
 }
 
 void AnimationClip::setName(const std::string& name)
@@ -104,12 +108,12 @@ creator::AnimationClip::WrapMode AnimationClip::getWrapMode() const
     return _wrapMode;
 }
 
-void AnimationClip::addAnimProperties(const AnimProperties& properties)
+void AnimationClip::addAnimProperties( AnimProperties* properties)
 {
     _animPropertiesVec.push_back(properties);
 }
 
-const std::vector<AnimProperties>& AnimationClip::getAnimProperties() const
+const std::vector<AnimProperties*>& AnimationClip::getAnimProperties() const
 {
     return _animPropertiesVec;
 }

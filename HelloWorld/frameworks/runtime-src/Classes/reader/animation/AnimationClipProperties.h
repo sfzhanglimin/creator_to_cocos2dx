@@ -32,7 +32,9 @@
 
 NS_CCR_BEGIN
 
-struct AnimPropRotation
+
+
+struct AnimPropRotation 
 {
     float frame;
     float value;
@@ -40,7 +42,7 @@ struct AnimPropRotation
     std::string curveType;
 };
 
-struct AnimPropPosition
+struct AnimPropPosition 
 {
     float frame;
     cocos2d::Vec2 value;
@@ -48,7 +50,7 @@ struct AnimPropPosition
     std::string curveType;
 };
 
-struct AnimPropPositionX
+struct AnimPropPositionX 
 {
     float frame;
     float value;
@@ -56,7 +58,7 @@ struct AnimPropPositionX
     std::string curveType;
 };
 
-struct AnimPropPositionY
+struct AnimPropPositionY 
 {
     float frame;
     float value;
@@ -64,7 +66,7 @@ struct AnimPropPositionY
     std::string curveType;
 };
 
-struct AnimPropScaleX
+struct AnimPropScaleX 
 {
     float frame;
     float value;
@@ -72,7 +74,7 @@ struct AnimPropScaleX
     std::string curveType;
 };
 
-struct AnimPropScaleY
+struct AnimPropScaleY 
 {
     float frame;
     float value;
@@ -80,7 +82,7 @@ struct AnimPropScaleY
     std::string curveType;
 };
 
-struct AnimPropWidth
+struct AnimPropWidth 
 {
     float frame;
     float value;
@@ -88,7 +90,7 @@ struct AnimPropWidth
     std::string curveType;
 };
 
-struct AnimPropHeight
+struct AnimPropHeight 
 {
     float frame;
     float value;
@@ -96,7 +98,7 @@ struct AnimPropHeight
     std::string curveType;
 };
 
-struct AnimPropColor
+struct AnimPropColor 
 {
     float frame;
     cocos2d::Color3B value;
@@ -104,7 +106,7 @@ struct AnimPropColor
     std::string curveType;
 };
 
-struct AnimPropOpacity
+struct AnimPropOpacity 
 {
     float frame;
     float value;
@@ -112,7 +114,7 @@ struct AnimPropOpacity
     std::string curveType;
 };
 
-struct AnimPropAnchorX
+struct AnimPropAnchorX 
 {
     float frame;
     float value;
@@ -120,7 +122,7 @@ struct AnimPropAnchorX
     std::string curveType;
 };
 
-struct AnimPropAnchorY
+struct AnimPropAnchorY 
 {
     float frame;
     float value;
@@ -128,7 +130,7 @@ struct AnimPropAnchorY
     std::string curveType;
 };
 
-struct AnimPropSkewX
+struct AnimPropSkewX 
 {
     float frame;
     float value;
@@ -136,7 +138,7 @@ struct AnimPropSkewX
     std::string curveType;
 };
 
-struct AnimPropSkewY
+struct AnimPropSkewY 
 {
     float frame;
     float value;
@@ -145,7 +147,7 @@ struct AnimPropSkewY
 };
 
 
-struct AnimPropSpriteFrame
+struct AnimPropSpriteFrame 
 {
 	float frame;
 	std::string value;
@@ -154,24 +156,77 @@ struct AnimPropSpriteFrame
 };
 
 
-struct AnimProperties
+class AnimProperties
 {
-    std::vector<AnimPropRotation> animRotation;
-    std::vector<AnimPropPosition> animPosition;
-    std::vector<AnimPropPositionX> animPositionX;
-    std::vector<AnimPropPositionY> animPositionY;
-    std::vector<AnimPropScaleX> animScaleX;
-    std::vector<AnimPropScaleY> animScaleY;
-    std::vector<AnimPropSkewX> animSkewX;
-    std::vector<AnimPropSkewY> animSkewY;
-    std::vector<AnimPropAnchorX> animAnchorX;
-    std::vector<AnimPropAnchorY> animAnchorY;
-    std::vector<AnimPropColor> animColor;
-    std::vector<AnimPropOpacity> animOpacity;
-    std::vector<AnimPropWidth> animWidth;
-    std::vector<AnimPropHeight> animHeight;
+public:
+
+	AnimProperties() {
+		m_target = nullptr;
+	}
+
+	~AnimProperties() {
+		clearAnimMap();
+	}
+
+	void clearAnimMap();
+
+	void updateAnimMap();
+	bool isEmpty() {
+		return m_sAnimMap.empty();
+	}
+
+	void updateAnimRotation(cocos2d::Node* target, float elapsed);
+	void updateAnimPosition(cocos2d::Node* target, float elapsed);
+	void updateAnimPositionX(cocos2d::Node* target, float elapsed);
+	void updateAnimPositionY(cocos2d::Node* target, float elapsed);
+	void updateAnimScaleX(cocos2d::Node* target, float elapsed);
+	void updateAnimScaleY(cocos2d::Node* target, float elapsed);
+	void updateAnimSkewX(cocos2d::Node* target, float elapsed);
+	void updateAnimSkewY(cocos2d::Node* target, float elapsed);
+	void updateAnimAnchorX(cocos2d::Node* target, float elapsed);
+	void updateAnimAnchorY(cocos2d::Node* target, float elapsed);
+	void updateAnimColor(cocos2d::Node* target, float elapsed);
+	void updateAnimOpacity(cocos2d::Node* target, float elapsed);
+	void updateAnimWidth(cocos2d::Node* target, float elapsed);
+	void updateAnimHeight(cocos2d::Node* target, float elapsed);
+	void updateAnimSpriteFrame(cocos2d::Node* target, float elapsed);
+
+
+	std::vector<AnimPropRotation> animRotation;
+	std::vector<AnimPropPosition> animPosition;
+	std::vector<AnimPropPositionX> animPositionX;
+	std::vector<AnimPropPositionY> animPositionY;
+	std::vector<AnimPropScaleX> animScaleX;
+	std::vector<AnimPropScaleY> animScaleY;
+	std::vector<AnimPropSkewX> animSkewX;
+	std::vector<AnimPropSkewY> animSkewY;
+	std::vector<AnimPropAnchorX> animAnchorX;
+	std::vector<AnimPropAnchorY> animAnchorY;
+	std::vector<AnimPropColor> animColor;
+	std::vector<AnimPropOpacity> animOpacity;
+	std::vector<AnimPropWidth> animWidth;
+	std::vector<AnimPropHeight> animHeight;
 	std::vector<AnimPropSpriteFrame> animSpriteFrame;
+
+
+	void setTarget(cocos2d::Node* target) {
+		m_target = target;
+	}
+
+	cocos2d::Node* getTarget() {
+		return m_target ;
+	}
+
     std::string path;
+
+	//typedef std::function<void(cocos2d::Node* target, float elapsed)> AnimationUpdateFunc;
+
+	std::list<std::function<void(cocos2d::Node* target, float elapsed)>> m_sAnimMap;
+	cocos2d::Vec2 nextPos;
+	float nextValue;
+	cocos2d::Color3B nextColor;
+	std::string nextPath;
+	cocos2d::Node* m_target;
 };
 
 NS_CCR_END
