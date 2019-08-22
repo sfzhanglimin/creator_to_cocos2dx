@@ -9,24 +9,6 @@
   "wrapMode": "2",
   "curveData": {
     "props": {
-      "rotation": [
-        {
-          "frame": 0,
-          "value": 90
-        },
-        {
-          "frame": 2.95,
-          "value": 90
-        },
-        {
-          "frame": 4.616666666666666,
-          "value": 90
-        },
-        {
-          "frame": 5.383333333333334,
-          "value": 0
-        }
-      ],
       "position": [
         {
           "frame": 0,
@@ -117,6 +99,24 @@
       "skewY": [
         {
           "frame": 0.21666666666666667,
+          "value": 0
+        }
+      ],
+      "angle": [
+        {
+          "frame": 0,
+          "value": -90
+        },
+        {
+          "frame": 2.95,
+          "value": -90
+        },
+        {
+          "frame": 4.616666666666666,
+          "value": -90
+        },
+        {
+          "frame": 5.383333333333334,
           "value": 0
         }
       ]

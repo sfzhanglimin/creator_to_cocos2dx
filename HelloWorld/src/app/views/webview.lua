@@ -14,7 +14,8 @@ function webview:dtor()
 end
 
 function webview:init()
-
+	
+	self.m_root,self.m_aniManager = UIUtils:getRootNodeInCreatorEx(self,"creator/layout/login.ccreator")
 end
 
 
