@@ -58,6 +58,10 @@ WidgetAdapter::~WidgetAdapter()
 {
    // CC_SAFE_RELEASE(_layoutNode);
 	//CC_SAFE_RELEASE(_parameter);
+	if (_layoutTarget)
+	{
+		_layoutTarget->release();
+	}
 }
 
 void WidgetAdapter::setIsAlignOnce(bool isAlignOnce)
@@ -71,7 +75,17 @@ void WidgetAdapter::setAdaptNode(cocos2d::Node* needAdaptNode)
 
 void WidgetAdapter::setLayoutTarget(cocos2d::Node* layoutTarget)
 {
+	if (_layoutTarget)
+	{
+		_layoutTarget:release();
+	}
+
     _layoutTarget = layoutTarget;
+	if (_layoutTarget)
+	{
+		_layoutTarget->retain();
+	}
+	
 }
 
 void WidgetAdapter::setMargin(const Margin &sMargin)
@@ -164,8 +178,21 @@ void WidgetAdapter::syncLayoutProperty()
 
 
 	if (_needAdaptNode->getName().compare("root") == 0){
+		auto rect = WidgetManager::getSafeUIRect();
+		if (rect.size.width > 1)
+		{
+			sDesignSize = rect.size;
+		}
+		float x = rect.origin.x + sDesignSize.width*0.5;
+		float y = rect.origin.y + sDesignSize.height*0.5;
 		_needAdaptNode->setContentSize(sDesignSize);
-		_needAdaptNode->setPosition(sDesignSize / 2);
+		_needAdaptNode->setPosition(x,y);
+		return;
+	}
+
+	if (_needAdaptNode->getName().find("__bg") != std::string::npos ) {
+		_needAdaptNode->setContentSize(sDesignSize);
+		_needAdaptNode->setPosition(sDesignSize/2);
 		return;
 	}
 
@@ -402,13 +429,18 @@ void WidgetAdapter::setupLayout()
 
     // set default layout target to parent node
     if (_layoutTarget == nullptr) {
-        _layoutTarget = parent;
+        //_layoutTarget = parent;
+		setLayoutTarget(parent);
     }
    // _needAdaptNode->removeFromParentAndCleanup(false);
    // _layoutNode->setName(PLUGIN_EXTRA_LAYOUT_NAME);
    // _layoutNode->addChild(_needAdaptNode);
    // parent->addChild(_layoutNode);
 }
+
+
+
+cocos2d::Rect WidgetManager::m_sSafeUIRect = cocos2d::Rect();
 
 WidgetManager::WidgetManager()
 : _forceAlignDirty(false)
@@ -431,6 +463,13 @@ void WidgetManager::forceDoAlign()
     _forceAlignDirty = true;
     doAlign();
 }
+
+void WidgetManager::setSafeUIRect(cocos2d::Rect &sRect)
+{
+	m_sSafeUIRect = sRect;
+}
+
+
 
 void WidgetManager::doAlign()
 {

@@ -67,6 +67,8 @@ public :
 
 	void addChild(Node *child) override;
 
+	
+
 	virtual void onPressStateChangedToCancel();
 	virtual void onPressStateChangedToNormal() override;
 	virtual void onPressStateChangedToPressed() override;
@@ -97,9 +99,10 @@ public :
 	void setNodeBgName(std::string sBgName);
 	std::string getNodeBgName() { return _nodeBgName; }
 
-
-	float getOrignScale() { return _orignScale; }
-	void setOrignScale(float scale) { _orignScale = scale; }
+	virtual void setColor(const Color3B& color);
+	void addRefrenceChild(Node *child);
+	void removeRefrenceChild(Node *child);
+	virtual void setVisible(bool visible);
 public:
 	float _actionDuration;
 	TransitionType _transitionType;
@@ -110,7 +113,8 @@ public:
 
 	bool _enableAutoGrayEffect;
 	std::string _nodeBgName;
-	float _orignScale;
+
+	std::map<Node *, Node *> m_pRefrenceChildren;
 };
 
 NS_CCR_END

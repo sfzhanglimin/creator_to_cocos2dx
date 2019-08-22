@@ -48,6 +48,8 @@ public :
 
 	void removeAllElements();
 
+	void setElementsAnchorPoint(Vec2 sVec2);
+
 	void formatRenderers();
 
 	ui::RichElement * getElement(int index);
@@ -58,6 +60,7 @@ public :
 
 private:
 	ProtectedNode* _arrangeNode;
+	Vec2 m_sDefaultAnchorPoint;
 
 };
 

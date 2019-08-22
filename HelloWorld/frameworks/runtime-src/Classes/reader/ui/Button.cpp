@@ -45,6 +45,10 @@ CreatorButton::CreatorButton()
 
 CreatorButton::~CreatorButton()
 {
+	for (auto it = m_pRefrenceChildren.begin(); it != m_pRefrenceChildren.end(); it++)
+	{
+		(it->second)->release();
+	}
 }
 
 void CreatorButton::setNodeBgName(std::string sBgName) {
@@ -70,6 +74,7 @@ void CreatorButton::addChild(Node *child)
 
 	ui::Button::addChild(child);
 }
+
 
 void CreatorButton::onPressStateChangedToCancel()
 {
@@ -336,6 +341,53 @@ void CreatorButton::cancelUpEvent()
 		onPressStateChangedToCancel();
 	}
 	this->release();
+}
+
+
+void CreatorButton::setColor(const Color3B& color)
+{
+	Node::setColor(color);
+	if (isCascadeColorEnabled()) {
+		auto displayedColor = getDisplayedColor();
+		for (auto it = m_pRefrenceChildren.begin(); it != m_pRefrenceChildren.end(); it++)
+		{
+			it->second->updateDisplayedColor(displayedColor);
+		}
+	}
+}
+
+
+void CreatorButton::addRefrenceChild(Node *child)
+{
+	auto it = m_pRefrenceChildren.find(child);
+	if (it == m_pRefrenceChildren.end())
+	{
+		child->retain();
+		m_pRefrenceChildren[child] = child;
+	}
+}
+
+
+void CreatorButton::removeRefrenceChild(Node *child)
+{
+	auto it = m_pRefrenceChildren.find(child);
+	if (it != m_pRefrenceChildren.end())
+	{
+		child->release();
+		m_pRefrenceChildren.erase(it);
+	}
+}
+
+void CreatorButton::setVisible(bool visible)
+{
+	Node::setVisible(visible);
+
+	auto displayedColor = getDisplayedColor();
+	for (auto it = m_pRefrenceChildren.begin(); it != m_pRefrenceChildren.end(); it++)
+	{
+		it->second->setVisible(visible);
+	}
+
 }
 
 
