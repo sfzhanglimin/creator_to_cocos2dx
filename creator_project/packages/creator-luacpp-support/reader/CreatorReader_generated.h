@@ -1674,7 +1674,8 @@ struct Button FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     VT_IGNORECONTENTADAPTWITHSIZE = 22,
     VT_NORMALCOLOR = 24,
     VT_PRESSEDCOLOR = 26,
-    VT_DISABLECOLOR = 28
+    VT_DISABLECOLOR = 28,
+    VT_BACKGROUNDNODENAME = 30
   };
   const Node *node() const { return GetPointer<const Node *>(VT_NODE); }
   int32_t transition() const { return GetField<int32_t>(VT_TRANSITION, 0); }
@@ -1689,6 +1690,7 @@ struct Button FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   const ColorRGBA *normalColor() const { return GetStruct<const ColorRGBA *>(VT_NORMALCOLOR); }
   const ColorRGBA *pressedColor() const { return GetStruct<const ColorRGBA *>(VT_PRESSEDCOLOR); }
   const ColorRGBA *disableColor() const { return GetStruct<const ColorRGBA *>(VT_DISABLECOLOR); }
+  const flatbuffers::String *backgroundNodeName() const { return GetPointer<const flatbuffers::String *>(VT_BACKGROUNDNODENAME); }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<flatbuffers::uoffset_t>(verifier, VT_NODE) &&
@@ -1708,6 +1710,8 @@ struct Button FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            VerifyField<ColorRGBA>(verifier, VT_NORMALCOLOR) &&
            VerifyField<ColorRGBA>(verifier, VT_PRESSEDCOLOR) &&
            VerifyField<ColorRGBA>(verifier, VT_DISABLECOLOR) &&
+           VerifyField<flatbuffers::uoffset_t>(verifier, VT_BACKGROUNDNODENAME) &&
+           verifier.Verify(backgroundNodeName()) &&
            verifier.EndTable();
   }
 };
@@ -1728,10 +1732,11 @@ struct ButtonBuilder {
   void add_normalColor(const ColorRGBA *normalColor) { fbb_.AddStruct(Button::VT_NORMALCOLOR, normalColor); }
   void add_pressedColor(const ColorRGBA *pressedColor) { fbb_.AddStruct(Button::VT_PRESSEDCOLOR, pressedColor); }
   void add_disableColor(const ColorRGBA *disableColor) { fbb_.AddStruct(Button::VT_DISABLECOLOR, disableColor); }
+  void add_backgroundNodeName(flatbuffers::Offset<flatbuffers::String> backgroundNodeName) { fbb_.AddOffset(Button::VT_BACKGROUNDNODENAME, backgroundNodeName); }
   ButtonBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
   ButtonBuilder &operator=(const ButtonBuilder &);
   flatbuffers::Offset<Button> Finish() {
-    auto o = flatbuffers::Offset<Button>(fbb_.EndTable(start_, 13));
+    auto o = flatbuffers::Offset<Button>(fbb_.EndTable(start_, 14));
     return o;
   }
 };
@@ -1749,8 +1754,10 @@ inline flatbuffers::Offset<Button> CreateButton(flatbuffers::FlatBufferBuilder &
     bool ignoreContentAdaptWithSize = false,
     const ColorRGBA *normalColor = 0,
     const ColorRGBA *pressedColor = 0,
-    const ColorRGBA *disableColor = 0) {
+    const ColorRGBA *disableColor = 0,
+    flatbuffers::Offset<flatbuffers::String> backgroundNodeName = 0) {
   ButtonBuilder builder_(_fbb);
+  builder_.add_backgroundNodeName(backgroundNodeName);
   builder_.add_disableColor(disableColor);
   builder_.add_pressedColor(pressedColor);
   builder_.add_normalColor(normalColor);
@@ -1780,8 +1787,9 @@ inline flatbuffers::Offset<Button> CreateButtonDirect(flatbuffers::FlatBufferBui
     bool ignoreContentAdaptWithSize = false,
     const ColorRGBA *normalColor = 0,
     const ColorRGBA *pressedColor = 0,
-    const ColorRGBA *disableColor = 0) {
-  return CreateButton(_fbb, node, transition, duration, zoomScale, spriteType, trimEnabled, spriteFrameName ? _fbb.CreateString(spriteFrameName) : 0, pressedSpriteFrameName ? _fbb.CreateString(pressedSpriteFrameName) : 0, disabledSpriteFrameName ? _fbb.CreateString(disabledSpriteFrameName) : 0, ignoreContentAdaptWithSize, normalColor, pressedColor, disableColor);
+    const ColorRGBA *disableColor = 0,
+    const char *backgroundNodeName = nullptr) {
+  return CreateButton(_fbb, node, transition, duration, zoomScale, spriteType, trimEnabled, spriteFrameName ? _fbb.CreateString(spriteFrameName) : 0, pressedSpriteFrameName ? _fbb.CreateString(pressedSpriteFrameName) : 0, disabledSpriteFrameName ? _fbb.CreateString(disabledSpriteFrameName) : 0, ignoreContentAdaptWithSize, normalColor, pressedColor, disableColor, backgroundNodeName ? _fbb.CreateString(backgroundNodeName) : 0);
 }
 
 struct Layout FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {

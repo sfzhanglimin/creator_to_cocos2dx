@@ -49,7 +49,7 @@ public:
 
 	virtual void cleanup();
 
-    void playAnimationClip(cocos2d::Node *target, const std::string &animationClipName, AnimationCallback cb=nullptr);
+    void playAnimationClip(cocos2d::Node *target, const std::string &animationClipName, AnimationCallback cb= nullptr, int modeType = -1);
     // if AnimationClip is stopped, can not run it again.
     void stopAnimationClip(cocos2d::Node *target, const std::string &animationClipName);
     void pauseAnimationClip(cocos2d::Node *target, const std::string &animationClipName);

@@ -104,9 +104,9 @@ class Utils {
     }
 
     static recordBuild() {
-        Utils.initAnalytics(function(analytics){
-            analytics.CAEvent.onEvent({ eventName: 'build' });
-        });
+        //Utils.initAnalytics(function(analytics){
+        //    analytics.CAEvent.onEvent({ eventName: 'build' });
+        //});
     }
 
     static initAnalytics(callback) {

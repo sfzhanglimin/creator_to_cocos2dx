@@ -204,7 +204,6 @@ table Button
     zoomScale:float;
     spriteType:SpriteType;
     trimEnabled:bool = false;
-    backgroundNodeName:string;
     spriteFrameName:string;
     pressedSpriteFrameName:string;
     disabledSpriteFrameName:string;
@@ -212,6 +211,7 @@ table Button
     normalColor:ColorRGBA;
     pressedColor:ColorRGBA;
     disableColor:ColorRGBA;
+    backgroundNodeName:string;
 }
 
 table Layout

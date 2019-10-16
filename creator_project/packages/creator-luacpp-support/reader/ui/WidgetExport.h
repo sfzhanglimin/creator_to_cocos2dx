@@ -229,6 +229,10 @@ public:
     virtual void update(float dt) override;
     // do layout align manually, you should call it when you make layout content size different from scene in Creator.
     void forceDoAlign();
+	static void setSafeUIRect(cocos2d::Rect &sRect);
+	static cocos2d::Rect& getSafeUIRect() {
+		return m_sSafeUIRect;
+	};
 private:
     friend class CreatorReader;
 
@@ -237,6 +241,7 @@ private:
     void setupWidgets();
     void doAlign();
     bool _forceAlignDirty;
+	static cocos2d::Rect m_sSafeUIRect;
     cocos2d::Vector<WidgetAdapter*> _needAdaptWidgets;
 };
 NS_CCR_END

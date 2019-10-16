@@ -57,8 +57,8 @@ public:
     void setWrapMode(WrapMode wrapMode);
     WrapMode getWrapMode() const;
 
-    void addAnimProperties(const AnimProperties& properties);
-    const std::vector<AnimProperties>& getAnimProperties() const;
+    void addAnimProperties( AnimProperties*properties);
+    const std::vector<AnimProperties*>& getAnimProperties() const;
     
 private:
     AnimationClip();
@@ -68,7 +68,7 @@ private:
     float _sample;
     float _speed;
     WrapMode _wrapMode;
-    std::vector<AnimProperties> _animPropertiesVec;
+    std::vector<AnimProperties*> _animPropertiesVec;
 };
 
 NS_CCR_END

@@ -38,7 +38,6 @@
 #include <vector>
 #include <cmath>
 #include <algorithm>
-#include "VxNativeUtils.h"
 
 using namespace cocos2d;
 using namespace creator;
@@ -247,6 +246,13 @@ void CreatorReader::setup()
 
 static std::map<std::string, bool> s_checkSpriteFrameFixed;
 
+
+
+void CreatorReader::resetSpriteFrames()
+{
+	s_checkSpriteFrameFixed.clear();
+}
+
 void CreatorReader::setupSpriteFrames()
 {
     const void* buffer = _data.getBytes();
@@ -276,7 +282,15 @@ void CreatorReader::setupSpriteFrames()
 
 				const auto& centerRect = spriteFrame->centerRect();
 				if (sf && centerRect) {
-					sf->setCenterRectInPixels(cocos2d::Rect(centerRect->x(), centerRect->y(), centerRect->w(), centerRect->h()));
+					cocos2d::Rect sTempRect(centerRect->x(), centerRect->y(), centerRect->w(), centerRect->h());
+				/*	if (centerRect->x() == centerRect->w()){
+						sTempRect.size.width = originalSize->w();
+					}
+					if (centerRect->y() == centerRect->h()){
+						sTempRect.size.height = originalSize->h();
+						sf->setRect(sTempRect);
+					}*/
+					sf->setCenterRectInPixels(sTempRect);
 				}
 
 				if (sf) {
@@ -668,59 +682,67 @@ void CreatorReader::parseNodeAnimation(cocos2d::Node* node, const buffers::Node*
                 
                 if (fbCurveData) {
                     const AnimProps* fbAnimProps = fbCurveData->props();
-                    AnimProperties properties;
+                    AnimProperties* properties = new AnimProperties();
                     
                     // position
-                    setupAnimClipsPropVec2(fbAnimProps->position(), properties.animPosition);
+                    setupAnimClipsPropVec2(fbAnimProps->position(), properties->animPosition);
                     
                     // position X
-                    setupAnimClipsPropValue(fbAnimProps->positionX(), properties.animPositionX);
+                    setupAnimClipsPropValue(fbAnimProps->positionX(), properties->animPositionX);
                     
                     // position Y
-                    setupAnimClipsPropValue(fbAnimProps->positionY(), properties.animPositionY);
+                    setupAnimClipsPropValue(fbAnimProps->positionY(), properties->animPositionY);
                     
                     // rotation
-                    setupAnimClipsPropValue(fbAnimProps->rotation(), properties.animRotation);
+                    setupAnimClipsPropValue(fbAnimProps->rotation(), properties->animRotation);
                     
                     // skew X
-                    setupAnimClipsPropValue(fbAnimProps->skewX(), properties.animSkewX);
+                    setupAnimClipsPropValue(fbAnimProps->skewX(), properties->animSkewX);
                     
                     // skew Y
-                    setupAnimClipsPropValue(fbAnimProps->skewY(), properties.animSkewY);
+                    setupAnimClipsPropValue(fbAnimProps->skewY(), properties->animSkewY);
                     
                     // scaleX
-                    setupAnimClipsPropValue(fbAnimProps->scaleX(), properties.animScaleX);
+                    setupAnimClipsPropValue(fbAnimProps->scaleX(), properties->animScaleX);
                     
                     // scaleY
-                    setupAnimClipsPropValue(fbAnimProps->scaleY(), properties.animScaleY);
+                    setupAnimClipsPropValue(fbAnimProps->scaleY(), properties->animScaleY);
                     
                     // Color
-                    setupAnimClipsPropColor(fbAnimProps->color(), properties.animColor);
+                    setupAnimClipsPropColor(fbAnimProps->color(), properties->animColor);
                     
                     // opacity
-                    setupAnimClipsPropValue(fbAnimProps->opacity(), properties.animOpacity);
+                    setupAnimClipsPropValue(fbAnimProps->opacity(), properties->animOpacity);
                     
                     // anchor x
-                    setupAnimClipsPropValue(fbAnimProps->anchorX(), properties.animAnchorX);
+                    setupAnimClipsPropValue(fbAnimProps->anchorX(), properties->animAnchorX);
                     
                     // anchor y
-                    setupAnimClipsPropValue(fbAnimProps->anchorY(), properties.animAnchorY);
+                    setupAnimClipsPropValue(fbAnimProps->anchorY(), properties->animAnchorY);
 
 
 					// width
-					setupAnimClipsPropValue(fbAnimProps->width(), properties.animWidth);
+					setupAnimClipsPropValue(fbAnimProps->width(), properties->animWidth);
 
 					// height
-					setupAnimClipsPropValue(fbAnimProps->height(), properties.animHeight);
+					setupAnimClipsPropValue(fbAnimProps->height(), properties->animHeight);
 
-					setupAnimClipsPropString(fbAnimProps->spriteFrame(), properties.animSpriteFrame);
+					setupAnimClipsPropString(fbAnimProps->spriteFrame(), properties->animSpriteFrame);
                     
                     // path: self's animation doesn't have path
                     // path is used for sub node
                     if (fbCurveData->path())
-                        properties.path = fbCurveData->path()->str();
+                        properties->path = fbCurveData->path()->str();
+					properties->updateAnimMap();
+					if (properties->isEmpty())
+					{
+						delete properties;
+					}
+					else
+					{
+						animClip->addAnimProperties(properties);
+					}
                     
-                    animClip->addAnimProperties(properties);
                 }
             }
             
@@ -911,12 +933,21 @@ void CreatorReader::parseSprite(cocos2d::ui::Scale9Sprite* sprite, const buffers
     }
 
     // Creator doesn't premultiply alpha, so its blend function can not work in cocos2d-x.
-    // const auto& srcBlend = spriteBuffer->srcBlend();
-    // const auto& dstBlend = spriteBuffer->dstBlend();
-    // cocos2d::BlendFunc blendFunc;
-    // blendFunc.src = srcBlend;
-    // blendFunc.dst = dstBlend;
-    // sprite->setBlendFunc(blendFunc);
+     const auto& srcBlend = spriteBuffer->srcBlend();
+     const auto& dstBlend = spriteBuffer->dstBlend();
+    
+	 if (770 == srcBlend && 771 == dstBlend)
+	 {
+
+	 }
+	 else
+	 {
+		 cocos2d::BlendFunc blendFunc;
+		 blendFunc.src = srcBlend;
+		 blendFunc.dst = dstBlend;
+		 sprite->setBlendFunc(blendFunc);
+	 }
+     
 
 #if 1
     // FIXME: do something with these values
@@ -968,30 +999,20 @@ cocos2d::Label* CreatorReader::createLabel(const buffers::Label* labelBuffer) co
     cocos2d::Label* label = nullptr;
     auto text = labelBuffer->labelText();
     auto fontSize = labelBuffer->fontSize();
-    std::string fontName = labelBuffer->fontName()->str();
+    auto fontName = labelBuffer->fontName();
 
     auto fontType = labelBuffer->fontType();
-
-	if (fontName.compare("arial") == 0 || fontName.compare("Arial") == 0)
-	{
-		auto temp = VxNativeUtils::getDefaultFontName();
-		if (!temp.empty())
-		{
-			fontType = FontType_TTF;
-			fontName = VxNativeUtils::getDefaultFontName();
-		}
-	}
     switch (fontType) {
         case buffers::FontType_TTF:
-            label = cocos2d::Label::createWithTTF(text->str(), fontName, fontSize);
+            label = cocos2d::Label::createWithTTF(text->str(), fontName->str(), fontSize);
             break;
         case buffers::FontType_BMFont:
-            label = cocos2d::Label::createWithBMFont(fontName, text->str());
+            label = cocos2d::Label::createWithBMFont(fontName->str(), text->str());
             if (label)
                 label->setBMFontSize(fontSize);
             break;
         case buffers::FontType_System:
-            label = cocos2d::Label::createWithSystemFont(text->str(), fontName, fontSize);
+            label = cocos2d::Label::createWithSystemFont(text->str(), fontName->str(), fontSize);
             break;
     }
 
@@ -1191,8 +1212,19 @@ void CreatorReader::parseParticle(cocos2d::ParticleSystemQuad* particle, const b
     const auto& texturePath = particleBuffer->texturePath();
     if (texturePath)
     {
+		auto spriteFrame = cocos2d::SpriteFrameCache::getInstance()->getSpriteFrameByName(texturePath->c_str());
         auto texture = cocos2d::Director::getInstance()->getTextureCache()->addImage(texturePath->c_str());
-        if(texture)particle->setTexture(texture);
+		if (spriteFrame)
+		{
+		
+			particle->setTextureWithRect(spriteFrame->getTexture(), spriteFrame->getRect());
+		}
+		else if(texture)
+		{
+
+			particle->setTexture(texture);
+			
+		}
     }
 }
 
@@ -1237,7 +1269,7 @@ void CreatorReader::parseScrollView(cocos2d::ui::ScrollView* scrollView, const b
     scrollView->setDirection(static_cast<cocos2d::ui::ScrollView::Direction>(direction));
     scrollView->setBounceEnabled(bounceEnabled);
     scrollView->setInnerContainerSize(cocos2d::Size(innerContainerSize->w(), innerContainerSize->h()));
-
+	scrollView->setScrollBarEnabled(false);
     // FIXME: Call setJumpToPercent at the end, because it depens on having the contentSize correct
     // FIXME: uses the anchorPoint for the percent in the bar, but this migh break if it changes the position of the bar content node
     const auto& anchorPoint = scrollViewBuffer->node()->anchorPoint();
@@ -1365,8 +1397,13 @@ void CreatorReader::parseButton(CreatorButton* button, const buffers::Button* bu
 	button->setActionDuration(buttonBuffer->duration());
 
 
-
 	const auto transtionTyp = buttonBuffer->transition();
+
+
+	if (buttonBuffer->backgroundNodeName()) {
+		//checkBox->getRendererBackground()->setName(button->backgroundNodeName()->str());
+		button->setNodeBgName(buttonBuffer->backgroundNodeName()->str());
+	}
 
 
 	if (transtionTyp == CreatorButton::COLOR)
@@ -1847,11 +1884,15 @@ void CreatorReader::parseMask(cocos2d::ClippingNode* mask, const buffers::Mask* 
         // image stencil type
         const auto& alphaThreshold = maskBuffer->alphaThreshold();
         const auto& spriteFrame = maskBuffer->spriteFrame();
-        auto stencil = cocos2d::Sprite::createWithSpriteFrameName(spriteFrame->c_str());
-        stencil->setContentSize(mask->getContentSize());
-        
-        mask->setStencil(stencil);
-        mask->setAlphaThreshold(alphaThreshold);
+		if (spriteFrame)
+		{
+			auto stencil = cocos2d::Sprite::createWithSpriteFrameName(spriteFrame->c_str());
+			stencil->setContentSize(mask->getContentSize());
+			cocos2d::Size s(0, 0);
+			mask->setContentSize(s);
+			mask->setStencil(stencil);
+			mask->setAlphaThreshold(alphaThreshold);
+		}
     }
 }
 
@@ -2081,7 +2122,7 @@ static void tileSprite(cocos2d::ui::Scale9Sprite* sprite)
     }
 
     // populate the indices
-    for( int i=0; i < totalQuads; i++)
+    for( int i=0; i < totalQuads; ++i)
     {
         indices[i*6+0] = (GLushort) (i*4+0);
         indices[i*6+1] = (GLushort) (i*4+1);

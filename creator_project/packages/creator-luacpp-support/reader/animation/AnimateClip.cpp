@@ -29,128 +29,13 @@
 #include "Easing.h"
 #include "Bezier.h"
 #include "ui/CocosGUI.h"
-
+#include "base/ccUtils.h"
 #include <functional>
 
 namespace  {
 
     creator::AnimationClip* g_clip = nullptr;
 
-    // -1: invalid index
-    // -2: haven't reached first frame, so it should be the same as first frame
-    template<typename P>
-    int getValidIndex(const P &properties, float elapsed)
-    {
-        if (properties.empty())
-            return -1;
-
-        if (properties.front().frame > elapsed)
-            return -2;
-
-        if (properties.back().frame <= elapsed)
-            return properties.size() - 1;
-
-        for (int i = 0, len = properties.size(); i < len; ++i)
-        {
-            const auto& prop = properties[i];
-            if (prop.frame > elapsed)
-                return i - 1;
-        }
-
-        return -1;
-    }
-
-    template<typename P>
-    float getPercent(const P& p1, const P& p2, float elapsed)
-    {
-        const auto& curveType = p1.curveType;
-        const auto& curveData = p1.curveData;
-        auto ratio = (elapsed - p1.frame) / (p2.frame - p1.frame);
-
-        if (!curveType.empty())
-        {
-            const auto& easingFunc = creator::Easing::getFunction(curveType);
-            ratio = easingFunc(ratio);
-        }
-        if (curveData.size() > 0)
-            ratio = creator::Bazier::computeBezier(curveData, ratio);
-
-        return ratio;
-    }
-
-    void assignValue(float src, float& dst)
-    {
-        dst = src;
-    }
-
-	void assignValue(std::string src, std::string & dst)
-	{
-		dst = src;
-	}
-
-    void assignValue(const cocos2d::Color3B& src, cocos2d::Color3B& dst)
-    {
-        dst.r = src.r;
-        dst.g = src.g;
-        dst.b = src.b;
-    }
-
-    void assignValue(const cocos2d::Vec2& src, cocos2d::Vec2& dst)
-    {
-        dst.x = src.x;
-        dst.y = src.y;
-    }
-
-    template<typename T>
-    void computeNextValue(T start, T end, float percent, T &out)
-    {
-        out = start + percent * (end - start);
-    }
-
-	void computeNextValue(std::string start, std::string end, float percent, std::string &out)
-	{
-		out = start;
-	}
-
-    void computeNextValue(const cocos2d::Color3B& start, const cocos2d::Color3B& end, float percent, cocos2d::Color3B& out)
-    {
-        computeNextValue(start.r, end.r, percent, out.r);
-        computeNextValue(start.g, end.g, percent, out.g);
-        computeNextValue(start.b, end.b, percent, out.b);
-    }
-
-    void computeNextValue(const cocos2d::Vec2& start, const cocos2d::Vec2& end, float percent, cocos2d::Vec2& out)
-    {
-        computeNextValue(start.x, end.x, percent, out.x);
-        computeNextValue(start.y, end.y, percent, out.y);
-    }
-
-    template<typename P, typename T>
-    bool getNextValue(const P & properties, float elapsed, T &out)
-    {
-        int index = getValidIndex(properties, elapsed);
-        if (index == -1)
-            return false;
-
-        if (index == -2)
-        {
-            assignValue(properties.front().value, out);
-            return true;
-        }
-
-        if (index == properties.size() -1)
-        {
-            assignValue(properties.back().value, out);
-            return true;
-        }
-
-        const auto& prop = properties[index];
-        const auto& nextProp = properties[index+1];
-        float percent = getPercent(prop, nextProp, elapsed);
-        computeNextValue(prop.value, nextProp.value, percent, out);
-
-        return true;
-    }
 }
 
 USING_NS_CCR;
@@ -197,12 +82,12 @@ void AnimateClip::stopAnimate()
 {
 	if (_running)
 	{
-		if (_endCallback)
-			_endCallback();
-
 		unscheduleUpdate();
 		// release self
 		_running = false;
+
+		if (_endCallback)
+			_endCallback();
 	}
 
 }
@@ -242,6 +127,11 @@ bool AnimateClip::initWithAnimationClip(cocos2d::Node* rootTarget, AnimationClip
 
         // assign it to be used in anonymous namespace
         g_clip = _clip;
+		const auto& allAnimProperties = _clip->getAnimProperties();
+		for (const auto& animProperties : allAnimProperties)
+		{
+			animProperties->setTarget(getTarget(animProperties->path));
+		}
     }
 
     return clip != nullptr;
@@ -250,132 +140,197 @@ bool AnimateClip::initWithAnimationClip(cocos2d::Node* rootTarget, AnimationClip
 void AnimateClip::update(float dt) {
     _elapsed += dt;
 
-    if (_needStop && _elapsed >= _durationToStop)
+    if (_needStop && _elapsed*_clip->getSpeed() >= _durationToStop)
     {
         stopAnimate();
 
         return;
     }
 
+	auto p = _rootTarget;
+
+	bool isIn = false;
+	while (p)
+	{
+		cocos2d::Scene* pScene = dynamic_cast<cocos2d::Scene*>(p);
+		if (pScene)
+		{
+			isIn = true;
+			break;
+		}
+		p = p->getParent();
+	}
+	if (!isIn)
+	{
+		stopAnimate();
+		return;
+	}
+
+	//auto pre = cocos2d::utils::getTimeInMilliseconds();
     const auto& allAnimProperties = _clip->getAnimProperties();
-    for (const auto& animProperties : allAnimProperties)
-        doUpdate(animProperties);
+	auto elapsed = computeElapse();
+	for (auto it = allAnimProperties.begin(); it != allAnimProperties.end(); ++it)//const auto& animProperties : allAnimProperties)
+	{
+		auto target = (*it)->getTarget();
+		if (target)
+		{
+			
+			auto &aniMap = (*it)->m_sAnimMap;
+
+			for (auto it = aniMap.begin(); it != aniMap.end(); ++it)
+			{
+				(*it)(target, elapsed);
+			}
+		}
+	}
+
+
+	
+        //doUpdate(animProperties);
+
+	//auto cur = cocos2d::utils::getTimeInMilliseconds();
+	//CCLOG("useTime %lld %d,name %s", cur - pre, allAnimProperties.size(), _clip->getName().c_str());
 }
 
-void AnimateClip::doUpdate(const AnimProperties& animProperties) const
+void AnimateClip::doUpdate( AnimProperties* animProperties) const
 {
-    auto target = getTarget(animProperties.path);
-    if (target && target->getParent())
-    {
-        auto elapsed = computeElapse();
+	auto target = animProperties->getTarget();
+	if (target && target->getParent())
+	{
+		auto elapsed = computeElapse();
+		auto &aniMap = animProperties->m_sAnimMap;
 
-        // update position
-        cocos2d::Vec2 nextPos;
-		if (getNextValue(animProperties.animPosition, elapsed, nextPos))
+		for (auto it = aniMap.begin(); it != aniMap.end(); ++it)
 		{
-			auto s =target->getParent()->getContentSize();
-			auto ap = target->getParent()->getAnchorPoint();
-			nextPos.x += s.width*ap.x;
-			nextPos.y += s.height*ap.y;
-			target->setPosition(nextPos);
-		}
-            
-
-        // update color
-        cocos2d::Color3B nextColor;
-        if (getNextValue(animProperties.animColor, elapsed, nextColor))
-            target->setColor(nextColor);
-
-        // update scaleX
-        float nextValue;
-        if (getNextValue(animProperties.animScaleX, elapsed, nextValue))
-            target->setScaleX(nextValue);
-
-        // update scaleY
-        if (getNextValue(animProperties.animScaleY, elapsed, nextValue))
-            target->setScaleY(nextValue);
-
-        // rotation
-        if (getNextValue(animProperties.animRotation, elapsed, nextValue))
-            target->setRotation(nextValue);
-
-        // SkewX
-        if (getNextValue(animProperties.animSkewX, elapsed, nextValue))
-            target->setSkewX(nextValue);
-
-        // SkewY
-        if (getNextValue(animProperties.animSkewY, elapsed, nextValue))
-            target->setSkewY(nextValue);
-
-        // Opacity
-        if (getNextValue(animProperties.animOpacity, elapsed, nextValue))
-            target->setOpacity(nextValue);
-
-        // anchor x
-        if (getNextValue(animProperties.animAnchorX, elapsed, nextValue))
-            target->setAnchorPoint(cocos2d::Vec2(nextValue, target->getAnchorPoint().y));
-
-        // anchor y
-        if (getNextValue(animProperties.animAnchorY, elapsed, nextValue))
-            target->setAnchorPoint(cocos2d::Vec2(target->getAnchorPoint().x, nextValue));
-
-        // positoin x
-		if (getNextValue(animProperties.animPositionX, elapsed, nextValue))
-		{
-			auto s = target->getParent()->getContentSize();
-			auto ap = target->getParent()->getAnchorPoint();
-			nextValue += s.width*ap.x;
-
-			target->setPositionX(nextValue);
-		}
-
-        // position y
-		if (getNextValue(animProperties.animPositionY, elapsed, nextValue))
-		{
-			auto s = target->getParent()->getContentSize();
-			auto ap = target->getParent()->getAnchorPoint();
-			nextValue += s.height*ap.y;
-			target->setPositionY(nextValue);
-		} 
-
-
-		// width 
-		if (getNextValue(animProperties.animWidth, elapsed, nextValue))
-		{
-			auto size = target->getContentSize();
-			size.width = nextValue;
-			target->setContentSize(size);
-		}
-
-		// height 
-		if (getNextValue(animProperties.animHeight, elapsed, nextValue))
-		{
-			auto size = target->getContentSize();
-			size.height = nextValue;
-			target->setContentSize(size);
+			(*it)(target, elapsed);
 		}
 
 
-		std::string nextPath;
-		if (getNextValue(animProperties.animSpriteFrame, elapsed, nextPath))
-		{
-			cocos2d::ui::Button* pButton = dynamic_cast<cocos2d::ui::Button*>(target);
+		/*  // update position
+		  cocos2d::Vec2 nextPos;
+		  if (getNextValue(animProperties.animPosition, elapsed, nextPos))
+		  {
+			  auto s =target->getParent()->getContentSize();
+			  auto ap = target->getParent()->getAnchorPoint();
+			  nextPos.x += s.width*ap.x;
+			  nextPos.y += s.height*ap.y;
+			  target->setPosition(nextPos);
+		  }
 
-			if (pButton)
-			{
-				pButton->getRendererNormal()->setTexture(nextPath);
-			}
-			else
-			{
-				cocos2d::Sprite* pSprite = dynamic_cast<cocos2d::Sprite*>(target);
-				if (pSprite)
-				{
-					pSprite->setTexture(nextPath);
-				}
-			}
-			
-		}
-			
+
+		  // update color
+		  cocos2d::Color3B nextColor;
+		  if (getNextValue(animProperties.animColor, elapsed, nextColor))
+			  target->setColor(nextColor);
+
+		  // update scaleX
+		  float nextValue;
+		  if (getNextValue(animProperties.animScaleX, elapsed, nextValue))
+			  target->setScaleX(nextValue);
+
+		  // update scaleY
+		  if (getNextValue(animProperties.animScaleY, elapsed, nextValue))
+			  target->setScaleY(nextValue);
+
+		  // rotation
+		  if (getNextValue(animProperties.animRotation, elapsed, nextValue))
+			  target->setRotation(nextValue);
+
+		  // SkewX
+		  if (getNextValue(animProperties.animSkewX, elapsed, nextValue))
+			  target->setSkewX(nextValue);
+
+		  // SkewY
+		  if (getNextValue(animProperties.animSkewY, elapsed, nextValue))
+			  target->setSkewY(nextValue);
+
+		  // Opacity
+		  if (getNextValue(animProperties.animOpacity, elapsed, nextValue))
+			  target->setOpacity(nextValue);
+
+		  // anchor x
+		  if (getNextValue(animProperties.animAnchorX, elapsed, nextValue))
+			  target->setAnchorPoint(cocos2d::Vec2(nextValue, target->getAnchorPoint().y));
+
+		  // anchor y
+		  if (getNextValue(animProperties.animAnchorY, elapsed, nextValue))
+			  target->setAnchorPoint(cocos2d::Vec2(target->getAnchorPoint().x, nextValue));
+
+		  // positoin x
+		  if (getNextValue(animProperties.animPositionX, elapsed, nextValue))
+		  {
+			  auto s = target->getParent()->getContentSize();
+			  auto ap = target->getParent()->getAnchorPoint();
+			  nextValue += s.width*ap.x;
+
+			  target->setPositionX(nextValue);
+		  }
+
+		  // position y
+		  if (getNextValue(animProperties.animPositionY, elapsed, nextValue))
+		  {
+			  auto s = target->getParent()->getContentSize();
+			  auto ap = target->getParent()->getAnchorPoint();
+			  nextValue += s.height*ap.y;
+			  target->setPositionY(nextValue);
+		  }
+
+
+		  // width
+		  if (getNextValue(animProperties.animWidth, elapsed, nextValue))
+		  {
+			  auto size = target->getContentSize();
+			  size.width = nextValue;
+			  target->setContentSize(size);
+		  }
+
+		  // height
+		  if (getNextValue(animProperties.animHeight, elapsed, nextValue))
+		  {
+			  auto size = target->getContentSize();
+			  size.height = nextValue;
+			  target->setContentSize(size);
+		  }
+
+
+		  std::string nextPath;
+		  if (getNextValue(animProperties.animSpriteFrame, elapsed, nextPath))
+		  {
+			  cocos2d::ui::Button* pButton = dynamic_cast<cocos2d::ui::Button*>(target);
+
+			  if (pButton)
+			  {
+				  auto frameCache = cocos2d::SpriteFrameCache::getInstance();
+				  auto pSpriteFrame = frameCache->getSpriteFrameByName(nextPath);
+				  if (pSpriteFrame)
+				  {
+					  pButton->getRendererNormal()->setSpriteFrame(pSpriteFrame);
+				  }
+				  else
+				  {
+					  pButton->getRendererNormal()->setTexture(nextPath);
+				  }
+			  }
+			  else
+			  {
+				  cocos2d::Sprite* pSprite = dynamic_cast<cocos2d::Sprite*>(target);
+				  if (pSprite)
+				  {
+					  auto frameCache = cocos2d::SpriteFrameCache::getInstance();
+					  auto pSpriteFrame = frameCache->getSpriteFrameByName(nextPath);
+					  if (pSpriteFrame)
+					  {
+						  pSprite->setSpriteFrame(pSpriteFrame);
+					  }
+					  else
+					  {
+						  pSprite->setTexture(nextPath);
+					  }
+				  }
+			  }
+
+		  }*/
+
     }
 }
 
@@ -394,7 +349,7 @@ cocos2d::Node* AnimateClip::getTarget(const std::string &path) const
 
 float AnimateClip::computeElapse() const
 {
-    auto elapsed = _elapsed;
+    auto elapsed = _elapsed* _clip->getSpeed();
     auto duration = _clip->getDuration();
 
     // as the time goes, _elapsed will be bigger than duration when _needStop = false

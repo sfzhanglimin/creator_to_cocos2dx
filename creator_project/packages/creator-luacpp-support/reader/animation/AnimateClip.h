@@ -55,7 +55,8 @@ public:
 private:
     AnimateClip();
     bool initWithAnimationClip(cocos2d::Node* rootTarget, AnimationClip* clip);
-    void doUpdate(const AnimProperties& animProperties) const;
+    inline void doUpdate( AnimProperties* animProperties) const;
+
     cocos2d::Node* getTarget(const std::string &path) const;
     float computeElapse() const;
 

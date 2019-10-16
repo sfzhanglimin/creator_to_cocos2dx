@@ -415,12 +415,14 @@ class Node {
                     let clip_content = JSON.parse(fs.readFileSync(Utils.get_file_by_uuid(clip_uuid)));//uuidinfos[clip_uuid]));
                     
                     // parse curveData
+                    let tMode = Node.WRAP_MODE[parseInt(clip_content.wrapMode)];
+
                     let animationClip = {
                         name: clip_content._name,
                         duration: clip_content._duration,
                         sample: clip_content.sample,
                         speed: clip_content.speed,
-                        wrapMode: clip_content.wrapMode,
+                        wrapMode: tMode,
                         curveData: []
                     };
 
@@ -514,5 +516,7 @@ class Node {
         // As an example, ScrollView needs to adjust its children position
     }
 }
+
+Node.WRAP_MODE = ['Default', 'Normal', 'Loop','PingPong','Reverse','LoopReverse','PingPongReverse'];
 
 module.exports = Node;

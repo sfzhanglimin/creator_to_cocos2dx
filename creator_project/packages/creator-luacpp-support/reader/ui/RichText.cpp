@@ -20,7 +20,7 @@ CreatorRichText* CreatorRichText::create()
 CreatorRichText::CreatorRichText()
 	:_arrangeNode(nullptr)
 {
-
+	m_sDefaultAnchorPoint = Vec2::UNIT_Y;
 }
 
 CreatorRichText::~CreatorRichText()
@@ -83,6 +83,10 @@ void CreatorRichText::removeAllElements()
 	formatText();
 }
 
+void CreatorRichText::setElementsAnchorPoint(Vec2 sVec2)
+{
+	m_sDefaultAnchorPoint = sVec2;
+}
 
 void CreatorRichText::formatRenderers()
 {
@@ -103,7 +107,7 @@ void CreatorRichText::formatRenderers()
 			float maxY = 0.0f;
 			for (auto& iter : element)
 			{
-				iter->setAnchorPoint(Vec2::UNIT_Y);
+				iter->setAnchorPoint(m_sDefaultAnchorPoint);
 				iter->setPosition(nextPosX, nextPosY);
 				_arrangeNode->addProtectedChild(iter, 1);
 				Size iSize = iter->getContentSize();
