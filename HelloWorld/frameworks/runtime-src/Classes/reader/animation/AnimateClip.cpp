@@ -29,9 +29,8 @@
 #include "Easing.h"
 #include "Bezier.h"
 #include "ui/CocosGUI.h"
-
-#include <functional>
 #include "base/ccUtils.h"
+#include <functional>
 
 namespace  {
 
@@ -83,12 +82,12 @@ void AnimateClip::stopAnimate()
 {
 	if (_running)
 	{
-		if (_endCallback)
-			_endCallback();
-
 		unscheduleUpdate();
 		// release self
 		_running = false;
+
+		if (_endCallback)
+			_endCallback();
 	}
 
 }
@@ -128,7 +127,6 @@ bool AnimateClip::initWithAnimationClip(cocos2d::Node* rootTarget, AnimationClip
 
         // assign it to be used in anonymous namespace
         g_clip = _clip;
-
 		const auto& allAnimProperties = _clip->getAnimProperties();
 		for (const auto& animProperties : allAnimProperties)
 		{
@@ -139,11 +137,6 @@ bool AnimateClip::initWithAnimationClip(cocos2d::Node* rootTarget, AnimationClip
     return clip != nullptr;
 }
 
-//static __int64 my_getmillisecond() {
-
-//	return cocos2d::utils::getTimeInMilliseconds();
-//}
-
 void AnimateClip::update(float dt) {
     _elapsed += dt;
 
@@ -153,152 +146,191 @@ void AnimateClip::update(float dt) {
 
         return;
     }
-	//auto pre = my_getmillisecond();
-    const auto& allAnimProperties = _clip->getAnimProperties();
-    for (const auto& animProperties : allAnimProperties)
-        doUpdate(animProperties);
-	//auto cur = my_getmillisecond();
 
-	//CCLOG("AnimateClip %lld", cur - pre);
+	auto p = _rootTarget;
+
+	bool isIn = false;
+	while (p)
+	{
+		cocos2d::Scene* pScene = dynamic_cast<cocos2d::Scene*>(p);
+		if (pScene)
+		{
+			isIn = true;
+			break;
+		}
+		p = p->getParent();
+	}
+	if (!isIn)
+	{
+		stopAnimate();
+		return;
+	}
+
+	//auto pre = cocos2d::utils::getTimeInMilliseconds();
+    const auto& allAnimProperties = _clip->getAnimProperties();
+	auto elapsed = computeElapse();
+	for (auto it = allAnimProperties.begin(); it != allAnimProperties.end(); ++it)//const auto& animProperties : allAnimProperties)
+	{
+		auto target = (*it)->getTarget();
+		if (target)
+		{
+			
+			auto &aniMap = (*it)->m_sAnimMap;
+
+			for (auto it = aniMap.begin(); it != aniMap.end(); ++it)
+			{
+				(*it)(target, elapsed);
+			}
+		}
+	}
+
+
+	
+        //doUpdate(animProperties);
+
+	//auto cur = cocos2d::utils::getTimeInMilliseconds();
+	//CCLOG("useTime %lld %d,name %s", cur - pre, allAnimProperties.size(), _clip->getName().c_str());
 }
 
 void AnimateClip::doUpdate( AnimProperties* animProperties) const
 {
 	auto target = animProperties->getTarget();
-		//getTarget(animProperties->path);
-    if (target && target->getParent())
-    {
-        auto elapsed = computeElapse();
+	if (target && target->getParent())
+	{
+		auto elapsed = computeElapse();
 		auto &aniMap = animProperties->m_sAnimMap;
-		for (auto it = aniMap.begin(); it != aniMap.end(); it++)
+
+		for (auto it = aniMap.begin(); it != aniMap.end(); ++it)
 		{
 			(*it)(target, elapsed);
 		}
-      /*  // update position
-        cocos2d::Vec2 nextPos;
-		if (getNextValue(animProperties.animPosition, elapsed, nextPos))
-		{
-			auto s =target->getParent()->getContentSize();
-			auto ap = target->getParent()->getAnchorPoint();
-			nextPos.x += s.width*ap.x;
-			nextPos.y += s.height*ap.y;
-			target->setPosition(nextPos);
-		}
-            
-
-        // update color
-        cocos2d::Color3B nextColor;
-        if (getNextValue(animProperties.animColor, elapsed, nextColor))
-            target->setColor(nextColor);
-
-        // update scaleX
-        float nextValue;
-        if (getNextValue(animProperties.animScaleX, elapsed, nextValue))
-            target->setScaleX(nextValue);
-
-        // update scaleY
-        if (getNextValue(animProperties.animScaleY, elapsed, nextValue))
-            target->setScaleY(nextValue);
-
-        // rotation
-        if (getNextValue(animProperties.animRotation, elapsed, nextValue))
-            target->setRotation(nextValue);
-
-        // SkewX
-        if (getNextValue(animProperties.animSkewX, elapsed, nextValue))
-            target->setSkewX(nextValue);
-
-        // SkewY
-        if (getNextValue(animProperties.animSkewY, elapsed, nextValue))
-            target->setSkewY(nextValue);
-
-        // Opacity
-        if (getNextValue(animProperties.animOpacity, elapsed, nextValue))
-            target->setOpacity(nextValue);
-
-        // anchor x
-        if (getNextValue(animProperties.animAnchorX, elapsed, nextValue))
-            target->setAnchorPoint(cocos2d::Vec2(nextValue, target->getAnchorPoint().y));
-
-        // anchor y
-        if (getNextValue(animProperties.animAnchorY, elapsed, nextValue))
-            target->setAnchorPoint(cocos2d::Vec2(target->getAnchorPoint().x, nextValue));
-
-        // positoin x
-		if (getNextValue(animProperties.animPositionX, elapsed, nextValue))
-		{
-			auto s = target->getParent()->getContentSize();
-			auto ap = target->getParent()->getAnchorPoint();
-			nextValue += s.width*ap.x;
-
-			target->setPositionX(nextValue);
-		}
-
-        // position y
-		if (getNextValue(animProperties.animPositionY, elapsed, nextValue))
-		{
-			auto s = target->getParent()->getContentSize();
-			auto ap = target->getParent()->getAnchorPoint();
-			nextValue += s.height*ap.y;
-			target->setPositionY(nextValue);
-		} 
 
 
-		// width 
-		if (getNextValue(animProperties.animWidth, elapsed, nextValue))
-		{
-			auto size = target->getContentSize();
-			size.width = nextValue;
-			target->setContentSize(size);
-		}
-
-		// height 
-		if (getNextValue(animProperties.animHeight, elapsed, nextValue))
-		{
-			auto size = target->getContentSize();
-			size.height = nextValue;
-			target->setContentSize(size);
-		}
+		/*  // update position
+		  cocos2d::Vec2 nextPos;
+		  if (getNextValue(animProperties.animPosition, elapsed, nextPos))
+		  {
+			  auto s =target->getParent()->getContentSize();
+			  auto ap = target->getParent()->getAnchorPoint();
+			  nextPos.x += s.width*ap.x;
+			  nextPos.y += s.height*ap.y;
+			  target->setPosition(nextPos);
+		  }
 
 
-		std::string nextPath;
-		if (getNextValue(animProperties.animSpriteFrame, elapsed, nextPath))
-		{
-			cocos2d::ui::Button* pButton = dynamic_cast<cocos2d::ui::Button*>(target);
+		  // update color
+		  cocos2d::Color3B nextColor;
+		  if (getNextValue(animProperties.animColor, elapsed, nextColor))
+			  target->setColor(nextColor);
 
-			if (pButton)
-			{
-				auto frameCache = cocos2d::SpriteFrameCache::getInstance();
-				auto pSpriteFrame = frameCache->getSpriteFrameByName(nextPath);
-				if (pSpriteFrame)
-				{
-					pButton->getRendererNormal()->setSpriteFrame(pSpriteFrame);
-				}
-				else
-				{
-					pButton->getRendererNormal()->setTexture(nextPath);
-				}
-			}
-			else
-			{
-				cocos2d::Sprite* pSprite = dynamic_cast<cocos2d::Sprite*>(target);
-				if (pSprite)
-				{
-					auto frameCache = cocos2d::SpriteFrameCache::getInstance();
-					auto pSpriteFrame = frameCache->getSpriteFrameByName(nextPath);
-					if (pSpriteFrame)
-					{
-						pSprite->setSpriteFrame(pSpriteFrame);
-					}
-					else
-					{
-						pSprite->setTexture(nextPath);
-					}
-				}
-			}
-			
-		}*/
-			
+		  // update scaleX
+		  float nextValue;
+		  if (getNextValue(animProperties.animScaleX, elapsed, nextValue))
+			  target->setScaleX(nextValue);
+
+		  // update scaleY
+		  if (getNextValue(animProperties.animScaleY, elapsed, nextValue))
+			  target->setScaleY(nextValue);
+
+		  // rotation
+		  if (getNextValue(animProperties.animRotation, elapsed, nextValue))
+			  target->setRotation(nextValue);
+
+		  // SkewX
+		  if (getNextValue(animProperties.animSkewX, elapsed, nextValue))
+			  target->setSkewX(nextValue);
+
+		  // SkewY
+		  if (getNextValue(animProperties.animSkewY, elapsed, nextValue))
+			  target->setSkewY(nextValue);
+
+		  // Opacity
+		  if (getNextValue(animProperties.animOpacity, elapsed, nextValue))
+			  target->setOpacity(nextValue);
+
+		  // anchor x
+		  if (getNextValue(animProperties.animAnchorX, elapsed, nextValue))
+			  target->setAnchorPoint(cocos2d::Vec2(nextValue, target->getAnchorPoint().y));
+
+		  // anchor y
+		  if (getNextValue(animProperties.animAnchorY, elapsed, nextValue))
+			  target->setAnchorPoint(cocos2d::Vec2(target->getAnchorPoint().x, nextValue));
+
+		  // positoin x
+		  if (getNextValue(animProperties.animPositionX, elapsed, nextValue))
+		  {
+			  auto s = target->getParent()->getContentSize();
+			  auto ap = target->getParent()->getAnchorPoint();
+			  nextValue += s.width*ap.x;
+
+			  target->setPositionX(nextValue);
+		  }
+
+		  // position y
+		  if (getNextValue(animProperties.animPositionY, elapsed, nextValue))
+		  {
+			  auto s = target->getParent()->getContentSize();
+			  auto ap = target->getParent()->getAnchorPoint();
+			  nextValue += s.height*ap.y;
+			  target->setPositionY(nextValue);
+		  }
+
+
+		  // width
+		  if (getNextValue(animProperties.animWidth, elapsed, nextValue))
+		  {
+			  auto size = target->getContentSize();
+			  size.width = nextValue;
+			  target->setContentSize(size);
+		  }
+
+		  // height
+		  if (getNextValue(animProperties.animHeight, elapsed, nextValue))
+		  {
+			  auto size = target->getContentSize();
+			  size.height = nextValue;
+			  target->setContentSize(size);
+		  }
+
+
+		  std::string nextPath;
+		  if (getNextValue(animProperties.animSpriteFrame, elapsed, nextPath))
+		  {
+			  cocos2d::ui::Button* pButton = dynamic_cast<cocos2d::ui::Button*>(target);
+
+			  if (pButton)
+			  {
+				  auto frameCache = cocos2d::SpriteFrameCache::getInstance();
+				  auto pSpriteFrame = frameCache->getSpriteFrameByName(nextPath);
+				  if (pSpriteFrame)
+				  {
+					  pButton->getRendererNormal()->setSpriteFrame(pSpriteFrame);
+				  }
+				  else
+				  {
+					  pButton->getRendererNormal()->setTexture(nextPath);
+				  }
+			  }
+			  else
+			  {
+				  cocos2d::Sprite* pSprite = dynamic_cast<cocos2d::Sprite*>(target);
+				  if (pSprite)
+				  {
+					  auto frameCache = cocos2d::SpriteFrameCache::getInstance();
+					  auto pSpriteFrame = frameCache->getSpriteFrameByName(nextPath);
+					  if (pSpriteFrame)
+					  {
+						  pSprite->setSpriteFrame(pSpriteFrame);
+					  }
+					  else
+					  {
+						  pSprite->setTexture(nextPath);
+					  }
+				  }
+			  }
+
+		  }*/
+
     }
 }
 

@@ -191,6 +191,14 @@ public:
 	void updateAnimHeight(cocos2d::Node* target, float elapsed);
 	void updateAnimSpriteFrame(cocos2d::Node* target, float elapsed);
 
+	void setTarget(cocos2d::Node* target) {
+		m_target = target;
+	}
+
+	cocos2d::Node* getTarget() {
+		return m_target;
+	}
+
 
 	std::vector<AnimPropRotation> animRotation;
 	std::vector<AnimPropPosition> animPosition;
@@ -207,15 +215,6 @@ public:
 	std::vector<AnimPropWidth> animWidth;
 	std::vector<AnimPropHeight> animHeight;
 	std::vector<AnimPropSpriteFrame> animSpriteFrame;
-
-
-	void setTarget(cocos2d::Node* target) {
-		m_target = target;
-	}
-
-	cocos2d::Node* getTarget() {
-		return m_target ;
-	}
 
     std::string path;
 

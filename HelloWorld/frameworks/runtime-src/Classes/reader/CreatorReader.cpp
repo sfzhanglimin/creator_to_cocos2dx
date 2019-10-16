@@ -282,7 +282,15 @@ void CreatorReader::setupSpriteFrames()
 
 				const auto& centerRect = spriteFrame->centerRect();
 				if (sf && centerRect) {
-					sf->setCenterRectInPixels(cocos2d::Rect(centerRect->x(), centerRect->y(), centerRect->w(), centerRect->h()));
+					cocos2d::Rect sTempRect(centerRect->x(), centerRect->y(), centerRect->w(), centerRect->h());
+				/*	if (centerRect->x() == centerRect->w()){
+						sTempRect.size.width = originalSize->w();
+					}
+					if (centerRect->y() == centerRect->h()){
+						sTempRect.size.height = originalSize->h();
+						sf->setRect(sTempRect);
+					}*/
+					sf->setCenterRectInPixels(sTempRect);
 				}
 
 				if (sf) {
@@ -1204,8 +1212,19 @@ void CreatorReader::parseParticle(cocos2d::ParticleSystemQuad* particle, const b
     const auto& texturePath = particleBuffer->texturePath();
     if (texturePath)
     {
+		auto spriteFrame = cocos2d::SpriteFrameCache::getInstance()->getSpriteFrameByName(texturePath->c_str());
         auto texture = cocos2d::Director::getInstance()->getTextureCache()->addImage(texturePath->c_str());
-        if(texture)particle->setTexture(texture);
+		if (spriteFrame)
+		{
+		
+			particle->setTextureWithRect(spriteFrame->getTexture(), spriteFrame->getRect());
+		}
+		else if(texture)
+		{
+
+			particle->setTexture(texture);
+			
+		}
     }
 }
 
@@ -1865,12 +1884,15 @@ void CreatorReader::parseMask(cocos2d::ClippingNode* mask, const buffers::Mask* 
         // image stencil type
         const auto& alphaThreshold = maskBuffer->alphaThreshold();
         const auto& spriteFrame = maskBuffer->spriteFrame();
-        auto stencil = cocos2d::Sprite::createWithSpriteFrameName(spriteFrame->c_str());
-        stencil->setContentSize(mask->getContentSize());
-		cocos2d::Size s(0, 0);
-		mask->setContentSize(s);
-        mask->setStencil(stencil);
-        mask->setAlphaThreshold(alphaThreshold);
+		if (spriteFrame)
+		{
+			auto stencil = cocos2d::Sprite::createWithSpriteFrameName(spriteFrame->c_str());
+			stencil->setContentSize(mask->getContentSize());
+			cocos2d::Size s(0, 0);
+			mask->setContentSize(s);
+			mask->setStencil(stencil);
+			mask->setAlphaThreshold(alphaThreshold);
+		}
     }
 }
 
@@ -2100,7 +2122,7 @@ static void tileSprite(cocos2d::ui::Scale9Sprite* sprite)
     }
 
     // populate the indices
-    for( int i=0; i < totalQuads; i++)
+    for( int i=0; i < totalQuads; ++i)
     {
         indices[i*6+0] = (GLushort) (i*4+0);
         indices[i*6+1] = (GLushort) (i*4+1);

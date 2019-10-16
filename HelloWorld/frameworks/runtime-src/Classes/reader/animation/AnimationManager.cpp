@@ -47,12 +47,21 @@ void AnimationManager::stopAllAnimationClips()
 {
 	if (!_cachedAnimates.empty())
 	{
-		for (auto iter = _cachedAnimates.begin(), end = _cachedAnimates.end(); iter != end; ++iter)
+		std::vector<std::tuple<cocos2d::Node*, std::string, AnimateClip*>> sTemp = _cachedAnimates;
+		for (auto iter = sTemp.begin(), end = sTemp.end(); iter != end; ++iter)
 		{
 			auto&& e = *iter;
 			// release AnimateClip
-			std::get<2>(e)->pauseAnimate();
-			std::get<2>(e)->autorelease();
+			std::get<2>(e)->stopAnimate();
+			//std::get<2>(e)->autorelease();
+		}
+		sTemp = _cachedAnimates;
+		for (auto iter = sTemp.begin(), end = sTemp.end(); iter != end; ++iter)
+		{
+			auto&& e = *iter;
+			// release AnimateClip
+			std::get<2>(e)->stopAnimate();
+			//std::get<2>(e)->autorelease();
 		}
 	}
 	
@@ -60,7 +69,7 @@ void AnimationManager::stopAllAnimationClips()
 }
 
 
-void AnimationManager::playAnimationClip(cocos2d::Node *target, const std::string &animationClipName, AnimationCallback cb)
+void AnimationManager::playAnimationClip(cocos2d::Node *target, const std::string &animationClipName, AnimationCallback cb, int modeType)
 {
     bool foundTarget = false;
     bool foundAnimationClip = false;
@@ -73,6 +82,10 @@ void AnimationManager::playAnimationClip(cocos2d::Node *target, const std::strin
             {
                 if (animClip->getName() == animationClipName)
                 {
+					if (modeType != -1)
+					{
+						animClip->setWrapMode((AnimationClip::WrapMode)modeType);
+					}
                     runAnimationClip(target, animClip, cb);
                     foundAnimationClip = true;
 					foundTarget = true;
@@ -148,7 +161,7 @@ void AnimationManager::removeAnimateClip(cocos2d::Node *target, const std::strin
 			if (std::get<0>(e) == target && std::get<1>(e) == animationClipName)
 			{
 				// release AnimateClip
-				std::get<2>(e)->autorelease();
+                std::get<2>(e)->autorelease();
 
 				_cachedAnimates.erase(iter);
 				break;

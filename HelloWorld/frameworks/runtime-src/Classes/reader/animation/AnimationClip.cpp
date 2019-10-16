@@ -52,7 +52,7 @@ AnimationClip::AnimationClip()
 
 AnimationClip::~AnimationClip()
 {
-	for (auto it = _animPropertiesVec.begin(); it != _animPropertiesVec.end(); it++)
+	for (auto it = _animPropertiesVec.begin(); it != _animPropertiesVec.end(); ++it)
 	{
 		delete (*it);
 	}

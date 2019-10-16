@@ -37,6 +37,7 @@ public:
     typedef std::function<void()> AnimateEndCallback;
     
     static AnimateClip* createWithAnimationClip(cocos2d::Node* rootTarget, AnimationClip* clip);
+    
     void startAnimate();
     void stopAnimate();
     void pauseAnimate();
@@ -54,7 +55,8 @@ public:
 private:
     AnimateClip();
     bool initWithAnimationClip(cocos2d::Node* rootTarget, AnimationClip* clip);
-    void doUpdate( AnimProperties* animProperties) const;
+    inline void doUpdate( AnimProperties* animProperties) const;
+
     cocos2d::Node* getTarget(const std::string &path) const;
     float computeElapse() const;
 

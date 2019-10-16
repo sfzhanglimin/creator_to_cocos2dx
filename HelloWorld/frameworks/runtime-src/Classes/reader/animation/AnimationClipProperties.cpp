@@ -14,8 +14,8 @@ namespace CreatorAniUtils{
 	template<typename P>
 	int getValidIndex(const P &properties, float elapsed)
 	{
-		if (properties.empty())
-			return -1;
+		//if (properties.empty())
+		//	return -1;
 
 		if (properties.front().frame > elapsed)
 			return -2;

@@ -218,6 +218,47 @@ int lua_creator_reader_AnimationManager_playAnimationClip(lua_State* tolua_S)
 		return 1;
 
 	}
+	else if (argc == 4)
+	{
+		cocos2d::Node* arg0;
+		std::string arg1;
+
+		ok &= luaval_to_object<cocos2d::Node>(tolua_S, 2, "cc.Node", &arg0, "creator.AnimationManager:playAnimationClip");
+
+		ok &= luaval_to_std_string(tolua_S, 3, &arg1, "creator.AnimationManager:playAnimationClip");
+		if (!ok)
+		{
+			tolua_error(tolua_S, "invalid arguments in function 'lua_creator_reader_AnimationManager_playAnimationClip'", nullptr);
+			return 0;
+		}
+
+
+		LUA_FUNCTION handler = (toluafix_ref_function(tolua_S, 4, 0));
+		int  nModeType = lua_tointeger(tolua_S, 5);
+
+		if (handler)
+		{
+			auto func = [=]()
+			{
+				auto stack = cocos2d::LuaEngine::getInstance()->getLuaStack();
+				stack->executeFunctionByHandler(handler, 0);
+				stack->clean();
+			};
+
+			ScriptHandlerMgr::getInstance()->addCustomHandler((void*)cobj, handler);
+
+			cobj->playAnimationClip(arg0, arg1, func, nModeType);
+		}
+		else
+		{ 
+
+			cobj->playAnimationClip(arg0, arg1, nullptr, nModeType);
+		}
+		
+
+		lua_settop(tolua_S, 1);
+		return 1;
+	}
 	luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "creator.AnimationManager:playAnimationClip", argc, 2);
 	return 0;
 

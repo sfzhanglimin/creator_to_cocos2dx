@@ -1668,14 +1668,14 @@ struct Button FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     VT_ZOOMSCALE = 10,
     VT_SPRITETYPE = 12,
     VT_TRIMENABLED = 14,
-    VT_BACKGROUNDNODENAME = 16,
-    VT_SPRITEFRAMENAME = 18,
-    VT_PRESSEDSPRITEFRAMENAME = 20,
-    VT_DISABLEDSPRITEFRAMENAME = 22,
-    VT_IGNORECONTENTADAPTWITHSIZE = 24,
-    VT_NORMALCOLOR = 26,
-    VT_PRESSEDCOLOR = 28,
-    VT_DISABLECOLOR = 30
+    VT_SPRITEFRAMENAME = 16,
+    VT_PRESSEDSPRITEFRAMENAME = 18,
+    VT_DISABLEDSPRITEFRAMENAME = 20,
+    VT_IGNORECONTENTADAPTWITHSIZE = 22,
+    VT_NORMALCOLOR = 24,
+    VT_PRESSEDCOLOR = 26,
+    VT_DISABLECOLOR = 28,
+    VT_BACKGROUNDNODENAME = 30
   };
   const Node *node() const { return GetPointer<const Node *>(VT_NODE); }
   int32_t transition() const { return GetField<int32_t>(VT_TRANSITION, 0); }
@@ -1683,7 +1683,6 @@ struct Button FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   float zoomScale() const { return GetField<float>(VT_ZOOMSCALE, 0.0f); }
   SpriteType spriteType() const { return static_cast<SpriteType>(GetField<int8_t>(VT_SPRITETYPE, 0)); }
   bool trimEnabled() const { return GetField<uint8_t>(VT_TRIMENABLED, 0) != 0; }
-  const flatbuffers::String *backgroundNodeName() const { return GetPointer<const flatbuffers::String *>(VT_BACKGROUNDNODENAME); }
   const flatbuffers::String *spriteFrameName() const { return GetPointer<const flatbuffers::String *>(VT_SPRITEFRAMENAME); }
   const flatbuffers::String *pressedSpriteFrameName() const { return GetPointer<const flatbuffers::String *>(VT_PRESSEDSPRITEFRAMENAME); }
   const flatbuffers::String *disabledSpriteFrameName() const { return GetPointer<const flatbuffers::String *>(VT_DISABLEDSPRITEFRAMENAME); }
@@ -1691,6 +1690,7 @@ struct Button FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   const ColorRGBA *normalColor() const { return GetStruct<const ColorRGBA *>(VT_NORMALCOLOR); }
   const ColorRGBA *pressedColor() const { return GetStruct<const ColorRGBA *>(VT_PRESSEDCOLOR); }
   const ColorRGBA *disableColor() const { return GetStruct<const ColorRGBA *>(VT_DISABLECOLOR); }
+  const flatbuffers::String *backgroundNodeName() const { return GetPointer<const flatbuffers::String *>(VT_BACKGROUNDNODENAME); }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<flatbuffers::uoffset_t>(verifier, VT_NODE) &&
@@ -1700,8 +1700,6 @@ struct Button FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            VerifyField<float>(verifier, VT_ZOOMSCALE) &&
            VerifyField<int8_t>(verifier, VT_SPRITETYPE) &&
            VerifyField<uint8_t>(verifier, VT_TRIMENABLED) &&
-           VerifyField<flatbuffers::uoffset_t>(verifier, VT_BACKGROUNDNODENAME) &&
-           verifier.Verify(backgroundNodeName()) &&
            VerifyField<flatbuffers::uoffset_t>(verifier, VT_SPRITEFRAMENAME) &&
            verifier.Verify(spriteFrameName()) &&
            VerifyField<flatbuffers::uoffset_t>(verifier, VT_PRESSEDSPRITEFRAMENAME) &&
@@ -1712,6 +1710,8 @@ struct Button FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            VerifyField<ColorRGBA>(verifier, VT_NORMALCOLOR) &&
            VerifyField<ColorRGBA>(verifier, VT_PRESSEDCOLOR) &&
            VerifyField<ColorRGBA>(verifier, VT_DISABLECOLOR) &&
+           VerifyField<flatbuffers::uoffset_t>(verifier, VT_BACKGROUNDNODENAME) &&
+           verifier.Verify(backgroundNodeName()) &&
            verifier.EndTable();
   }
 };
@@ -1725,7 +1725,6 @@ struct ButtonBuilder {
   void add_zoomScale(float zoomScale) { fbb_.AddElement<float>(Button::VT_ZOOMSCALE, zoomScale, 0.0f); }
   void add_spriteType(SpriteType spriteType) { fbb_.AddElement<int8_t>(Button::VT_SPRITETYPE, static_cast<int8_t>(spriteType), 0); }
   void add_trimEnabled(bool trimEnabled) { fbb_.AddElement<uint8_t>(Button::VT_TRIMENABLED, static_cast<uint8_t>(trimEnabled), 0); }
-  void add_backgroundNodeName(flatbuffers::Offset<flatbuffers::String> backgroundNodeName) { fbb_.AddOffset(Button::VT_BACKGROUNDNODENAME, backgroundNodeName); }
   void add_spriteFrameName(flatbuffers::Offset<flatbuffers::String> spriteFrameName) { fbb_.AddOffset(Button::VT_SPRITEFRAMENAME, spriteFrameName); }
   void add_pressedSpriteFrameName(flatbuffers::Offset<flatbuffers::String> pressedSpriteFrameName) { fbb_.AddOffset(Button::VT_PRESSEDSPRITEFRAMENAME, pressedSpriteFrameName); }
   void add_disabledSpriteFrameName(flatbuffers::Offset<flatbuffers::String> disabledSpriteFrameName) { fbb_.AddOffset(Button::VT_DISABLEDSPRITEFRAMENAME, disabledSpriteFrameName); }
@@ -1733,6 +1732,7 @@ struct ButtonBuilder {
   void add_normalColor(const ColorRGBA *normalColor) { fbb_.AddStruct(Button::VT_NORMALCOLOR, normalColor); }
   void add_pressedColor(const ColorRGBA *pressedColor) { fbb_.AddStruct(Button::VT_PRESSEDCOLOR, pressedColor); }
   void add_disableColor(const ColorRGBA *disableColor) { fbb_.AddStruct(Button::VT_DISABLECOLOR, disableColor); }
+  void add_backgroundNodeName(flatbuffers::Offset<flatbuffers::String> backgroundNodeName) { fbb_.AddOffset(Button::VT_BACKGROUNDNODENAME, backgroundNodeName); }
   ButtonBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
   ButtonBuilder &operator=(const ButtonBuilder &);
   flatbuffers::Offset<Button> Finish() {
@@ -1748,22 +1748,22 @@ inline flatbuffers::Offset<Button> CreateButton(flatbuffers::FlatBufferBuilder &
     float zoomScale = 0.0f,
     SpriteType spriteType = SpriteType_Simple,
     bool trimEnabled = false,
-    flatbuffers::Offset<flatbuffers::String> backgroundNodeName = 0,
     flatbuffers::Offset<flatbuffers::String> spriteFrameName = 0,
     flatbuffers::Offset<flatbuffers::String> pressedSpriteFrameName = 0,
     flatbuffers::Offset<flatbuffers::String> disabledSpriteFrameName = 0,
     bool ignoreContentAdaptWithSize = false,
     const ColorRGBA *normalColor = 0,
     const ColorRGBA *pressedColor = 0,
-    const ColorRGBA *disableColor = 0) {
+    const ColorRGBA *disableColor = 0,
+    flatbuffers::Offset<flatbuffers::String> backgroundNodeName = 0) {
   ButtonBuilder builder_(_fbb);
+  builder_.add_backgroundNodeName(backgroundNodeName);
   builder_.add_disableColor(disableColor);
   builder_.add_pressedColor(pressedColor);
   builder_.add_normalColor(normalColor);
   builder_.add_disabledSpriteFrameName(disabledSpriteFrameName);
   builder_.add_pressedSpriteFrameName(pressedSpriteFrameName);
   builder_.add_spriteFrameName(spriteFrameName);
-  builder_.add_backgroundNodeName(backgroundNodeName);
   builder_.add_zoomScale(zoomScale);
   builder_.add_duration(duration);
   builder_.add_transition(transition);
@@ -1781,15 +1781,15 @@ inline flatbuffers::Offset<Button> CreateButtonDirect(flatbuffers::FlatBufferBui
     float zoomScale = 0.0f,
     SpriteType spriteType = SpriteType_Simple,
     bool trimEnabled = false,
-    const char *backgroundNodeName = nullptr,
     const char *spriteFrameName = nullptr,
     const char *pressedSpriteFrameName = nullptr,
     const char *disabledSpriteFrameName = nullptr,
     bool ignoreContentAdaptWithSize = false,
     const ColorRGBA *normalColor = 0,
     const ColorRGBA *pressedColor = 0,
-    const ColorRGBA *disableColor = 0) {
-  return CreateButton(_fbb, node, transition, duration, zoomScale, spriteType, trimEnabled, backgroundNodeName ? _fbb.CreateString(backgroundNodeName) : 0, spriteFrameName ? _fbb.CreateString(spriteFrameName) : 0, pressedSpriteFrameName ? _fbb.CreateString(pressedSpriteFrameName) : 0, disabledSpriteFrameName ? _fbb.CreateString(disabledSpriteFrameName) : 0, ignoreContentAdaptWithSize, normalColor, pressedColor, disableColor);
+    const ColorRGBA *disableColor = 0,
+    const char *backgroundNodeName = nullptr) {
+  return CreateButton(_fbb, node, transition, duration, zoomScale, spriteType, trimEnabled, spriteFrameName ? _fbb.CreateString(spriteFrameName) : 0, pressedSpriteFrameName ? _fbb.CreateString(pressedSpriteFrameName) : 0, disabledSpriteFrameName ? _fbb.CreateString(disabledSpriteFrameName) : 0, ignoreContentAdaptWithSize, normalColor, pressedColor, disableColor, backgroundNodeName ? _fbb.CreateString(backgroundNodeName) : 0);
 }
 
 struct Layout FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
