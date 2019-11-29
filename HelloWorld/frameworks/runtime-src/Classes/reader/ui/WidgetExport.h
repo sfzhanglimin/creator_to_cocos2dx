@@ -233,6 +233,7 @@ public:
 	static cocos2d::Rect& getSafeUIRect() {
 		return m_sSafeUIRect;
 	};
+	virtual void cleanup()override;
 private:
     friend class CreatorReader;
 

@@ -85,7 +85,6 @@ void WidgetAdapter::setLayoutTarget(cocos2d::Node* layoutTarget)
 	{
 		_layoutTarget->retain();
 	}
-	
 }
 
 void WidgetAdapter::setMargin(const Margin &sMargin)
@@ -445,13 +444,20 @@ cocos2d::Rect WidgetManager::m_sSafeUIRect = cocos2d::Rect();
 WidgetManager::WidgetManager()
 : _forceAlignDirty(false)
 {
-
 }
 
 WidgetManager::~WidgetManager()
 {
-    
 }
+
+
+void WidgetManager::cleanup()
+{
+	cocos2d::Node::cleanup();
+	_needAdaptWidgets.clear();
+}
+
+
 
 void WidgetManager::update(float dt)
 {
@@ -468,8 +474,6 @@ void WidgetManager::setSafeUIRect(cocos2d::Rect &sRect)
 {
 	m_sSafeUIRect = sRect;
 }
-
-
 
 void WidgetManager::doAlign()
 {

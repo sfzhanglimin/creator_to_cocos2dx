@@ -263,11 +263,12 @@ void CreatorReader::setupSpriteFrames()
     if (spriteFrames) {
         for (const auto& spriteFrame: *spriteFrames) {
 			const auto& filename = spriteFrame->texturePath()->str();
+			const auto& name = spriteFrame->name()->str();
 
-			auto pSpriteFrame = frameCache->getSpriteFrameByName(filename);
+			auto pSpriteFrame = frameCache->getSpriteFrameByName(name);
 			if (!pSpriteFrame)
 			{
-				const auto& name = spriteFrame->name()->str();
+				//const auto& name = spriteFrame->name()->str();
 				const auto& rect = spriteFrame->rect();
 				const auto& rotated = spriteFrame->rotated();
 				const auto& offset = spriteFrame->offset();
@@ -283,13 +284,13 @@ void CreatorReader::setupSpriteFrames()
 				const auto& centerRect = spriteFrame->centerRect();
 				if (sf && centerRect) {
 					cocos2d::Rect sTempRect(centerRect->x(), centerRect->y(), centerRect->w(), centerRect->h());
-				/*	if (centerRect->x() == centerRect->w()){
+					if (centerRect->x() == centerRect->w()){
 						sTempRect.size.width = originalSize->w();
 					}
 					if (centerRect->y() == centerRect->h()){
 						sTempRect.size.height = originalSize->h();
 						sf->setRect(sTempRect);
-					}*/
+					}
 					sf->setCenterRectInPixels(sTempRect);
 				}
 
@@ -298,11 +299,11 @@ void CreatorReader::setupSpriteFrames()
 					CCLOG("Adding sprite frame: %s", name.c_str());
 				}
 
-				s_checkSpriteFrameFixed[filename] = true;
+				s_checkSpriteFrameFixed[name] = true;
 			}
 			else
 			{
-				if (!s_checkSpriteFrameFixed[filename])
+				if (!s_checkSpriteFrameFixed[name])
 				{
 					const auto& centerRect = spriteFrame->centerRect();
 					if (centerRect) {
@@ -327,7 +328,7 @@ void CreatorReader::setupSpriteFrames()
 						pSpriteFrame->setCenterRectInPixels(cocos2d::Rect(centerRect->x(), centerRect->y(), centerRect->w(), centerRect->h()));
 
 					}
-					s_checkSpriteFrameFixed[filename] = true;
+					s_checkSpriteFrameFixed[name] = true;
 				}
 			}
         }
@@ -412,7 +413,7 @@ cocos2d::Node* CreatorReader::getNodeGraph() const
 	_collisionManager->start();
 
 	_widgetManager->setupWidgets();
-	node->addChild(_widgetManager);
+	//node->addChild(_widgetManager);
 
 	return node;
 }
