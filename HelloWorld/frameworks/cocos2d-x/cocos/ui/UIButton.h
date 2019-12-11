@@ -283,6 +283,20 @@ public:
      * @since v3.3
      */
     float getZoomScale()const;
+
+
+	
+
+	/**
+	* CCNode.cpp
+	* ???¨®orignScale
+	*/
+	// original scale getter
+	float getOrignScale(void) const{return _orignScale;}
+
+	// original scale setter
+	void setOrignScale(float scale){_orignScale = scale;}
+
     
     /**
      * @brief Return the nine-patch sprite of normal state
@@ -329,6 +343,9 @@ protected:
     virtual void onPressStateChangedToDisabled() override;
     virtual void onSizeChanged() override;
 
+	virtual bool onTouchBegan(Touch *touch, Event* /*unusedEvent*/)override;
+	virtual void onTouchEnded(Touch *touch, Event *unusedEvent)override;
+
     void loadTextureNormal(SpriteFrame* normalSpriteFrame);
     void setupNormalTexture(bool textureLoaded);
     void loadTexturePressed(SpriteFrame* pressedSpriteFrame);
@@ -356,6 +373,7 @@ protected:
     Scale9Sprite* _buttonDisabledRenderer;
     Label* _titleRenderer;
 
+	float _orignScale;             
     float _zoomScale;
     bool _prevIgnoreSize;
     bool _scale9Enabled;
@@ -384,6 +402,15 @@ protected:
     TextureResType _disabledTexType;
 
 private:
+    enum class FontType
+    {
+        SYSTEM,
+        TTF,
+        BMFONT
+    };
+
+    int _fontSize;
+    FontType _type;
     std::string _fontName;
 };
 

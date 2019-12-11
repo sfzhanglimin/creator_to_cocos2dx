@@ -72,7 +72,8 @@ _disabledFileName(""),
 _normalTexType(TextureResType::LOCAL),
 _pressedTexType(TextureResType::LOCAL),
 _disabledTexType(TextureResType::LOCAL),
-_fontName("")
+_fontName(""),
+_orignScale(-1)
 {
     setTouchEnabled(true);
 }
@@ -467,7 +468,7 @@ void Button::onPressStateChangedToNormal()
     {
         if (_pressedActionEnabled)
         {
-            _buttonNormalRenderer->stopAllActions();
+           /* _buttonNormalRenderer->stopAllActions();
             _buttonClickedRenderer->stopAllActions();
 
 //            Action *zoomAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP, _normalTextureScaleXInSize, _normalTextureScaleYInSize);
@@ -488,7 +489,13 @@ void Button::onPressStateChangedToNormal()
                     _titleRenderer->setScaleX(1.0f);
                     _titleRenderer->setScaleY(1.0f);
                 }
-            }
+            }*/
+
+			this->stopAllActions();
+			float orignScale = this->getOrignScale();
+			float childScale = (orignScale == -1.0f ? this->getScale() : orignScale);
+			this->setScale(childScale);
+			this->setOrignScale(-1);
         }
     }
     else
@@ -518,7 +525,7 @@ void Button::onPressStateChangedToPressed()
 
         if (_pressedActionEnabled)
         {
-            _buttonNormalRenderer->stopAllActions();
+           /* _buttonNormalRenderer->stopAllActions();
             _buttonClickedRenderer->stopAllActions();
 
             Action *zoomAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP,
@@ -535,7 +542,18 @@ void Button::onPressStateChangedToPressed()
                 Action *zoomTitleAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP,
                                                           1.0f + _zoomScale, 1.0f + _zoomScale);
                 _titleRenderer->runAction(zoomTitleAction);
-            }
+            }*/
+
+			this->stopAllActions();
+			float orignScale = this->getOrignScale();
+			float childScale = (orignScale == -1.0f ? this->getScale() : orignScale);
+			this->setOrignScale(childScale);
+
+			Action *zoomChildAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP,
+				childScale * (1.0f + _zoomScale),
+				childScale * (1.0f + _zoomScale));
+			this->runAction(zoomChildAction);
+
         }
     }
     else
@@ -971,6 +989,56 @@ ResourceData Button::getDisabledFile()
     rData.type = (int)_disabledTexType;
     rData.file = _disabledFileName;
     return rData;
+}
+
+bool Button::onTouchBegan(Touch *touch, Event* /*unusedEvent*/)
+{
+	_hitted = false;
+	if (isVisible()  && isAncestorsEnabled() && isAncestorsVisible(this))
+	{
+		_touchBeganPosition = touch->getLocation();
+		auto camera = Camera::getVisitingCamera();
+		if (hitTest(_touchBeganPosition, camera, nullptr))
+		{
+			if (isClippingParentContainsPoint(_touchBeganPosition)) {
+				_hittedByCamera = camera;
+				_hitted = true;
+			}
+		}
+	}
+
+
+	if (!_hitted)
+	{
+		return false;
+	}
+	if (!isEnabled())
+	{
+		return true;
+	}
+
+	setHighlighted(true);
+
+	/*
+	* Propagate touch events to its parents
+	*/
+	if (_propagateTouchEvents)
+	{
+		this->propagateTouchEvent(TouchEventType::BEGAN, this, touch);
+	}
+
+	pushDownEvent();
+	return true;
+}
+
+
+void Button::onTouchEnded(Touch *touch, Event *unusedEvent)
+{
+	if (!isEnabled())
+	{
+		return;
+	}
+	Widget::onTouchEnded(touch, unusedEvent);
 }
 
 }

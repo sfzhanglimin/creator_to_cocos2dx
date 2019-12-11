@@ -506,6 +506,9 @@
     <ClCompile Include="..\Classes\reader\CreatorReader.cpp">
       <Filter>Classes\reader</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\reader\animation\AnimationClipProperties.cpp">
+      <Filter>Classes\reader\animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">

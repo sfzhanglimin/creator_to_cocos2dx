@@ -283,6 +283,7 @@ xcopy "$(ProjectDir)..\..\..\src" "$(LocalDebuggerWorkingDirectory)\Resources\sr
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
     <ClCompile Include="..\Classes\reader\animation\AnimateClip.cpp" />
     <ClCompile Include="..\Classes\reader\animation\AnimationClip.cpp" />
+    <ClCompile Include="..\Classes\reader\animation\AnimationClipProperties.cpp" />
     <ClCompile Include="..\Classes\reader\animation\AnimationManager.cpp" />
     <ClCompile Include="..\Classes\reader\animation\Bezier.cpp" />
     <ClCompile Include="..\Classes\reader\animation\Easing.cpp" />
