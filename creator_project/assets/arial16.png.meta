@@ -1,12 +1,13 @@
 {
-  "ver": "1.0.0",
+  "ver": "2.2.0",
   "uuid": "2c8df125-099b-4cc6-aa64-a27080e09ead",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
+  "premultiplyAlpha": false,
   "subMetas": {
     "arial16": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "9d118d40-151d-4255-bfa5-ccc223cb4026",
       "rawTextureUuid": "2c8df125-099b-4cc6-aa64-a27080e09ead",
       "trimType": "auto",

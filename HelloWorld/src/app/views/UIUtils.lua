@@ -65,5 +65,27 @@ function UIUtils:getRootNodeInCreatorEx(parentNode,creatorName)
 end
 
 
+local stringFind = string.find
+function UIUtils:autoGenMember(table,node)
+
+   if node == nil then
+       return 
+   end
+
+   local children = node:getChildren()
+
+   if children ~= nil then
+       for _,child in pairs(children) do
+
+           local cname = child:getName()
+           if  stringFind(cname,"m_") then
+               table[cname] = child
+           end
+           self:autoGenMember(table,child)
+       end
+   end 
+end
+
+
 
 return UIUtils

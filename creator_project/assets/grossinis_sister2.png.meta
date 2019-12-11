@@ -1,12 +1,13 @@
 {
-  "ver": "1.0.0",
+  "ver": "2.2.0",
   "uuid": "55a00ee1-d4e3-4981-aa79-fa17aa2e0940",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
+  "premultiplyAlpha": false,
   "subMetas": {
     "grossinis_sister2": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "0f491ace-1ca9-452a-9d37-7c2c618f6dda",
       "rawTextureUuid": "55a00ee1-d4e3-4981-aa79-fa17aa2e0940",
       "trimType": "auto",

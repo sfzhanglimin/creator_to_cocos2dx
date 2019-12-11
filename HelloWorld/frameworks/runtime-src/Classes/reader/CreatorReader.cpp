@@ -572,6 +572,14 @@ cocos2d::Node* CreatorReader::createTree(const buffers::NodeTree* tree, bool isS
 		auto pLayout = dynamic_cast<CreatorLayout*>(node);
 		pLayout->doLayout();
 	}
+
+	if (static_cast<int>(bufferType) == buffers::AnyNode_EditBox)
+	{
+		auto pEditBox = dynamic_cast<ui::EditBox*>(node);
+		pEditBox->removeChildByName("BACKGROUND_SPRITE");
+		pEditBox->removeChildByName("TEXT_LABEL");
+		pEditBox->removeChildByName("PLACEHOLDER_LABEL");
+	}
 	
     return node;
 }
