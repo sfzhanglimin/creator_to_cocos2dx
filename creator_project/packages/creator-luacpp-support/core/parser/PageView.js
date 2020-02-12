@@ -8,15 +8,18 @@ const state = require('./Global').state;
 /**
  * 
  */
-class PageView extends Node {
-    constructor(data) {
+class PageView extends Node
+{
+    constructor(data)
+    {
         super(data);
         this._jsonNode.object_type = 'PageView';
     }
 
-    parse_properties() {
+    parse_properties()
+    {
         super.parse_node_properties();
-        this._properties = {node: this._properties};
+        this._properties = { node: this._properties };
 
         let pageview_component = Node.get_node_component_of_type(this._node_data, 'cc.PageView');
         this.add_property_bool('inertia', 'inertia', pageview_component);
@@ -37,7 +40,8 @@ class PageView extends Node {
         Utils.remove_child_by_id(this, view_id);
         Utils.remove_child_by_id(this, background_id);
 
-        this._node_data._children.forEach(function(child_idx) {
+        this._node_data._children.forEach(function (child_idx)
+        {
             this.parse_child(child_idx.__id__);
         }.bind(this));
     }
@@ -45,18 +49,26 @@ class PageView extends Node {
     /**
      * @return indicator node id
      */
-    initilizeIndicator(pageview_component) {
+    initilizeIndicator(pageview_component)
+    {
         let indicator_component = state._json_data[pageview_component._N$indicator.__id__]
         let indicator_node = state._json_data[indicator_component.node.__id__];
-        let indicator = {_properties:{}};
-        
+        //add by zlm
+        this.convertHightVersionToLowVersion(indicator_node);
+        //end
+
+        let indicator = { _properties: {} };
+
         this.add_property_int.bind(indicator)('space', 'spacing', indicator_component);
 
         let pageview_size = this._properties.node.contentSize;
-        indicator._properties.positionAnchor = {x: 0.5 + indicator_node._position.x / pageview_size.w,
-                                             y: 0.5 + indicator_node._position.y / pageview_size.h};
+        indicator._properties.positionAnchor = {
+            x: 0.5 + indicator_node._position.x / pageview_size.w,
+            y: 0.5 + indicator_node._position.y / pageview_size.h
+        };
 
-        if (indicator_component.spriteFrame) {
+        if (indicator_component.spriteFrame)
+        {
             let sprite_frame_uuid = indicator_component.spriteFrame.__uuid__;
             indicator._properties.spriteFrame = Utils.get_sprite_frame_name_by_uuid(sprite_frame_uuid);
             indicator._properties.spriteFrameFromTP = Utils.is_sprite_frame_from_texture_packer(sprite_frame_uuid);
@@ -64,7 +76,7 @@ class PageView extends Node {
                 indicator._properties.spriteFrame = indicator._properties.spriteFrame;
         }
         else
-            log('indicator name(' + indicator_node._name  + ') does not have sprite frame');
+            log('indicator name(' + indicator_node._name + ') does not have sprite frame');
 
         indicator = indicator._properties;
         delete indicator._properties;
@@ -76,26 +88,29 @@ class PageView extends Node {
     /**
      * @return view node id
      */
-    initializePages(pageview_component) {
+    initializePages(pageview_component)
+    {
         let content_id = pageview_component.content.__id__;
         let content_node = state._json_data[content_id];
-        
+
         // all children of content should be a page
         let pages = [];
-        content_node._children.forEach(function(child) {
+        content_node._children.forEach(function (child)
+        {
             let page_id = child.__id__;
             let page_node = state._json_data[page_id];
-            let page = {_properties:{}};
+            let page = { _properties: {} };
 
             let page_sprite_component = Node.get_node_component_of_type(page_node, 'cc.Sprite');
             page._properties.scale9Enabled = page_sprite_component._type == SpriteTypes.SLICED;
 
-            if (page_sprite_component._spriteFrame) {
+            if (page_sprite_component._spriteFrame)
+            {
                 let sprite_frame_uuid = page_sprite_component._spriteFrame.__uuid__;
                 page._properties.spriteFrame = Utils.get_sprite_frame_name_by_uuid(sprite_frame_uuid);
                 page._properties.spriteFrameFromTP = Utils.is_sprite_frame_from_texture_packer(sprite_frame_uuid);
                 if (!page._properties.spriteFrameFromTP)
-                    page._properties.spriteFrame =  page._properties.spriteFrame;
+                    page._properties.spriteFrame = page._properties.spriteFrame;
             }
             else
                 log('page name(' + page._name + ') does not have sprite frame');
@@ -118,13 +133,15 @@ class PageView extends Node {
      * FIXME: we treat the first child of `pageview` as background
      * @return background id
      */
-    initBackground(pageview_component) {
+    initBackground(pageview_component)
+    {
         let pageview_node_id = pageview_component.node.__id__;
         let pageview_node = state._json_data[pageview_node_id];
         let background_id = pageview_node._children[0].__id__;
         let background_node = state._json_data[background_id];
         let background_sprite_component = Node.get_node_component_of_type(background_node, 'cc.Sprite');
-        if (background_sprite_component._spriteFrame) {
+        if (background_sprite_component._spriteFrame)
+        {
             let background = {};
             let uuid = background_sprite_component._spriteFrame.__uuid__;
             background.spriteFrame = Utils.get_sprite_frame_name_by_uuid(uuid);
