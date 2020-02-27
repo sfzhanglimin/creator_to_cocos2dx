@@ -1,0 +1,470 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="animation">
+      <UniqueIdentifier>{3156f416-be1b-44d8-8516-a79bac475eaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="collider">
+      <UniqueIdentifier>{34c1a108-7581-4185-a40a-afe84389e197}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dragonbones\animation">
+      <UniqueIdentifier>{d1d27c97-1fa6-462c-85d8-fb84179f739b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dragonbones">
+      <UniqueIdentifier>{e794a7f1-9d42-45b2-8b07-2aa69b2f6800}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dragonbones\armature">
+      <UniqueIdentifier>{e0e89976-860a-4531-93b5-a18ac08cb1d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dragonbones\cocos2dx">
+      <UniqueIdentifier>{20026c7b-461b-473f-85b8-387102d563e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dragonbones\core">
+      <UniqueIdentifier>{19dbedbe-717d-4217-8bf8-8bf7f0233217}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dragonbones\event">
+      <UniqueIdentifier>{eb567ac1-fe20-4db2-ad13-d70bb4c18a36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dragonbones\factory">
+      <UniqueIdentifier>{2f843a80-f220-4fe6-99c1-3f96d3bd830b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dragonbones\geom">
+      <UniqueIdentifier>{ada18cb0-f616-4df9-8584-35925c8c87ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dragonbones\model">
+      <UniqueIdentifier>{6a413c94-093c-4582-9347-903debab1151}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dragonbones\parser">
+      <UniqueIdentifier>{23ab9a20-2c05-4347-8a32-1aea06f6f4ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lua-bindings\dragonbones">
+      <UniqueIdentifier>{31f86650-68ac-4da6-89fb-73bfc888ece6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lua-bindings">
+      <UniqueIdentifier>{b81f31a8-4c89-4a29-be5d-3b821e7d22e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lua-bindings\reader">
+      <UniqueIdentifier>{9ac2d80c-5e62-4b0c-a68a-d1f946f65202}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ui">
+      <UniqueIdentifier>{1a174be5-65f3-4094-9878-6bf2f75ac16c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="flatbuffers">
+      <UniqueIdentifier>{7dacad2b-3a94-4dd5-9e14-2120f8a98d9b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="animation\AnimateClip.cpp">
+      <Filter>animation</Filter>
+    </ClCompile>
+    <ClCompile Include="animation\AnimationClip.cpp">
+      <Filter>animation</Filter>
+    </ClCompile>
+    <ClCompile Include="animation\AnimationManager.cpp">
+      <Filter>animation</Filter>
+    </ClCompile>
+    <ClCompile Include="animation\Bezier.cpp">
+      <Filter>animation</Filter>
+    </ClCompile>
+    <ClCompile Include="animation\Easing.cpp">
+      <Filter>animation</Filter>
+    </ClCompile>
+    <ClCompile Include="collider\Collider.cpp">
+      <Filter>collider</Filter>
+    </ClCompile>
+    <ClCompile Include="collider\ColliderManager.cpp">
+      <Filter>collider</Filter>
+    </ClCompile>
+    <ClCompile Include="collider\Contract.cpp">
+      <Filter>collider</Filter>
+    </ClCompile>
+    <ClCompile Include="collider\Intersection.cpp">
+      <Filter>collider</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\animation\Animation.cpp">
+      <Filter>dragonbones\animation</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\animation\AnimationState.cpp">
+      <Filter>dragonbones\animation</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\animation\BaseTimelineState.cpp">
+      <Filter>dragonbones\animation</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\animation\TimelineState.cpp">
+      <Filter>dragonbones\animation</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\animation\WorldClock.cpp">
+      <Filter>dragonbones\animation</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\armature\Armature.cpp">
+      <Filter>dragonbones\armature</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\armature\Bone.cpp">
+      <Filter>dragonbones\armature</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\armature\Constraint.cpp">
+      <Filter>dragonbones\armature</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\armature\DeformVertices.cpp">
+      <Filter>dragonbones\armature</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\armature\Slot.cpp">
+      <Filter>dragonbones\armature</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\armature\TransformObject.cpp">
+      <Filter>dragonbones\armature</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\cocos2dx\CCArmatureDisplay.cpp">
+      <Filter>dragonbones\cocos2dx</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\cocos2dx\CCFactory.cpp">
+      <Filter>dragonbones\cocos2dx</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\cocos2dx\CCSlot.cpp">
+      <Filter>dragonbones\cocos2dx</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\cocos2dx\CCTextureAtlasData.cpp">
+      <Filter>dragonbones\cocos2dx</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\core\BaseObject.cpp">
+      <Filter>dragonbones\core</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\core\DragonBones.cpp">
+      <Filter>dragonbones\core</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\event\EventObject.cpp">
+      <Filter>dragonbones\event</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\factory\BaseFactory.cpp">
+      <Filter>dragonbones\factory</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\geom\Point.cpp">
+      <Filter>dragonbones\geom</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\geom\Transform.cpp">
+      <Filter>dragonbones\geom</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\model\AnimationConfig.cpp">
+      <Filter>dragonbones\model</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\model\AnimationData.cpp">
+      <Filter>dragonbones\model</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\model\ArmatureData.cpp">
+      <Filter>dragonbones\model</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\model\BoundingBoxData.cpp">
+      <Filter>dragonbones\model</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\model\CanvasData.cpp">
+      <Filter>dragonbones\model</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\model\ConstraintData.cpp">
+      <Filter>dragonbones\model</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\model\DisplayData.cpp">
+      <Filter>dragonbones\model</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\model\DragonBonesData.cpp">
+      <Filter>dragonbones\model</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\model\SkinData.cpp">
+      <Filter>dragonbones\model</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\model\TextureAtlasData.cpp">
+      <Filter>dragonbones\model</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\model\UserData.cpp">
+      <Filter>dragonbones\model</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\parser\BinaryDataParser.cpp">
+      <Filter>dragonbones\parser</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\parser\DataParser.cpp">
+      <Filter>dragonbones\parser</Filter>
+    </ClCompile>
+    <ClCompile Include="dragonbones\parser\JSONDataParser.cpp">
+      <Filter>dragonbones\parser</Filter>
+    </ClCompile>
+    <ClCompile Include="lua-bindings\dragonbones\lua_dragonbones_auto.cpp">
+      <Filter>lua-bindings\dragonbones</Filter>
+    </ClCompile>
+    <ClCompile Include="lua-bindings\dragonbones\lua_dragonbones_manual.cpp">
+      <Filter>lua-bindings\dragonbones</Filter>
+    </ClCompile>
+    <ClCompile Include="lua-bindings\reader\lua_creator_reader_auto.cpp">
+      <Filter>lua-bindings\reader</Filter>
+    </ClCompile>
+    <ClCompile Include="lua-bindings\reader\lua_creator_reader_manual.cpp">
+      <Filter>lua-bindings\reader</Filter>
+    </ClCompile>
+    <ClCompile Include="lua-bindings\creator_reader_bindings.cpp">
+      <Filter>lua-bindings</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\Button.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\Layout.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\PageView.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\RadioButton.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\RadioButtonGroup.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\RichText.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\RichtextStringVisitor.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\WidgetExport.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatorReader.cpp" />
+    <ClCompile Include="ui\ShaderCache.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="animation\AnimationClipProperties.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="animation\AnimateClip.h">
+      <Filter>animation</Filter>
+    </ClInclude>
+    <ClInclude Include="animation\AnimationClip.h">
+      <Filter>animation</Filter>
+    </ClInclude>
+    <ClInclude Include="animation\AnimationClipProperties.h">
+      <Filter>animation</Filter>
+    </ClInclude>
+    <ClInclude Include="animation\AnimationManager.h">
+      <Filter>animation</Filter>
+    </ClInclude>
+    <ClInclude Include="animation\Bezier.h">
+      <Filter>animation</Filter>
+    </ClInclude>
+    <ClInclude Include="animation\Easing.h">
+      <Filter>animation</Filter>
+    </ClInclude>
+    <ClInclude Include="collider\Collider.h">
+      <Filter>collider</Filter>
+    </ClInclude>
+    <ClInclude Include="collider\ColliderManager.h">
+      <Filter>collider</Filter>
+    </ClInclude>
+    <ClInclude Include="collider\Contract.h">
+      <Filter>collider</Filter>
+    </ClInclude>
+    <ClInclude Include="collider\Intersection.h">
+      <Filter>collider</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\animation\Animation.h">
+      <Filter>dragonbones\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\animation\AnimationState.h">
+      <Filter>dragonbones\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\animation\BaseTimelineState.h">
+      <Filter>dragonbones\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\animation\IAnimatable.h">
+      <Filter>dragonbones\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\animation\IAnimateble.h">
+      <Filter>dragonbones\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\animation\TimelineState.h">
+      <Filter>dragonbones\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\animation\WorldClock.h">
+      <Filter>dragonbones\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\armature\Armature.h">
+      <Filter>dragonbones\armature</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\armature\Bone.h">
+      <Filter>dragonbones\armature</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\armature\Constraint.h">
+      <Filter>dragonbones\armature</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\armature\DeformVertices.h">
+      <Filter>dragonbones\armature</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\armature\IArmatureDisplay.h">
+      <Filter>dragonbones\armature</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\armature\IArmatureProxy.h">
+      <Filter>dragonbones\armature</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\armature\Slot.h">
+      <Filter>dragonbones\armature</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\armature\TransformObject.h">
+      <Filter>dragonbones\armature</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\cocos2dx\CCArmatureDisplay.h">
+      <Filter>dragonbones\cocos2dx</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\cocos2dx\CCDragonBonesHeaders.h">
+      <Filter>dragonbones\cocos2dx</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\cocos2dx\CCFactory.h">
+      <Filter>dragonbones\cocos2dx</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\cocos2dx\CCSlot.h">
+      <Filter>dragonbones\cocos2dx</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\cocos2dx\CCTextureAtlasData.h">
+      <Filter>dragonbones\cocos2dx</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\core\BaseObject.h">
+      <Filter>dragonbones\core</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\core\DragonBones.h">
+      <Filter>dragonbones\core</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\event\EventObject.h">
+      <Filter>dragonbones\event</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\event\IEventDispatcher.h">
+      <Filter>dragonbones\event</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\factory\BaseFactory.h">
+      <Filter>dragonbones\factory</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\geom\ColorTransform.h">
+      <Filter>dragonbones\geom</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\geom\Matrix.h">
+      <Filter>dragonbones\geom</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\geom\Point.h">
+      <Filter>dragonbones\geom</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\geom\Rectangle.h">
+      <Filter>dragonbones\geom</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\geom\Transform.h">
+      <Filter>dragonbones\geom</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\model\AnimationConfig.h">
+      <Filter>dragonbones\model</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\model\AnimationData.h">
+      <Filter>dragonbones\model</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\model\ArmatureData.h">
+      <Filter>dragonbones\model</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\model\BoundingBoxData.h">
+      <Filter>dragonbones\model</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\model\CanvasData.h">
+      <Filter>dragonbones\model</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\model\ConstraintData.h">
+      <Filter>dragonbones\model</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\model\DisplayData.h">
+      <Filter>dragonbones\model</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\model\DragonBonesData.h">
+      <Filter>dragonbones\model</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\model\SkinData.h">
+      <Filter>dragonbones\model</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\model\TextureAtlasData.h">
+      <Filter>dragonbones\model</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\model\UserData.h">
+      <Filter>dragonbones\model</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\parser\BinaryDataParser.h">
+      <Filter>dragonbones\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\parser\DataParser.h">
+      <Filter>dragonbones\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\parser\JSONDataParser.h">
+      <Filter>dragonbones\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="dragonbones\DragonBonesHeaders.h">
+      <Filter>dragonbones</Filter>
+    </ClInclude>
+    <ClInclude Include="flatbuffers\code_generators.h">
+      <Filter>flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="flatbuffers\flatbuffers.h">
+      <Filter>flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="flatbuffers\grpc.h">
+      <Filter>flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="flatbuffers\hash.h">
+      <Filter>flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="flatbuffers\idl.h">
+      <Filter>flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="flatbuffers\reflection.h">
+      <Filter>flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="flatbuffers\reflection_generated.h">
+      <Filter>flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="flatbuffers\util.h">
+      <Filter>flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="lua-bindings\dragonbones\lua_dragonbones_auto.hpp">
+      <Filter>lua-bindings\dragonbones</Filter>
+    </ClInclude>
+    <ClInclude Include="lua-bindings\dragonbones\lua_dragonbones_manual.hpp">
+      <Filter>lua-bindings\dragonbones</Filter>
+    </ClInclude>
+    <ClInclude Include="lua-bindings\reader\lua_creator_reader_auto.hpp">
+      <Filter>lua-bindings\reader</Filter>
+    </ClInclude>
+    <ClInclude Include="lua-bindings\reader\lua_creator_reader_manual.hpp">
+      <Filter>lua-bindings\reader</Filter>
+    </ClInclude>
+    <ClInclude Include="lua-bindings\creator_reader_bindings.hpp">
+      <Filter>lua-bindings</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\Button.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\Layout.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\PageView.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\RadioButton.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\RadioButtonGroup.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\RichText.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\RichtextStringVisitor.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\WidgetExport.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="CreatorReader.h" />
+    <ClInclude Include="CreatorReader_generated.h" />
+    <ClInclude Include="Macros.h" />
+    <ClInclude Include="ui\ShaderCache.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

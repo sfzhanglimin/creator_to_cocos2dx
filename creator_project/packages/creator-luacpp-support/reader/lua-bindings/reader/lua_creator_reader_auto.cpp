@@ -934,6 +934,58 @@ int lua_creator_reader_CreatorReader_setup(lua_State* tolua_S)
 
     return 0;
 }
+
+//add by zlm add clone function
+int lua_creator_reader_CreatorReader_clone(lua_State* tolua_S)
+{
+    int argc = 0;
+    creator::CreatorReader* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"creator.CreatorReader",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (creator::CreatorReader*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_creator_reader_CreatorReader_clone'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_creator_reader_CreatorReader_clone'", nullptr);
+            return 0;
+        }
+        auto ret = cobj->clone();
+		object_to_luaval<creator::CreatorReader>(tolua_S, "creator.CreatorReader", (creator::CreatorReader*)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "creator.CreatorReader:clone",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_creator_reader_CreatorReader_clone'.",&tolua_err);
+#endif
+
+    return 0;
+}
+
+//end
+
 int lua_creator_reader_CreatorReader_getVersion(lua_State* tolua_S)
 {
     int argc = 0;
@@ -1175,6 +1227,9 @@ int lua_register_creator_reader_CreatorReader(lua_State* tolua_S)
     tolua_beginmodule(tolua_S,"CreatorReader");
         tolua_function(tolua_S,"getAnimationManager",lua_creator_reader_CreatorReader_getAnimationManager);
         tolua_function(tolua_S,"setup",lua_creator_reader_CreatorReader_setup);
+		//add by zlm add clone function
+        tolua_function(tolua_S,"clone",lua_creator_reader_CreatorReader_clone);
+		//end
         tolua_function(tolua_S,"getVersion",lua_creator_reader_CreatorReader_getVersion);
         tolua_function(tolua_S,"getSceneGraph",lua_creator_reader_CreatorReader_getSceneGraph);
 		tolua_function(tolua_S, "getNodeGraph", lua_creator_reader_CreatorReader_getNodeGraph);

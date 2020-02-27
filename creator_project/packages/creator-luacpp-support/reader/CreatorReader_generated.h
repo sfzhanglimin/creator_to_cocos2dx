@@ -947,10 +947,12 @@ struct SpriteFrame FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     VT_OFFSET = 10,
     VT_ROTATED = 12,
     VT_ORIGINALSIZE = 14,
-    VT_CENTERRECT = 16
+    VT_CENTERRECT = 16,
+	VT_ISTEXTUREPACKER = 18,
   };
   const flatbuffers::String *name() const { return GetPointer<const flatbuffers::String *>(VT_NAME); }
   const flatbuffers::String *texturePath() const { return GetPointer<const flatbuffers::String *>(VT_TEXTUREPATH); }
+  bool isTexturePacker() const { return GetField<uint8_t>(VT_ISTEXTUREPACKER, 0) != 0; }
   const Rect *rect() const { return GetStruct<const Rect *>(VT_RECT); }
   const Vec2 *offset() const { return GetStruct<const Vec2 *>(VT_OFFSET); }
   bool rotated() const { return GetField<uint8_t>(VT_ROTATED, 0) != 0; }
@@ -1935,10 +1937,12 @@ struct ProgressBar FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     VT_BACKGROUNDSPRITEFRAMENAME = 8,
     VT_BARSPRITEFRAMENAME = 10,
     VT_BARSPRITETYPE = 12,
-    VT_REVERSE = 14
+    VT_REVERSE = 14,
+	VT_BACKGROUNDSPRITETYPE = 16,
   };
   const Node *node() const { return GetPointer<const Node *>(VT_NODE); }
   float percent() const { return GetField<float>(VT_PERCENT, 0.0f); }
+  int32_t backgroundSpriteType() const { return GetField<int32_t>(VT_BACKGROUNDSPRITETYPE, 0); }
   const flatbuffers::String *backgroundSpriteFrameName() const { return GetPointer<const flatbuffers::String *>(VT_BACKGROUNDSPRITEFRAMENAME); }
   const flatbuffers::String *barSpriteFrameName() const { return GetPointer<const flatbuffers::String *>(VT_BARSPRITEFRAMENAME); }
   int32_t barSpriteType() const { return GetField<int32_t>(VT_BARSPRITETYPE, 0); }

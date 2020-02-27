@@ -16,7 +16,10 @@ class ProgressBar extends Node {
         // background sprite
         let bg_component = Node.get_node_component_of_type(this._node_data, 'cc.Sprite');
         if (bg_component._spriteFrame)
-            this._properties.backgroundSpriteFrameName = Utils.get_sprite_frame_name_by_uuid(bg_component._spriteFrame.__uuid__);
+            {
+                this._properties.backgroundSpriteFrameName = Utils.get_sprite_frame_name_by_uuid(bg_component._spriteFrame.__uuid__);
+                this._properties.backgroundSpriteType = (bg_component._atlas && bg_component._atlas.__uuid__&&bg_component._atlas.__uuid__.length > 0) ? 1 : 0;
+            }
 
         let bar_component = Node.get_node_component_of_type(this._node_data, 'cc.ProgressBar');
         this._properties.percent = bar_component._N$progress * 100;
@@ -28,7 +31,7 @@ class ProgressBar extends Node {
             let bar_sprite_uuid = bar_sprite_data._spriteFrame.__uuid__;
             this._properties.barSpriteFrameName =  Utils.get_sprite_frame_name_by_uuid(bar_sprite_uuid);
             this._properties.barSpriteType = bar_sprite_data._type;
-
+            
             // should remove the child: bar sprite node
             let bar_sprite_node_id = state._json_data[bar_sprite.__id__].node.__id__;
             Utils.remove_child_by_id(this, bar_sprite_node_id);

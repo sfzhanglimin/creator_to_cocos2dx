@@ -55,7 +55,7 @@ public:
     cocos2d::Scene* getSceneGraph() const;
 
 
-	cocos2d::Node* getNodeGraph() const;
+	cocos2d::Node* getNodeGraph(bool aIsSceneToNode = true) const;
     
     /**
      Return the AnimationManager. It is added as a child of the Scene to simplify the codes.
@@ -87,6 +87,10 @@ public:
      */
     void setup();
 
+	//add by zlm add clone function
+	CreatorReader* clone();
+	//end
+
 	static void resetSpriteFrames();
 
 protected:
@@ -94,7 +98,7 @@ protected:
     ~CreatorReader();
     bool initWithFilename(const std::string& filename);
 
-    cocos2d::Node* createTree(const buffers::NodeTree* treeBuffer,bool isSceneToNode=false) const;
+    cocos2d::Node* createTree(const buffers::NodeTree* treeBuffer,bool isSceneToNode=true) const;
 
     cocos2d::Scene* createScene(const buffers::Scene* sceneBuffer) const;
     void parseScene(cocos2d::Scene* scene, const buffers::Scene* sceneBuffer) const;

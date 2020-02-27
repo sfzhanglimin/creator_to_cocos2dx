@@ -92,6 +92,7 @@ table SpriteFrame
     rotated:bool;
     originalSize:Size;
     centerRect:Rect;        // rect in pixels. top-left origin
+    isTexturePacker:bool;
 }
 
 table CreatorScene
@@ -241,6 +242,7 @@ table ProgressBar
     barSpriteFrameName:string;
     barSpriteType:int;
     reverse:bool;
+    backgroundSpriteType:int;
 }
 
 table ScrollView

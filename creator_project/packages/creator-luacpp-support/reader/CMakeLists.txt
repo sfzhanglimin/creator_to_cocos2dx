@@ -1,5 +1,5 @@
 # reader lib for creator to cocos2d-x plugin
-set(LIB_NAME creator_reader)
+set(LIB_NAME creator_to_cocos2dx)
 
 include_directories(
     collider
@@ -15,7 +15,7 @@ include_directories(
     ${COCOS2DX_ROOT_PATH}/cocos/editor-support
 )
 
-set(READER_HEADER
+set(CREATOR_TO_COCOS2DX_HEAD
     CreatorReader_generated.h
     CreatorReader.h
     animation/Easing.h
@@ -34,7 +34,7 @@ set(READER_HEADER
     ui/WidgetExport.h
 )
 
-set(READER_SOURCE
+set(CREATOR_TO_COCOS2DX_HEAD
     animation/AnimateClip.cpp
     animation/AnimationClip.cpp
     animation/AnimationManager.cpp
@@ -51,14 +51,14 @@ set(READER_SOURCE
 )
 
 if(BUILD_LUA_LIBS)
-    list(APPEND READER_HEADER
+    list(APPEND CREATOR_TO_COCOS2DX
         lua-bindings/reader/lua_creator_reader_auto.hpp
         lua-bindings/reader/lua_creator_reader_manual.hpp
         lua-bindings/dragonbones/lua_dragonbones_auto.hpp
         lua-bindings/dragonbones/lua_dragonbones_manual.hpp
         lua-bindings/creator_reader_bindings.hpp
     )
-    list(APPEND READER_SOURCE
+    list(APPEND CREATOR_TO_COCOS2DX_HEAD
         lua-bindings/creator_reader_bindings.cpp
         lua-bindings/reader/lua_creator_reader_auto.cpp
         lua-bindings/reader/lua_creator_reader_manual.cpp
@@ -68,7 +68,7 @@ if(BUILD_LUA_LIBS)
 endif()
 
 
-add_library(${LIB_NAME} ${READER_SOURCE} ${READER_HEADER})
+add_library(${LIB_NAME} ${CREATOR_TO_COCOS2DX_HEAD} ${CREATOR_TO_COCOS2DX})
 
 set_target_properties(${LIB_NAME}
     PROPERTIES

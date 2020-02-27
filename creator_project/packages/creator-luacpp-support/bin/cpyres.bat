@@ -7,6 +7,8 @@ set pathDst=%2
 if not exist %pathDst% mkdir %pathDst%
 
 XCOPY %pathSrc%\assets\*.png %pathDst% /S /E /Y /D
+XCOPY %pathSrc%\assets\*.atlas %pathDst% /S /E /Y /D
+XCOPY %pathSrc%\assets\*.skel %pathDst% /S /E /Y /D
 XCOPY %pathSrc%\assets\*.ttf %pathDst% /S /E /Y /D
 XCOPY %pathSrc%\assets\*.jpg %pathDst% /S /E /Y /D
 XCOPY %pathSrc%\assets\*.plist %pathDst% /S /E /Y /D

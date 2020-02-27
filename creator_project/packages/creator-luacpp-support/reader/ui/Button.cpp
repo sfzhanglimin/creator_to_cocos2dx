@@ -269,6 +269,13 @@ void CreatorButton::onPressStateChangedToDisabled()
 		//this->setColor(Color3B(_normalColor.r, _normalColor.b, _normalColor.g));
 		//this->setOpacity(_normalColor.a);
 	}
+	
+	if (_enableAutoGrayEffect)
+	{
+		_buttonDisabledRenderer->setState(ui::Scale9Sprite::State::GRAY);
+
+	}
+	
 
 	_buttonClickedRenderer->setVisible(false);
 	_buttonNormalRenderer->setScale(1.0);

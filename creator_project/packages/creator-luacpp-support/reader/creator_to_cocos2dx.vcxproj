@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{F2E5FB38-728F-467E-BB63-6A9318DB4C2F}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>creatortococos2dx</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\cocos2d-x\cocos\2d\cocos2d_headers.props" />
+    <Import Project="..\..\..\cocos2d-x\cocos\2d\cocos2dx.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\cocos2d-x\cocos\2d\cocos2d_headers.props" />
+    <Import Project="..\..\..\cocos2d-x\cocos\2d\cocos2dx.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <OutDir>$(SolutionDir)$(Configuration).win32\</OutDir>
+    <IntDir>$(Configuration).win32\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>
+      </SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_LIB;COCOS2DXWIN32_EXPORTS;GL_GLEXT_PROTOTYPES;COCOS2D_DEBUG=1;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>false</ConformanceMode>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(EngineRoot);$(EngineRoot)external;$(EngineRoot)external\lua\lua;$(EngineRoot)external\lua\tolua;$(EngineRoot)external\chipmunk\include\chipmunk;$(EngineRoot)extensions;$(ProjectDir);$(ProjectDir)collider;$(ProjectDir)ui;$(ProjectDir)animation;$(ProjectDir)dragonbones/cocos2dx;$(ProjectDir)dragonbones/animation;$(ProjectDir)dragonbones/armature;$(ProjectDir)dragonbones/events;$(ProjectDir)dragonbones/factories;$(ProjectDir)dragonbones/core;$(ProjectDir)dragonbones/geom;$(_COCOS_HEADER_WIN32_BEGIN);$(_COCOS_HEADER_WIN32_END);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DisableSpecificWarnings>4267;4251;4244;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="animation\AnimateClip.h" />
+    <ClInclude Include="animation\AnimationClip.h" />
+    <ClInclude Include="animation\AnimationClipProperties.h" />
+    <ClInclude Include="animation\AnimationManager.h" />
+    <ClInclude Include="animation\Bezier.h" />
+    <ClInclude Include="animation\Easing.h" />
+    <ClInclude Include="collider\Collider.h" />
+    <ClInclude Include="collider\ColliderManager.h" />
+    <ClInclude Include="collider\Contract.h" />
+    <ClInclude Include="collider\Intersection.h" />
+    <ClInclude Include="CreatorReader.h" />
+    <ClInclude Include="CreatorReader_generated.h" />
+    <ClInclude Include="dragonbones\animation\Animation.h" />
+    <ClInclude Include="dragonbones\animation\AnimationState.h" />
+    <ClInclude Include="dragonbones\animation\BaseTimelineState.h" />
+    <ClInclude Include="dragonbones\animation\IAnimatable.h" />
+    <ClInclude Include="dragonbones\animation\IAnimateble.h" />
+    <ClInclude Include="dragonbones\animation\TimelineState.h" />
+    <ClInclude Include="dragonbones\animation\WorldClock.h" />
+    <ClInclude Include="dragonbones\armature\Armature.h" />
+    <ClInclude Include="dragonbones\armature\Bone.h" />
+    <ClInclude Include="dragonbones\armature\Constraint.h" />
+    <ClInclude Include="dragonbones\armature\DeformVertices.h" />
+    <ClInclude Include="dragonbones\armature\IArmatureDisplay.h" />
+    <ClInclude Include="dragonbones\armature\IArmatureProxy.h" />
+    <ClInclude Include="dragonbones\armature\Slot.h" />
+    <ClInclude Include="dragonbones\armature\TransformObject.h" />
+    <ClInclude Include="dragonbones\cocos2dx\CCArmatureDisplay.h" />
+    <ClInclude Include="dragonbones\cocos2dx\CCDragonBonesHeaders.h" />
+    <ClInclude Include="dragonbones\cocos2dx\CCFactory.h" />
+    <ClInclude Include="dragonbones\cocos2dx\CCSlot.h" />
+    <ClInclude Include="dragonbones\cocos2dx\CCTextureAtlasData.h" />
+    <ClInclude Include="dragonbones\core\BaseObject.h" />
+    <ClInclude Include="dragonbones\core\DragonBones.h" />
+    <ClInclude Include="dragonbones\DragonBonesHeaders.h" />
+    <ClInclude Include="dragonbones\event\EventObject.h" />
+    <ClInclude Include="dragonbones\event\IEventDispatcher.h" />
+    <ClInclude Include="dragonbones\factory\BaseFactory.h" />
+    <ClInclude Include="dragonbones\geom\ColorTransform.h" />
+    <ClInclude Include="dragonbones\geom\Matrix.h" />
+    <ClInclude Include="dragonbones\geom\Point.h" />
+    <ClInclude Include="dragonbones\geom\Rectangle.h" />
+    <ClInclude Include="dragonbones\geom\Transform.h" />
+    <ClInclude Include="dragonbones\model\AnimationConfig.h" />
+    <ClInclude Include="dragonbones\model\AnimationData.h" />
+    <ClInclude Include="dragonbones\model\ArmatureData.h" />
+    <ClInclude Include="dragonbones\model\BoundingBoxData.h" />
+    <ClInclude Include="dragonbones\model\CanvasData.h" />
+    <ClInclude Include="dragonbones\model\ConstraintData.h" />
+    <ClInclude Include="dragonbones\model\DisplayData.h" />
+    <ClInclude Include="dragonbones\model\DragonBonesData.h" />
+    <ClInclude Include="dragonbones\model\SkinData.h" />
+    <ClInclude Include="dragonbones\model\TextureAtlasData.h" />
+    <ClInclude Include="dragonbones\model\UserData.h" />
+    <ClInclude Include="dragonbones\parser\BinaryDataParser.h" />
+    <ClInclude Include="dragonbones\parser\DataParser.h" />
+    <ClInclude Include="dragonbones\parser\JSONDataParser.h" />
+    <ClInclude Include="flatbuffers\code_generators.h" />
+    <ClInclude Include="flatbuffers\flatbuffers.h" />
+    <ClInclude Include="flatbuffers\grpc.h" />
+    <ClInclude Include="flatbuffers\hash.h" />
+    <ClInclude Include="flatbuffers\idl.h" />
+    <ClInclude Include="flatbuffers\reflection.h" />
+    <ClInclude Include="flatbuffers\reflection_generated.h" />
+    <ClInclude Include="flatbuffers\util.h" />
+    <ClInclude Include="lua-bindings\creator_reader_bindings.hpp" />
+    <ClInclude Include="lua-bindings\dragonbones\lua_dragonbones_auto.hpp" />
+    <ClInclude Include="lua-bindings\dragonbones\lua_dragonbones_manual.hpp" />
+    <ClInclude Include="lua-bindings\reader\lua_creator_reader_auto.hpp" />
+    <ClInclude Include="lua-bindings\reader\lua_creator_reader_manual.hpp" />
+    <ClInclude Include="Macros.h" />
+    <ClInclude Include="ui\Button.h" />
+    <ClInclude Include="ui\Layout.h" />
+    <ClInclude Include="ui\PageView.h" />
+    <ClInclude Include="ui\RadioButton.h" />
+    <ClInclude Include="ui\RadioButtonGroup.h" />
+    <ClInclude Include="ui\RichText.h" />
+    <ClInclude Include="ui\RichtextStringVisitor.h" />
+    <ClInclude Include="ui\ShaderCache.h" />
+    <ClInclude Include="ui\WidgetExport.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="animation\AnimateClip.cpp" />
+    <ClCompile Include="animation\AnimationClip.cpp" />
+    <ClCompile Include="animation\AnimationClipProperties.cpp" />
+    <ClCompile Include="animation\AnimationManager.cpp" />
+    <ClCompile Include="animation\Bezier.cpp" />
+    <ClCompile Include="animation\Easing.cpp" />
+    <ClCompile Include="collider\Collider.cpp" />
+    <ClCompile Include="collider\ColliderManager.cpp" />
+    <ClCompile Include="collider\Contract.cpp" />
+    <ClCompile Include="collider\Intersection.cpp" />
+    <ClCompile Include="CreatorReader.cpp" />
+    <ClCompile Include="dragonbones\animation\Animation.cpp" />
+    <ClCompile Include="dragonbones\animation\AnimationState.cpp" />
+    <ClCompile Include="dragonbones\animation\BaseTimelineState.cpp" />
+    <ClCompile Include="dragonbones\animation\TimelineState.cpp" />
+    <ClCompile Include="dragonbones\animation\WorldClock.cpp" />
+    <ClCompile Include="dragonbones\armature\Armature.cpp" />
+    <ClCompile Include="dragonbones\armature\Bone.cpp" />
+    <ClCompile Include="dragonbones\armature\Constraint.cpp" />
+    <ClCompile Include="dragonbones\armature\DeformVertices.cpp" />
+    <ClCompile Include="dragonbones\armature\Slot.cpp" />
+    <ClCompile Include="dragonbones\armature\TransformObject.cpp" />
+    <ClCompile Include="dragonbones\cocos2dx\CCArmatureDisplay.cpp" />
+    <ClCompile Include="dragonbones\cocos2dx\CCFactory.cpp" />
+    <ClCompile Include="dragonbones\cocos2dx\CCSlot.cpp" />
+    <ClCompile Include="dragonbones\cocos2dx\CCTextureAtlasData.cpp" />
+    <ClCompile Include="dragonbones\core\BaseObject.cpp" />
+    <ClCompile Include="dragonbones\core\DragonBones.cpp" />
+    <ClCompile Include="dragonbones\event\EventObject.cpp" />
+    <ClCompile Include="dragonbones\factory\BaseFactory.cpp" />
+    <ClCompile Include="dragonbones\geom\Point.cpp" />
+    <ClCompile Include="dragonbones\geom\Transform.cpp" />
+    <ClCompile Include="dragonbones\model\AnimationConfig.cpp" />
+    <ClCompile Include="dragonbones\model\AnimationData.cpp" />
+    <ClCompile Include="dragonbones\model\ArmatureData.cpp" />
+    <ClCompile Include="dragonbones\model\BoundingBoxData.cpp" />
+    <ClCompile Include="dragonbones\model\CanvasData.cpp" />
+    <ClCompile Include="dragonbones\model\ConstraintData.cpp" />
+    <ClCompile Include="dragonbones\model\DisplayData.cpp" />
+    <ClCompile Include="dragonbones\model\DragonBonesData.cpp" />
+    <ClCompile Include="dragonbones\model\SkinData.cpp" />
+    <ClCompile Include="dragonbones\model\TextureAtlasData.cpp" />
+    <ClCompile Include="dragonbones\model\UserData.cpp" />
+    <ClCompile Include="dragonbones\parser\BinaryDataParser.cpp" />
+    <ClCompile Include="dragonbones\parser\DataParser.cpp" />
+    <ClCompile Include="dragonbones\parser\JSONDataParser.cpp" />
+    <ClCompile Include="lua-bindings\creator_reader_bindings.cpp" />
+    <ClCompile Include="lua-bindings\dragonbones\lua_dragonbones_auto.cpp" />
+    <ClCompile Include="lua-bindings\dragonbones\lua_dragonbones_manual.cpp" />
+    <ClCompile Include="lua-bindings\reader\lua_creator_reader_auto.cpp" />
+    <ClCompile Include="lua-bindings\reader\lua_creator_reader_manual.cpp" />
+    <ClCompile Include="ui\Button.cpp" />
+    <ClCompile Include="ui\Layout.cpp" />
+    <ClCompile Include="ui\PageView.cpp" />
+    <ClCompile Include="ui\RadioButton.cpp" />
+    <ClCompile Include="ui\RadioButtonGroup.cpp" />
+    <ClCompile Include="ui\RichText.cpp" />
+    <ClCompile Include="ui\RichtextStringVisitor.cpp" />
+    <ClCompile Include="ui\ShaderCache.cpp" />
+    <ClCompile Include="ui\WidgetExport.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

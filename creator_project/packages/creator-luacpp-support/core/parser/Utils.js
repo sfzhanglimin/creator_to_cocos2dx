@@ -143,11 +143,11 @@ let get_sprite_frame_name_by_uuid_old = function(uuid) {
  */
 let get_sprite_frame_name_by_uuid = function(uuid) {
    let ret = get_sprite_frame_name_by_uuid_old(uuid);
-   if(ret)
-   {
-        return "creator/"+ret;
-   }
-   return null
+//    if(ret)
+//    {
+//         ret = "creator/"+ret;
+//    }
+   return ret
 }
 
 let get_font_path_by_uuid = function(uuid) {
@@ -212,6 +212,13 @@ let get_spine_info_by_uuid = function (uuid) {
     let jsonfile = get_meta_by_uuid(uuid);//uuidinfos[uuid];
     if (jsonfile) {
 
+        //add by zlm
+        //convert format to 2.3,only support single atlas files
+        if (jsonfile.textures && jsonfile.textures.length > 0)
+        {
+            jsonfile.atlas = jsonfile.textures[0];
+        }
+        //end
 
         let jsonPath = get_relative_full_path_by_uuid(uuid);
         let atlasPath = get_relative_full_path_by_uuid(jsonfile.atlas);

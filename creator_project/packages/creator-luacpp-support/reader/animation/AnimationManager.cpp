@@ -47,21 +47,12 @@ void AnimationManager::stopAllAnimationClips()
 {
 	if (!_cachedAnimates.empty())
 	{
-		std::vector<std::tuple<cocos2d::Node*, std::string, AnimateClip*>> sTemp = _cachedAnimates;
-		for (auto iter = sTemp.begin(), end = sTemp.end(); iter != end; ++iter)
+		for (auto iter = _cachedAnimates.begin(), end = _cachedAnimates.end(); iter != end; ++iter)
 		{
 			auto&& e = *iter;
 			// release AnimateClip
-			std::get<2>(e)->stopAnimate();
-			//std::get<2>(e)->autorelease();
-		}
-		sTemp = _cachedAnimates;
-		for (auto iter = sTemp.begin(), end = sTemp.end(); iter != end; ++iter)
-		{
-			auto&& e = *iter;
-			// release AnimateClip
-			std::get<2>(e)->stopAnimate();
-			//std::get<2>(e)->autorelease();
+			std::get<2>(e)->pauseAnimate();
+			std::get<2>(e)->autorelease();
 		}
 	}
 	

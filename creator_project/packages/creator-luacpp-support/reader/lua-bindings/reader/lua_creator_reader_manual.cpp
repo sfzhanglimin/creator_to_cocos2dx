@@ -507,6 +507,49 @@ static int lua_Button_removeRefrenceChild(lua_State* tolua_S)
 				return 0;
 }
 
+static int lua_Button_enableAutoGrayEffect(lua_State* tolua_S)
+{
+	int argc = 0;
+	bool ok = true;
+
+#if COCOS2D_DEBUG >= 1
+	tolua_Error tolua_err;
+#endif
+
+#if COCOS2D_DEBUG >= 1
+
+	if (!tolua_isusertype(tolua_S, 1, "creator.CreatorButton", 0, &tolua_err))
+	{
+		tolua_error(tolua_S, "'enableAutoGrayEffect' is not executed with CreatorButton\n", NULL);
+		return 0;
+	}
+
+#endif
+	auto self = static_cast<creator::CreatorButton*>(tolua_tousertype(tolua_S, 1, 0));
+	argc = lua_gettop(tolua_S) - 1;
+
+	if (argc == 1)
+	{
+		bool arg0 = false;
+		ok &= luaval_to_boolean(tolua_S, 2, &arg0, "creator.CreatorButton:enableAutoGrayEffect");
+
+		self->enableAutoGrayEffect(arg0);
+
+		return 1;
+	}
+
+
+	luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "creator.CreatorButton:enableAutoGrayEffect", argc, 1);
+	return 0;
+#if COCOS2D_DEBUG >= 1
+	tolua_lerror:
+				tolua_error(tolua_S, "#ferror in function 'lua_Button_enableAutoGrayEffect'.", &tolua_err);
+#endif
+				return 0;
+}
+
+
+
 static int lua_register_creator_reader_button(lua_State* tolua_S)
 {
 	tolua_usertype(tolua_S, "creator.CreatorButton");
@@ -517,7 +560,7 @@ static int lua_register_creator_reader_button(lua_State* tolua_S)
 		tolua_function(tolua_S, "setTransitionType", lua_Button_setTransitionType);
 		tolua_function(tolua_S, "addRefrenceChild", lua_Button_addRefrenceChild);
 		tolua_function(tolua_S, "removeRefrenceChild", lua_Button_removeRefrenceChild);
-		
+		tolua_function(tolua_S, "enableAutoGrayEffect", lua_Button_enableAutoGrayEffect);
 	tolua_endmodule(tolua_S);
 	std::string typeName = typeid(creator::CreatorButton).name();
 	g_luaType[typeName] = "creator.CreatorButton";
