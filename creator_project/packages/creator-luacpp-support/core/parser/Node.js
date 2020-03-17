@@ -284,7 +284,6 @@ class Node
         //2.3里面scale,position,rotaion在一个数组里面
         if (aJson._trs && aJson._trs.array)
         {
-            let key = "_position";
             let vx = 0;
             let vy = 1;
 
