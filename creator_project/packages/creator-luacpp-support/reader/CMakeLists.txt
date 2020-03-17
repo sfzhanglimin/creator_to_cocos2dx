@@ -22,7 +22,7 @@ set(CREATOR_TO_COCOS2DX_HEAD
     animation/AnimateClip.h
     animation/Bezier.h
     animation/AnimationClipProperties.h
-    animation/AnimationManager.h
+    animation/AnimationComponent.h
     animation/AnimationClip.h
     collider/Collider.h
     collider/Intersection.h
@@ -37,7 +37,7 @@ set(CREATOR_TO_COCOS2DX_HEAD
 set(CREATOR_TO_COCOS2DX_HEAD
     animation/AnimateClip.cpp
     animation/AnimationClip.cpp
-    animation/AnimationManager.cpp
+    animation/AnimationComponent.cpp
     animation/Easing.cpp
     animation/Bezier.cpp
     collider/Collider.cpp

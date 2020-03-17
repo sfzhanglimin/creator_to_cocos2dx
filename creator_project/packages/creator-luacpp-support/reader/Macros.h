@@ -34,6 +34,8 @@
 #define NS_CC
 #endif
 
+#define CRETOR_OPEN_COLLIDER false
+
 #if defined(__GNUC__) && ((__GNUC__ >= 5) || ((__GNUG__ == 4) && (__GNUC_MINOR__ >= 4))) \
 || (defined(__clang__) && (__clang_major__ >= 3)) || (_MSC_VER >= 1800)
     #define CREATOR_DISALLOW_COPY_ASSIGN_AND_MOVE(TypeName) \

@@ -31,7 +31,7 @@
 #include "base/CCEventListenerFocus.h"
 
 #include "collider/ColliderManager.h"
-#include "AnimationManager.h"
+#include "AnimationComponent.h"
 #include "ui/PageView.h"
 #include "ui/RadioButton.h"
 #include "ui/RadioButtonGroup.h"
@@ -138,10 +138,10 @@ static void extendColliderManager(lua_State* L)
 
 
 
-int lua_creator_reader_AnimationManager_playAnimationClip(lua_State* tolua_S)
+int lua_creator_reader_AnimationComponent_playAnimationClip(lua_State* tolua_S)
 {
 	int argc = 0;
-	creator::AnimationManager* cobj = nullptr;
+	creator::AnimationComponent* cobj = nullptr;
 	bool ok = true;
 
 #if COCOS2D_DEBUG >= 1
@@ -150,57 +150,48 @@ int lua_creator_reader_AnimationManager_playAnimationClip(lua_State* tolua_S)
 
 
 #if COCOS2D_DEBUG >= 1
-	if (!tolua_isusertype(tolua_S, 1, "creator.AnimationManager", 0, &tolua_err)) goto tolua_lerror;
+	if (!tolua_isusertype(tolua_S, 1, "creator.AnimationComponent", 0, &tolua_err)) goto tolua_lerror;
 #endif
 
-	cobj = (creator::AnimationManager*)tolua_tousertype(tolua_S, 1, 0);
+	cobj = (creator::AnimationComponent*)tolua_tousertype(tolua_S, 1, 0);
 
 #if COCOS2D_DEBUG >= 1
 	if (!cobj)
 	{
-		tolua_error(tolua_S, "invalid 'cobj' in function 'lua_creator_reader_AnimationManager_playAnimationClip'", nullptr);
+		tolua_error(tolua_S, "invalid 'cobj' in function 'lua_creator_reader_AnimationComponent_playAnimationClip'", nullptr);
 		return 0;
 	}
 #endif
 
 	argc = lua_gettop(tolua_S) - 1;
-	if (argc == 2)
+	if (argc == 1)
 	{
-		cocos2d::Node* arg0;
 		std::string arg1;
 
-		ok &= luaval_to_object<cocos2d::Node>(tolua_S, 2, "cc.Node", &arg0, "creator.AnimationManager:playAnimationClip");
-
-		ok &= luaval_to_std_string(tolua_S, 3, &arg1, "creator.AnimationManager:playAnimationClip");
+		ok &= luaval_to_std_string(tolua_S, 2, &arg1, "creator.AnimationComponent:playAnimationClip");
 		if (!ok)
 		{
-			tolua_error(tolua_S, "invalid arguments in function 'lua_creator_reader_AnimationManager_playAnimationClip'", nullptr);
+			tolua_error(tolua_S, "invalid arguments in function 'lua_creator_reader_AnimationComponent_playAnimationClip'", nullptr);
 			return 0;
 		}
-		cobj->playAnimationClip(arg0, arg1);
+		cobj->playAnimationClip(arg1);
 		lua_settop(tolua_S, 1);
 		return 1;
 	}
 
-	else if (argc == 3)
+	else if (argc == 2)
 	{
-
-
-
-		cocos2d::Node* arg0;
 		std::string arg1;
 
-		ok &= luaval_to_object<cocos2d::Node>(tolua_S, 2, "cc.Node", &arg0, "creator.AnimationManager:playAnimationClip");
-
-		ok &= luaval_to_std_string(tolua_S, 3, &arg1, "creator.AnimationManager:playAnimationClip");
+		ok &= luaval_to_std_string(tolua_S, 2, &arg1, "creator.AnimationComponent:playAnimationClip");
 		if (!ok)
 		{
-			tolua_error(tolua_S, "invalid arguments in function 'lua_creator_reader_AnimationManager_playAnimationClip'", nullptr);
+			tolua_error(tolua_S, "invalid arguments in function 'lua_creator_reader_AnimationComponent_playAnimationClip'", nullptr);
 			return 0;
 		}
 
 
-		LUA_FUNCTION handler = (toluafix_ref_function(tolua_S, 4, 0));
+		LUA_FUNCTION handler = (toluafix_ref_function(tolua_S, 3, 0));
 
 
 		auto func = [=]()
@@ -212,29 +203,26 @@ int lua_creator_reader_AnimationManager_playAnimationClip(lua_State* tolua_S)
 
 		ScriptHandlerMgr::getInstance()->addCustomHandler((void*)cobj, handler);
 
-		cobj->playAnimationClip(arg0, arg1, func);
+		cobj->playAnimationClip(arg1, func);
 
 		lua_settop(tolua_S, 1);
 		return 1;
 
 	}
-	else if (argc == 4)
+	else if (argc == 3)
 	{
-		cocos2d::Node* arg0;
 		std::string arg1;
 
-		ok &= luaval_to_object<cocos2d::Node>(tolua_S, 2, "cc.Node", &arg0, "creator.AnimationManager:playAnimationClip");
-
-		ok &= luaval_to_std_string(tolua_S, 3, &arg1, "creator.AnimationManager:playAnimationClip");
+		ok &= luaval_to_std_string(tolua_S, 2, &arg1, "creator.AnimationComponent:playAnimationClip");
 		if (!ok)
 		{
-			tolua_error(tolua_S, "invalid arguments in function 'lua_creator_reader_AnimationManager_playAnimationClip'", nullptr);
+			tolua_error(tolua_S, "invalid arguments in function 'lua_creator_reader_AnimationComponent_playAnimationClip'", nullptr);
 			return 0;
 		}
 
 
-		LUA_FUNCTION handler = (toluafix_ref_function(tolua_S, 4, 0));
-		int  nModeType = lua_tointeger(tolua_S, 5);
+		LUA_FUNCTION handler = (toluafix_ref_function(tolua_S, 3, 0));
+		int  nModeType = lua_tointeger(tolua_S, 4);
 
 		if (handler)
 		{
@@ -247,34 +235,34 @@ int lua_creator_reader_AnimationManager_playAnimationClip(lua_State* tolua_S)
 
 			ScriptHandlerMgr::getInstance()->addCustomHandler((void*)cobj, handler);
 
-			cobj->playAnimationClip(arg0, arg1, func, nModeType);
+			cobj->playAnimationClip(arg1, func, nModeType);
 		}
 		else
 		{ 
 
-			cobj->playAnimationClip(arg0, arg1, nullptr, nModeType);
+			cobj->playAnimationClip(arg1, nullptr, nModeType);
 		}
 		
 
 		lua_settop(tolua_S, 1);
 		return 1;
 	}
-	luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "creator.AnimationManager:playAnimationClip", argc, 2);
+	luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "creator.AnimationComponent:playAnimationClip", argc, 2);
 	return 0;
 
 #if COCOS2D_DEBUG >= 1
 	tolua_lerror:
-				tolua_error(tolua_S, "#ferror in function 'lua_creator_reader_AnimationManager_playAnimationClip'.", &tolua_err);
+				tolua_error(tolua_S, "#ferror in function 'lua_creator_reader_AnimationComponent_playAnimationClip'.", &tolua_err);
 #endif
 
 				return 0;
 }
 
 
-int lua_creator_reader_AnimationManager_stopAllAnimationClips(lua_State* tolua_S)
+int lua_creator_reader_AnimationComponent_stopAllAnimationClips(lua_State* tolua_S)
 {
 	int argc = 0;
-	creator::AnimationManager* cobj = nullptr;
+	creator::AnimationComponent* cobj = nullptr;
 	bool ok = true;
 
 #if COCOS2D_DEBUG >= 1
@@ -283,15 +271,15 @@ int lua_creator_reader_AnimationManager_stopAllAnimationClips(lua_State* tolua_S
 
 
 #if COCOS2D_DEBUG >= 1
-	if (!tolua_isusertype(tolua_S, 1, "creator.AnimationManager", 0, &tolua_err)) goto tolua_lerror;
+	if (!tolua_isusertype(tolua_S, 1, "creator.AnimationComponent", 0, &tolua_err)) goto tolua_lerror;
 #endif
 
-	cobj = (creator::AnimationManager*)tolua_tousertype(tolua_S, 1, 0);
+	cobj = (creator::AnimationComponent*)tolua_tousertype(tolua_S, 1, 0);
 
 #if COCOS2D_DEBUG >= 1
 	if (!cobj)
 	{
-		tolua_error(tolua_S, "invalid 'cobj' in function 'lua_creator_reader_AnimationManager_stopAllAnimationClips'", nullptr);
+		tolua_error(tolua_S, "invalid 'cobj' in function 'lua_creator_reader_AnimationComponent_stopAllAnimationClips'", nullptr);
 		return 0;
 	}
 #endif
@@ -304,21 +292,21 @@ int lua_creator_reader_AnimationManager_stopAllAnimationClips(lua_State* tolua_S
 
 #if COCOS2D_DEBUG >= 1
 	tolua_lerror:
-				tolua_error(tolua_S, "#ferror in function 'lua_creator_reader_AnimationManager_stopAllAnimationClips'.", &tolua_err);
+				tolua_error(tolua_S, "#ferror in function 'lua_creator_reader_AnimationComponent_stopAllAnimationClips'.", &tolua_err);
 #endif
 
 				return 0;
 }
 
 
-static void extendAnimationManager(lua_State* L)
+static void extendAnimationComponent(lua_State* L)
 {
-	lua_pushstring(L, "creator.AnimationManager");
+	lua_pushstring(L, "creator.AnimationComponent");
 	lua_rawget(L, LUA_REGISTRYINDEX);
 	if (lua_istable(L, -1))
 	{
-		tolua_function(L, "playAnimationClip", lua_creator_reader_AnimationManager_playAnimationClip);
-		tolua_function(L, "stopAllAnimationClips", lua_creator_reader_AnimationManager_stopAllAnimationClips);
+		tolua_function(L, "playAnimationClip", lua_creator_reader_AnimationComponent_playAnimationClip);
+		tolua_function(L, "stopAllAnimationClips", lua_creator_reader_AnimationComponent_stopAllAnimationClips);
 		
 	
 	}
@@ -1023,13 +1011,13 @@ static int lua_richText_forceDoAlign(lua_State* L)
 		return 0;
 
 	tolua_Error tolua_err;
-	if (!tolua_isusertype(L, 1, "creator.WidgetManager", 0, &tolua_err))
+	if (!tolua_isusertype(L, 1, "creator.WidgetComponent", 0, &tolua_err))
 	{
-		tolua_error(L, "'forceDoAlign' is not executed with WidgetManager\n", NULL);
+		tolua_error(L, "'forceDoAlign' is not executed with WidgetComponent\n", NULL);
 		return 0;
 	}
 
-	auto self = static_cast<creator::WidgetManager*>(tolua_tousertype(L, 1, 0));
+	auto self = static_cast<creator::WidgetComponent*>(tolua_tousertype(L, 1, 0));
 
 	int argc = lua_gettop(L) - 1;
 	if (0 == argc)
@@ -1037,7 +1025,7 @@ static int lua_richText_forceDoAlign(lua_State* L)
 		self->forceDoAlign();
 	}
 	else
-		luaL_error(L, "'getElement' function of WidgetManager has wrong number of arguments: %d, was expecting %d\n", argc, 0);
+		luaL_error(L, "'getElement' function of WidgetComponent has wrong number of arguments: %d, was expecting %d\n", argc, 0);
 
 	return 0;
 }
@@ -1045,26 +1033,26 @@ static int lua_richText_forceDoAlign(lua_State* L)
 
 
 
-static int lua_register_creator_reader_widgetManager(lua_State* tolua_S)
+static int lua_register_creator_reader_WidgetComponent(lua_State* tolua_S)
 {
-	tolua_usertype(tolua_S, "creator.WidgetManager");
-	tolua_cclass(tolua_S, "WidgetManager", "creator.WidgetManager", "cc.Node", nullptr);
+	tolua_usertype(tolua_S, "creator.WidgetComponent");
+	tolua_cclass(tolua_S, "WidgetComponent", "creator.WidgetComponent", "cc.Node", nullptr);
 
-	tolua_beginmodule(tolua_S, "WidgetManager");
+	tolua_beginmodule(tolua_S, "WidgetComponent");
 	tolua_function(tolua_S, "forceDoAlign", lua_richText_forceDoAlign);
 
 
 	tolua_endmodule(tolua_S);
-	std::string typeName = typeid(creator::WidgetManager).name();
-	g_luaType[typeName] = "creator.WidgetManager";
-	g_typeCast["WidgetManager"] = "creator.WidgetManager";
+	std::string typeName = typeid(creator::WidgetComponent).name();
+	g_luaType[typeName] = "creator.WidgetComponent";
+	g_typeCast["WidgetComponent"] = "creator.WidgetComponent";
 	return 1;
 }
 
 
 
 
-int lua_creator_reader_getWidgetManager(lua_State* tolua_S)
+int lua_creator_reader_getWidgetComponent(lua_State* tolua_S)
 {
 	int argc = 0;
 	creator::CreatorReader* cobj = nullptr;
@@ -1084,7 +1072,7 @@ int lua_creator_reader_getWidgetManager(lua_State* tolua_S)
 #if COCOS2D_DEBUG >= 1
 	if (!cobj)
 	{
-		tolua_error(tolua_S, "invalid 'cobj' in function 'lua_creator_reader_CreatorReader_getWidgetManager'", nullptr);
+		tolua_error(tolua_S, "invalid 'cobj' in function 'lua_creator_reader_CreatorReader_getWidgetComponent'", nullptr);
 		return 0;
 	}
 #endif
@@ -1094,19 +1082,19 @@ int lua_creator_reader_getWidgetManager(lua_State* tolua_S)
 	{
 		if (!ok)
 		{
-			tolua_error(tolua_S, "invalid arguments in function 'lua_creator_reader_CreatorReader_getWidgetManager'", nullptr);
+			tolua_error(tolua_S, "invalid arguments in function 'lua_creator_reader_CreatorReader_getWidgetComponent'", nullptr);
 			return 0;
 		}
-		creator::WidgetManager* ret = cobj->getWidgetManager();
-		object_to_luaval<creator::WidgetManager>(tolua_S, "creator.WidgetManager", (creator::WidgetManager*)ret);
+		creator::WidgetComponent* ret = cobj->getWidgetComponent();
+		object_to_luaval<creator::WidgetComponent>(tolua_S, "creator.WidgetComponent", (creator::WidgetComponent*)ret);
 		return 1;
 	}
-	luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "creator.CreatorReader:getWidgetManager", argc, 0);
+	luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "creator.CreatorReader:getWidgetComponent", argc, 0);
 	return 0;
 
 #if COCOS2D_DEBUG >= 1
 	tolua_lerror:
-				tolua_error(tolua_S, "#ferror in function 'lua_creator_reader_CreatorReader_getWidgetManager'.", &tolua_err);
+				tolua_error(tolua_S, "#ferror in function 'lua_creator_reader_CreatorReader_getWidgetComponent'.", &tolua_err);
 #endif
 
 				return 0;
@@ -1119,7 +1107,7 @@ static void extendReader(lua_State* L)
 	lua_rawget(L, LUA_REGISTRYINDEX);
 	if (lua_istable(L, -1))
 	{
-		tolua_function(L, "getWidgetManager", lua_creator_reader_getWidgetManager);
+		tolua_function(L, "getWidgetComponent", lua_creator_reader_getWidgetComponent);
 	}
 	lua_pop(L, 1);
 }
@@ -1137,10 +1125,10 @@ int register_all_creator_reader_manual(lua_State* L)
 	lua_register_creator_reader_radioButtonGroup(L);
 	lua_register_creator_reader_layout(L);
 	lua_register_creator_reader_richText(L);
-	lua_register_creator_reader_widgetManager(L);
+	lua_register_creator_reader_WidgetComponent(L);
 
     extendColliderManager(L);
-	extendAnimationManager(L);
+	extendAnimationComponent(L);
 
 	extendReader(L);
     return 0;

@@ -60,9 +60,6 @@
     <ClCompile Include="animation\AnimationClip.cpp">
       <Filter>animation</Filter>
     </ClCompile>
-    <ClCompile Include="animation\AnimationManager.cpp">
-      <Filter>animation</Filter>
-    </ClCompile>
     <ClCompile Include="animation\Bezier.cpp">
       <Filter>animation</Filter>
     </ClCompile>
@@ -230,6 +227,9 @@
       <Filter>ui</Filter>
     </ClCompile>
     <ClCompile Include="animation\AnimationClipProperties.cpp" />
+    <ClCompile Include="animation\AnimationComponent.cpp">
+      <Filter>animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="animation\AnimateClip.h">
@@ -239,9 +239,6 @@
       <Filter>animation</Filter>
     </ClInclude>
     <ClInclude Include="animation\AnimationClipProperties.h">
-      <Filter>animation</Filter>
-    </ClInclude>
-    <ClInclude Include="animation\AnimationManager.h">
       <Filter>animation</Filter>
     </ClInclude>
     <ClInclude Include="animation\Bezier.h">
@@ -465,6 +462,9 @@
     <ClInclude Include="Macros.h" />
     <ClInclude Include="ui\ShaderCache.h">
       <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="animation\AnimationComponent.h">
+      <Filter>animation</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

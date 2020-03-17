@@ -34,51 +34,70 @@ NS_CCR_BEGIN
 
 class AnimateClip;
 
-struct AnimationInfo
-{
-    AnimationClip* defaultClip;
-    cocos2d::Vector<AnimationClip*> clips;
-    bool playOnLoad;
-    cocos2d::Node* target; // will retain the target
-};
-
-class AnimationManager : public cocos2d::Node
+class AnimationInfo : public cocos2d::Ref
 {
 public:
+	bool haveAnimation() { return clips.size() > 0; };
+	std::string nodeName;
+	AnimationInfo();
+	~AnimationInfo();
+private:
+	friend class CreatorReader;
+	friend class AnimationComponent;
+	AnimationClip* defaultClip;
+	cocos2d::Vector<AnimationClip*> clips;
+	bool playOnLoad;
+};
+
+class AnimationComponent : public cocos2d::Component
+{
+public:
+
+	AnimationComponent();
+
+	~AnimationComponent();
 	typedef std::function<void()> AnimationCallback;
 
-	virtual void cleanup();
-
-    void playAnimationClip(cocos2d::Node *target, const std::string &animationClipName, AnimationCallback cb= nullptr, int modeType = -1);
+    void playAnimationClip(const std::string &animationClipName, AnimationCallback cb= nullptr, int modeType = -1);
     // if AnimationClip is stopped, can not run it again.
-    void stopAnimationClip(cocos2d::Node *target, const std::string &animationClipName);
-    void pauseAnimationClip(cocos2d::Node *target, const std::string &animationClipName);
-    void resumeAnimationClip(cocos2d::Node *target, const std::string &animationClipName);
+    void stopAnimationClip(const std::string &animationClipName);
+    void pauseAnimationClip(const std::string &animationClipName);
+    void resumeAnimationClip(const std::string &animationClipName);
     // if a "Play On Load" animation is a loop animation, please stop it manually.
     void stopAnimationClipsRunByPlayOnLoad();
 	void stopAllAnimationClips();
 
-	
+	AnimateClip * getCurrentAnimation() const;
+
+	virtual void onEnter();
+	virtual void onExit();
+	virtual void onAdd();
+	virtual void onRemove();
+
+	virtual void update(float delta);
 
 private:
     friend class CreatorReader;
     
-    AnimationManager();
-    ~AnimationManager();
-    
     // functions invoked by CreatorReader only
-    void addAnimation(const AnimationInfo& animationInfo);
+	void addAnimation(AnimationClip* animationClip);
+	void addAnimation(AnimationInfo * aInfo);
     void playOnLoad();
 
-    void runAnimationClip(cocos2d::Node *target, AnimationClip* animationClip, AnimationCallback cb);
+	AnimationClip* _defaultClip;
+
+	AnimateClip *_runningClip;
+
+	bool _playOnLoad;
+
+    void runAnimationClip(AnimationClip* animationClip, AnimationCallback cb);
     // AnimateClip will be released
-    void removeAnimateClip(cocos2d::Node *target, const std::string &animationClipName);
-    AnimateClip* getAnimateClip(cocos2d::Node *target, const std::string &animationClipName) const;
-    
-    std::vector<AnimationInfo> _animations;
-    std::vector<std::tuple<cocos2d::Node*, std::string, AnimateClip*>> _cachedAnimates;
-    
-    CREATOR_DISALLOW_COPY_ASSIGN_AND_MOVE(AnimationManager);
+    void removeAnimateClip(const std::string &animationClipName);
+	AnimateClip* getAnimateClip(const std::string &animationClipName);
+
+	cocos2d::Vector<AnimationClip *> _animations;
+	cocos2d::Vector<AnimateClip *> _runningAnimations;
+
 };
 
 NS_CC_END

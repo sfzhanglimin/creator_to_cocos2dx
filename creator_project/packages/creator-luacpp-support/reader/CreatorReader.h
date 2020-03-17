@@ -28,7 +28,7 @@
 
 #include "ui/CocosGUI.h"
 #include "animation/AnimationClip.h"
-#include "animation/AnimationManager.h"
+#include "animation/AnimationComponent.h"
 #include "Macros.h"
 #include "CreatorReader_generated.h"
 #include "collider/ColliderManager.h"
@@ -40,8 +40,11 @@
 #include "ui/Button.h"
 #include "ui/Layout.h"
 #include "ui/RichText.h"
+#include "2d/CCComponent.h"
 
 NS_CCR_BEGIN
+
+
 
 class CreatorReader: public cocos2d::Ref
 {
@@ -58,10 +61,10 @@ public:
 	cocos2d::Node* getNodeGraph(bool aIsSceneToNode = true) const;
     
     /**
-     Return the AnimationManager. It is added as a child of the Scene to simplify the codes.
-     @return The `AnimationManager` of the scene
+     Return the AnimationComponent. It is added as a child of the Scene to simplify the codes.
+     @return The `AnimationComponent` of the scene
      */
-    AnimationManager* getAnimationManager() const;
+    AnimationComponent* getAnimationComponent() const;
     
     /**
      Return the CollisionManager. It is added as a child of the Scene to make collision take effect.
@@ -70,10 +73,10 @@ public:
     ColliderManager* getColliderManager() const;
 
     /**
-     Return the WidgetManager. It is added as a child of the Scene to make Creator Widget component take effect.
-     @return The `WidgetManager` of the scene
+     Return the WidgetComponent. It is added as a child of the Scene to make Creator Widget component take effect.
+     @return The `WidgetComponent` of the scene
      */
-    WidgetManager* getWidgetManager() const;
+    WidgetComponent* getWidgetComponent() const;
 
     /**
      Returns the FlatBuffers Schema version.
@@ -143,6 +146,10 @@ protected:
 
     spine::SkeletonAnimation* createSpineSkeleton(const buffers::SpineSkeleton* spineBuffer) const;
     void parseSpineSkeleton(spine::SkeletonAnimation* button, const buffers::SpineSkeleton* spineBuffer) const;
+
+	std::vector<Component> *components = new std::vector<Component>();
+
+	mutable cocos2d::Map<std::string, AnimationInfo*> _animationiInfos;
     
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
     cocos2d::experimental::ui::VideoPlayer* createVideoPlayer(const buffers::VideoPlayer* videoPlayerBuffer) const;
@@ -187,11 +194,13 @@ protected:
     cocos2d::Data _data;
     std::string _version;
 
-    AnimationManager *_animationManager;
+	
+#if CRETOR_OPEN_COLLIDER
     ColliderManager *_collisionManager;
+#endif
 
     // Widget in creator is a component used to do Layout
-    WidgetManager *_widgetManager;
+    WidgetComponent *_WidgetComponent;
 
 //	NodeLayoutManager *_nodeLayoutManager;
     

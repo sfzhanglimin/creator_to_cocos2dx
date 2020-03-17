@@ -31,7 +31,7 @@ NS_CCR_BEGIN
 class AnimationClip;
 struct AnimProperties;
 
-class AnimateClip : public cocos2d::Node {
+class AnimateClip : public cocos2d::Ref {
 public:
     
     typedef std::function<void()> AnimateEndCallback;
@@ -42,18 +42,33 @@ public:
     void stopAnimate();
     void pauseAnimate();
     void resumeAnimate();
+
+	bool isPause() { return _pause; };
+
+	bool isRunning() { return _running; };
+
+	void update(float dt);
     
     void setCallbackForEndevent(const AnimateEndCallback &callback);
+
+	AnimationClip * getAnimationClip() { return _clip; };
     
     virtual ~AnimateClip();
+
+	void release();
+	void retain();
 
     //
     // Overrides
     //
-    virtual void update(float dt) override;
+    //virtual void update(float dt) override;
     
 private:
     AnimateClip();
+
+	bool _running;
+	bool _pause;
+	
     bool initWithAnimationClip(cocos2d::Node* rootTarget, AnimationClip* clip);
     inline void doUpdate( AnimProperties* animProperties) const;
 
@@ -61,6 +76,8 @@ private:
     float computeElapse() const;
 
     AnimationClip* _clip;
+
+	std::map<std::string, cocos2d::Node*> _nodeMap;
 
     // the time elapsed since the animation start
     float _elapsed;

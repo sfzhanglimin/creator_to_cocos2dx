@@ -99,7 +99,7 @@
     <ClInclude Include="animation\AnimateClip.h" />
     <ClInclude Include="animation\AnimationClip.h" />
     <ClInclude Include="animation\AnimationClipProperties.h" />
-    <ClInclude Include="animation\AnimationManager.h" />
+    <ClInclude Include="animation\AnimationComponent.h" />
     <ClInclude Include="animation\Bezier.h" />
     <ClInclude Include="animation\Easing.h" />
     <ClInclude Include="collider\Collider.h" />
@@ -181,7 +181,7 @@
     <ClCompile Include="animation\AnimateClip.cpp" />
     <ClCompile Include="animation\AnimationClip.cpp" />
     <ClCompile Include="animation\AnimationClipProperties.cpp" />
-    <ClCompile Include="animation\AnimationManager.cpp" />
+    <ClCompile Include="animation\AnimationComponent.cpp" />
     <ClCompile Include="animation\Bezier.cpp" />
     <ClCompile Include="animation\Easing.cpp" />
     <ClCompile Include="collider\Collider.cpp" />

@@ -177,7 +177,7 @@ void WidgetAdapter::syncLayoutProperty()
 
 
 	if (_needAdaptNode->getName().compare("root") == 0){
-		auto rect = WidgetManager::getSafeUIRect();
+		auto rect = WidgetComponent::getSafeUIRect();
 		if (rect.size.width > 1)
 		{
 			sDesignSize = rect.size;
@@ -439,63 +439,80 @@ void WidgetAdapter::setupLayout()
 
 
 
-cocos2d::Rect WidgetManager::m_sSafeUIRect = cocos2d::Rect();
+cocos2d::Rect WidgetComponent::m_sSafeUIRect = cocos2d::Rect();
 
-WidgetManager::WidgetManager()
-: _forceAlignDirty(false)
+WidgetComponent::WidgetComponent()
+{
+	this->setName("WidgetComponent");
+}
+
+WidgetComponent::~WidgetComponent()
 {
 }
 
-WidgetManager::~WidgetManager()
+void WidgetComponent::onExit()
 {
-}
-
-
-void WidgetManager::cleanup()
-{
-	cocos2d::Node::cleanup();
 	_needAdaptWidgets.clear();
 }
+void WidgetComponent::onAdd()
+{
+
+}
+void WidgetComponent::onRemove()
+{
+
+}
+//add by zlm
+void WidgetComponent::onEnter()
+{
+	Component::onEnter();
+	this->setupWidgets();
+}
+//end
 
 
-
-void WidgetManager::update(float dt)
+void WidgetComponent::update(float dt)
 {
     doAlign();
 }
 
-void WidgetManager::forceDoAlign()
+void WidgetComponent::forceDoAlign()
 {
-    _forceAlignDirty = true;
-    doAlign();
+	auto *owner = this->getOwner();
+	if (owner != nullptr)
+	{
+		this->getOwner()->scheduleOnce(std::function<void(float)>([&](float aTime) {
+			this->doAlign();
+		}), 0, "forceDoAlign");
+	}
 }
 
-void WidgetManager::setSafeUIRect(cocos2d::Rect &sRect)
+void WidgetComponent::setSafeUIRect(cocos2d::Rect &sRect)
 {
 	m_sSafeUIRect = sRect;
 }
 
-void WidgetManager::doAlign()
+void WidgetComponent::doAlign()
 {
-	if (_forceAlignDirty)
-	{
-		for (auto& adapter : _needAdaptWidgets) {
-			if (_forceAlignDirty || !(adapter->_isAlignOnce))
-			{
-				adapter->syncLayoutProperty();
-			}
+	for (auto& adapter : _needAdaptWidgets) {
+		if (!(adapter->_isAlignOnce))
+		{
+			adapter->syncLayoutProperty();
 		}
 	}
-    
-    _forceAlignDirty = false;
 }
 
-void WidgetManager::setupWidgets()
+void WidgetComponent::setupWidgets()
 {
     for (auto& adapter:_needAdaptWidgets) {
         adapter->setupLayout();
         adapter->syncLayoutProperty();
     }
-    scheduleUpdate();
+
+	/*auto *owner = this->getOwner();
+	if (owner != nullptr)
+	{
+		owner->scheduleUpdate();
+	}*/
 }
 NS_CCR_END

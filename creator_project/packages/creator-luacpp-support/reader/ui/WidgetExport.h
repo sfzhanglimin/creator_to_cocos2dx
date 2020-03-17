@@ -34,7 +34,7 @@ NS_CCR_BEGIN
 // name of extra layout Node
 #define PLUGIN_EXTRA_LAYOUT_NAME "Creator Widget to Cocos2d-x Layout"
 
-// creator align flag, see: https://github.com/cocos-creator/engine/blob/master/cocos2d/core/base-ui/CCWidgetManager.js
+// creator align flag, see: https://github.com/cocos-creator/engine/blob/master/cocos2d/core/base-ui/CCWidgetComponent.js
 #define CREATOR_ALIGN_TOP    (1 << 0)
 #define CREATOR_ALIGN_MID    (1 << 1)
 #define CREATOR_ALIGN_BOT    (1 << 2)
@@ -188,7 +188,7 @@ public:
     // TODO: support the align target of a widget component, default target is parent Node
     void setLayoutTarget(cocos2d::Node* layoutTarget);
 private:
-    friend class WidgetManager;
+    friend class WidgetComponent;
     // only do layout align once if true
     bool _isAlignOnce;
     // widget layout target, it's a Node, default target is _needAdaptNode's parent
@@ -222,7 +222,7 @@ private:
 };
 
 // manager all the widget component align
-class WidgetManager : public cocos2d::Node
+class WidgetComponent : public cocos2d::Component
 {
 public:
     // check widget component property AlignOnce every frame, update align if this property set to false
@@ -233,15 +233,18 @@ public:
 	static cocos2d::Rect& getSafeUIRect() {
 		return m_sSafeUIRect;
 	};
-	virtual void cleanup()override;
+
+	virtual void onEnter();
+	virtual void onExit();
+	virtual void onAdd();
+	virtual void onRemove();
 private:
     friend class CreatorReader;
 
-    WidgetManager();
-    virtual ~WidgetManager();
+    WidgetComponent();
+    virtual ~WidgetComponent();
     void setupWidgets();
     void doAlign();
-    bool _forceAlignDirty;
 	static cocos2d::Rect m_sSafeUIRect;
     cocos2d::Vector<WidgetAdapter*> _needAdaptWidgets;
 };

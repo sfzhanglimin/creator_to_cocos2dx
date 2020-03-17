@@ -161,25 +161,26 @@ CreatorReader::CreatorReader()
 	: _version("")
 	, _positionDiffDesignResolution(0, 0)
 {
-	_animationManager = new AnimationManager();
+#if CRETOR_OPEN_COLLIDER
 	_collisionManager = new ColliderManager();
-	_widgetManager = new WidgetManager();
-
-	_animationManager->autorelease();
 	_collisionManager->autorelease();
-	_widgetManager->autorelease();
-
-	CC_SAFE_RETAIN(_animationManager);
 	CC_SAFE_RETAIN(_collisionManager);
-	CC_SAFE_RETAIN(_widgetManager);
+#endif
+	_WidgetComponent = new WidgetComponent();
+
+	_WidgetComponent->autorelease();
+
+	CC_SAFE_RETAIN(_WidgetComponent);
 
 }
 
 CreatorReader::~CreatorReader()
 {
+	_animationiInfos.clear();
+#if CRETOR_OPEN_COLLIDER
 	CC_SAFE_RELEASE_NULL(_collisionManager);
-	CC_SAFE_RELEASE_NULL(_animationManager);
-	CC_SAFE_RELEASE_NULL(_widgetManager);
+#endif
+	CC_SAFE_RELEASE_NULL(_WidgetComponent);
 }
 
 CreatorReader* CreatorReader::createWithFilename(const std::string& filename)
@@ -374,8 +375,9 @@ void CreatorReader::setupCollisionMatrix()
 
 		collisionMatrix.push_back(line);
 	}
-
+#if CRETOR_OPEN_COLLIDER
 	_collisionManager->setCollistionMatrix(collisionMatrix);
+#endif
 }
 
 cocos2d::Scene* CreatorReader::getSceneGraph() const
@@ -407,31 +409,44 @@ cocos2d::Node* CreatorReader::getNodeGraph(bool aIsSceneToNode) const
 		if (dynamic_cast<Camera*>(child) == nullptr)
 			child->setPosition(child->getPosition() + _positionDiffDesignResolution);
 
-	_animationManager->playOnLoad();
+	auto it = _animationiInfos.find(node->getName());
+	if (it != _animationiInfos.end())
+	{
+		auto info = it->second;
+		AnimationComponent *animationComponent = new AnimationComponent();
+		animationComponent->addAnimation(info);
+		node->addComponent(animationComponent);
+		animationComponent->autorelease();
+	}
 
+#if CRETOR_OPEN_COLLIDER
 	node->addChild(_collisionManager);
-	node->addChild(_animationManager);
 	_collisionManager->start();
+#endif
 
-	_widgetManager->setupWidgets();
-	node->addChild(_widgetManager);
+	//_WidgetComponent->setupWidgets();
+	node->addComponent(_WidgetComponent);
 
 	return node;
 }
 
-AnimationManager* CreatorReader::getAnimationManager() const
+AnimationComponent* CreatorReader::getAnimationComponent() const
 {
-	return _animationManager;
+	return nullptr;
 }
 
 ColliderManager* CreatorReader::getColliderManager() const
 {
+#if CRETOR_OPEN_COLLIDER
 	return _collisionManager;
+#else 
+	return nullptr;
+#endif
 }
 
-WidgetManager* CreatorReader::getWidgetManager() const
+WidgetComponent* CreatorReader::getWidgetComponent() const
 {
-	return _widgetManager;
+	return _WidgetComponent;
 }
 
 std::string CreatorReader::getVersion() const
@@ -649,10 +664,11 @@ void CreatorReader::parseNodeAnimation(cocos2d::Node* node, const buffers::Node*
 	const AnimationRef *animRef = nodeBuffer->anim();
 
 	if (animRef) {
-		AnimationInfo animationInfo;
-		animationInfo.playOnLoad = animRef->playOnLoad();
-		animationInfo.target = node;
-		node->retain();
+
+		AnimationInfo* info = new AnimationInfo();
+		info->autorelease();
+		info->nodeName = node->getName();
+		info->playOnLoad = animRef->playOnLoad();
 		bool hasDefaultAnimclip = animRef->defaultClip() != nullptr;
 
 		const auto& animationClips = animRef->clips();
@@ -677,7 +693,7 @@ void CreatorReader::parseNodeAnimation(cocos2d::Node* node, const buffers::Node*
 
 			// is it defalut animation clip?
 			if (hasDefaultAnimclip && name->str() == animRef->defaultClip()->str())
-				animationInfo.defaultClip = animClip;
+				info->defaultClip = animClip;
 
 			const auto& curveDatas = fbAnimationClip->curveData();
 			for (const auto& fbCurveData : *curveDatas) {
@@ -744,20 +760,20 @@ void CreatorReader::parseNodeAnimation(cocos2d::Node* node, const buffers::Node*
 					{
 						animClip->addAnimProperties(properties);
 					}
-
 				}
 			}
 
-			animationInfo.clips.pushBack(animClip);
+			info->clips.pushBack(animClip);
 		}
 
+		_animationiInfos.insert(info->nodeName, info);
 		// record animation information -> {node: AnimationInfo}
-		_animationManager->addAnimation(std::move(animationInfo));
 	}
 }
 
 void CreatorReader::parseColliders(cocos2d::Node* node, const buffers::Node* nodeBuffer) const
 {
+#if CRETOR_OPEN_COLLIDER
 	const auto& collidersBuffer = nodeBuffer->colliders();
 	const auto& groupIndex = nodeBuffer->groupIndex();
 
@@ -791,6 +807,7 @@ void CreatorReader::parseColliders(cocos2d::Node* node, const buffers::Node* nod
 
 	if (collider)
 		_collisionManager->addCollider(collider);
+#endif
 }
 
 void CreatorReader::parseWidget(cocos2d::Node *node, const buffers::Node *nodeBuffer) const
@@ -855,7 +872,7 @@ void CreatorReader::parseWidget(cocos2d::Node *node, const buffers::Node *nodeBu
 			widgetInfo->setAlignComb(alignComb);
 			widgetInfo->setAdaptNode(pNode);
 			widgetInfo->setIsAlignOnce(info->isAlignOnce());
-			_widgetManager->_needAdaptWidgets.pushBack(widgetInfo);
+			_WidgetComponent->_needAdaptWidgets.pushBack(widgetInfo);
 		}
 
 	}

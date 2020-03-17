@@ -161,7 +161,6 @@ class AnimProperties
 public:
 
 	AnimProperties() {
-		m_target = nullptr;
 	}
 
 	~AnimProperties() {
@@ -190,15 +189,7 @@ public:
 	void updateAnimWidth(cocos2d::Node* target, float elapsed);
 	void updateAnimHeight(cocos2d::Node* target, float elapsed);
 	void updateAnimSpriteFrame(cocos2d::Node* target, float elapsed);
-
-	void setTarget(cocos2d::Node* target) {
-		m_target = target;
-	}
-
-	cocos2d::Node* getTarget() {
-		return m_target;
-	}
-
+	
 
 	std::vector<AnimPropRotation> animRotation;
 	std::vector<AnimPropPosition> animPosition;
@@ -225,7 +216,6 @@ public:
 	float nextValue;
 	cocos2d::Color3B nextColor;
 	std::string nextPath;
-	cocos2d::Node* m_target;
 };
 
 NS_CCR_END

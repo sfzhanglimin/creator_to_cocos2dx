@@ -44,8 +44,7 @@ ColliderManager::~ColliderManager()
 
 void ColliderManager::start()
 {
-	//本游戏没有colliderManager
-    //cocos2d::Director::getInstance()->getScheduler()->schedule(CC_CALLBACK_1(ColliderManager::update, this), this, 0, false, "update");
+    cocos2d::Director::getInstance()->getScheduler()->schedule(CC_CALLBACK_1(ColliderManager::update, this), this, 0, false, "update");
 }
 
 void ColliderManager::update(float dt)
